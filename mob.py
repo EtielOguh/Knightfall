@@ -25,9 +25,8 @@ class Enemy():
         
         enemy_names = ["Goblin", "Orc", "Esqueleto", "Lobo Sombrio", "Bandido", "Zumbi", "Mago Negro"]
         name = choice(enemy_names)
-        
         level = randint(player.level, player.level + 1)
-        attack = randint(player.attack // 2, player.attack)
+        attack = randint(0, 6)
         max_health = randint(player.max_health // 2, player.max_health)
         health = max_health
 
@@ -35,6 +34,3 @@ class Enemy():
         print(f" {name} Spawn (Lvl {level}, ATK {attack}, HP {health}/{max_health})")
 
         return new_enemy
-
-    
-    

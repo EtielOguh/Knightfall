@@ -1,7 +1,9 @@
-from mob import Enemy, spawn_monster
+from mob import Enemy
+from rules import spawn_monster
 from random import choice
 from knight import Player
 from time import sleep
+
 
 def Battle():
     player = Player()
@@ -20,7 +22,7 @@ def Battle():
                     if Enemy.enemy_is_alive(monster):
                         monster.attack_player(player)
                     if not Enemy.enemy_is_alive(monster):
-                        print(f'{monster.name} Defeated!')
+                        print(f'{monster} Defeated!')
                         player.potion_drops()
                         break
             elif action in "bB":

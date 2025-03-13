@@ -1,5 +1,4 @@
 from random import randint
-from mob import Enemy
 
 class Player():
     def __init__(self):

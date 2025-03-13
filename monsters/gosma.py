@@ -4,7 +4,7 @@ from random import randint
 class Gosma(Enemy):
     def __init__(self, player):
         name = "Gosma"
-        level = randint(player.level, player.level + 1)
+        level = 1
         attack = randint(0, 6)
         max_health = randint(player.max_health // 2, player.max_health)
         health = max_health 

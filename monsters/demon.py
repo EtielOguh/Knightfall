@@ -4,7 +4,7 @@ from random import randint
 class Demon(Enemy):
     def __init__(self, player):
         name = "Demon"
-        level = randint(player.level, player.level + 1)
+        level = 2
         attack = randint(0, 6)
         max_health = randint(player.max_health // 2, player.max_health)
         health = max_health 

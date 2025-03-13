@@ -20,17 +20,34 @@ class Enemy():
         if damage > player.health:
             damage = player.health
         player.damage_received(damage)
-        
-    def create_enemy(player):
-        
-        enemy_names = ["Goblin", "Orc", "Esqueleto", "Lobo Sombrio", "Bandido", "Zumbi", "Mago Negro"]
-        name = choice(enemy_names)
+    
+class Gosma(Enemy):
+    def __init__(self, player):
+        name = "Gosma"
         level = randint(player.level, player.level + 1)
         attack = randint(0, 6)
         max_health = randint(player.max_health // 2, player.max_health)
-        health = max_health
+        health = max_health 
 
-        new_enemy = Enemy(name, level, attack, health, max_health)
-        print(f" {name} Spawn (Lvl {level}, ATK {attack}, HP {health}/{max_health})")
+        super().__init__(name, level, attack, health, max_health)
 
-        return new_enemy
+        print(f"{self.name} is gonna kill you! {self.health}/{self.max_health}")
+        
+class Dragon(Enemy):
+    def __init__(self, player):
+        name = "Dragon"
+        level = randint(player.level, player.level + 1)
+        attack = randint(0, 6)
+        max_health = randint(player.max_health // 2, player.max_health)
+        health = max_health  
+        
+
+        super().__init__(name, level, attack, health, max_health)
+
+        print(f"{self.name} is gonna kill you! {self.health}/{self.max_health}")
+        
+        
+        
+def spawn_monster(player):
+    monster_class = choice([Gosma, Dragon]) #Escolhendo aleatório
+    return monster_class(player)

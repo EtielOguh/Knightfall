@@ -5,12 +5,12 @@ class Player():
     def __init__(self):
         self.name = "Knight"
         self.level = 1
-        self.attack = 800   
+        self.attack = 10   
         self.health = 100
         self.max_health = 100
         self.right_hand = []
         self.left_hand = []
-        self.bag = []
+        self.bag = ["Itens", "Exemple"]
         self.potion = 0
     
     def player_is_alive(self):
@@ -45,3 +45,6 @@ class Player():
             print (f"Potion used your HP now is: {player.health}/{player.max_health}")
         elif player.potion == 0:
             print("You don't have potion to use")
+            
+    def show_bag_itens(player):
+        print(player.bag)

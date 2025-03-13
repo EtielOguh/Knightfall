@@ -11,6 +11,8 @@ class Player():
         self.left_hand = []
         self.bag = ["Itens", "Exemple"]
         self.potion = 0
+        self.xp = 0
+        self.xp_max = 30
     
     def player_is_alive(self):
         return self.health > 0
@@ -28,6 +30,7 @@ class Player():
     def stats(self):
         print(f"\n{self.name} - level {self.level}")
         print(f"HP: {self.health}/{self.max_health} | Attack: {self.attack}\n")
+        print(f"XP {self.xp}/{self.xp_max}")
 
 
     def potion_drops(player):
@@ -47,3 +50,21 @@ class Player():
             
     def show_bag_itens(player):
         print(player.bag)
+    
+    def exp_wins(self, monster):
+        self.xp += monster.exp
+        while self.xp >= self.xp_max:
+            self.level_up()
+            
+    def level_up(self):
+        self.level += 1
+        self.xp -= self.xp_max
+        self.attack += 3
+        self.max_health += 50
+        self.health = self.max_health
+        self.xp_max = self.calculate_new_exp_max() 
+
+        print(f"Parabéns! Você subiu para o nível {self.level}. XP restante: {self.xp}/{self.xp_max}")
+    
+    def calculate_new_exp_max(self):
+        return self.xp_max + 50

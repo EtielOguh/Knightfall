@@ -18,4 +18,4 @@ class Angel(Enemy):
         return randint(player.max_health // 2, player.max_health)
 
     def battle_cry(self):
-        return f"{self.name} Appears! HP: {self.health}/{self.max_health}\n For my father, im gonna kill you!"
+        return f"{self.name} Appears! HP: {self.health}/{self.max_health}\nFor my father, im gonna kill you!"

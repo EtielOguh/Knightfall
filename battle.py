@@ -11,6 +11,7 @@ def Battle():
 
     while player.player_is_alive():
         monster = spawn_monster(player)
+        print(monster.battle_cry())
         
         while Enemy.enemy_is_alive(monster) and player.player_is_alive():
             action = input("A for Attack and B for potion: ")

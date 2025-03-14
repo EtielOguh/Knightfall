@@ -14,7 +14,7 @@ class Enemy():
     
     def damage_received(self, damage):
         self.health -= damage
-        print(f"{self.name} received {damage} damage HP LEFT {self.health}/{self.max_health}")
+        #print(f"{self.name} received {damage} damage HP LEFT {self.health}/{self.max_health}")
         
     def attack_player(self, player):
         damage = randint (self.attack -1, self.attack +5)

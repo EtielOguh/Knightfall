@@ -1,7 +1,7 @@
 from mob import Enemy
 from rules import spawn_monster
 from knight import Player
-from time import sleep
+from animation import battle_animation
 
 
 def Battle():
@@ -16,15 +16,16 @@ def Battle():
         while Enemy.enemy_is_alive(monster) and player.player_is_alive():
             action = input("A for Attack and B for potion: ")
             if action in 'aA':
+                battle_animation()
                 while Enemy.enemy_is_alive(monster) and player.player_is_alive():
                     player.attack_enemy(monster)
-                    sleep(1)
                     if Enemy.enemy_is_alive(monster):
                         monster.attack_player(player)
                     if not Enemy.enemy_is_alive(monster):
-                        print(f'{monster} Defeated!')
+                        print(f'{monster.name} Defeated!')
                         player.exp_wins(monster)
                         player.potion_drops()
+                        print("Stats player:")
                         player.stats()
                         
                         break

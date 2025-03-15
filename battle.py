@@ -1,33 +1,39 @@
-from mob import Enemy
 from rules import spawn_monster
 from knight import Player
 from animation import battle_animation
 
-
 def Battle():
     player = Player()
-    print(f"Wellcome to the jungle! {player.name}!")
+    print(f"Welcome to the jungle, {player.name}!")
     player.show_bag_itens()
 
     while player.player_is_alive():
-        monster = spawn_monster(player)
+        monster = spawn_monster()
         print(monster.battle_cry())
-        
-        while Enemy.enemy_is_alive(monster) and player.player_is_alive():
-            action = input("A for Attack and B for potion: ")
-            if action in 'aA':
+
+        while monster.enemy_is_alive() and player.player_is_alive():
+            action = input("\nChoose an action:\n[A] Attack\n[B] Use Potion\n> ").strip().lower()
+            
+            if action == 'a':
                 battle_animation()
-                while Enemy.enemy_is_alive(monster) and player.player_is_alive():
+                
+                while monster.enemy_is_alive() and player.player_is_alive():
                     player.attack_enemy(monster)
-                    if Enemy.enemy_is_alive(monster):
+
+                    if monster.enemy_is_alive():
                         monster.attack_player(player)
-                    if not Enemy.enemy_is_alive(monster):
-                        print(f'{monster.name} Defeated!')
-                        player.exp_wins(monster)
-                        player.potion_drops()
-                        print("Stats player:")
-                        player.stats()
-                        
-                        break
-            elif action in "bB":
+                    if player.health <= 20 or monster.attack > player.health:
+                        if player.potion > 0:
+                            player.potion_use()
+
+                if not monster.enemy_is_alive():
+                    print(f"\n{monster.name} Defeated!")
+                    player.exp_wins(monster)
+                    player.potion_drops()
+                    print("\nPlayer Stats:")
+                    player.stats()
+
+            elif action == 'b':
                 player.potion_use()
+            else:
+                print("Invalid action! Please choose 'A' to Attack or 'B' to Use Potion.")

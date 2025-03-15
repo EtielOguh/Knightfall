@@ -18,7 +18,7 @@ class Angel(Enemy):
         return randint(5 + level, 10 + level)
 
     def _generate_max_health(self, level):
-        return 40 + (level * 20) + randint(0, 10)
+        return 40 + (level * 20) + randint(0, 9)
 
     def battle_cry(self):
         return f"{self.name} Appears! HP: {self.health}/{self.max_health}\nFor my father, I'm gonna kill you!"

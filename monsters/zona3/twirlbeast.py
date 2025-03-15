@@ -1,13 +1,13 @@
 from random import randint
 from mob import Enemy
 
-class Angel(Enemy):
+class Twirlbeast(Enemy):
     def __init__(self):
-        level = 1
+        level = 8
         max_health = self._generate_max_health(level)
         health = max_health
         super().__init__(
-            name="Angel",
+            name="Twirlbeast",
             level=level,
             attack=self._generate_attack(level),
             health=health,
@@ -21,4 +21,4 @@ class Angel(Enemy):
         return 40 + (level * 20) + randint(0, 9)
 
     def battle_cry(self):
-        return f"{self.name} Appears! HP: {self.health}/{self.max_health}\nFor my father, I'm gonna kill you!"
+        return f"{self.name} Appears! HP: {self.health}/{self.max_health}\nTwirlbeast spins around, bumping into you accidentally, causing no real harm."

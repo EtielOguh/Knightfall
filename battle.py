@@ -8,11 +8,11 @@ def Battle():
     player.show_bag_itens()
 
     while player.player_is_alive():
-        monster = spawn_monster()
+        monster = spawn_monster(player.zone)
         print(monster.battle_cry())
 
         while monster.enemy_is_alive() and player.player_is_alive():
-            action = input("\nChoose an action:\n[A] Attack\n[B] Use Potion\n> ").strip().lower()
+            action = input("\nChoose an action:\n[A] Attack\n[B] Use Potion\n[Z] Change Zone\n> ").strip().lower()
             
             if action == 'a':
                 battle_animation()
@@ -35,5 +35,8 @@ def Battle():
 
             elif action == 'b':
                 player.potion_use()
+                
+            elif action == 'z':
+                player.change_zone()
             else:
                 print("Invalid action! Please choose 'A' to Attack or 'B' to Use Potion.")

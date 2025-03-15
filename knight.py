@@ -7,6 +7,7 @@ class Player():
         self.attack = 10   
         self.health = 100
         self.max_health = 100
+        self.zone = 1
         self.right_hand = []
         self.left_hand = []
         self.bag = ["Itens", "Exemple"]
@@ -68,3 +69,7 @@ class Player():
     
     def calculate_new_exp_max(self):
         return self.xp_max + 50
+    
+    def change_zone(self):
+         self.zone += 1
+         print(f"You have changed your zone, now your in {self.zone}")

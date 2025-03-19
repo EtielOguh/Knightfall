@@ -6,12 +6,12 @@ from random import choice
 
 def spawn_monster(zone):
     if zone == 1:
-        return choice(monsters_zone1)()
+        return choice(monster_zona1)()
     elif zone == 2:
-        return choice(monsters_zone2)()
+        return choice(monster_zona2)()
     elif zone == 3:
-        return choice(monsters_zone3)()
-    elif zone == 3:
-        return choice(monsters_zone4)()
+        return choice(monster_zona3)()
+    elif zone == 4:
+        return choice(monster_zona4)()
     else:
         raise ValueError("Invalid zone")

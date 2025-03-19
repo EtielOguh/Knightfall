@@ -71,5 +71,8 @@ class Player():
         return self.xp_max + 50
     
     def change_zone(self):
-         self.zone += 1
-         print(f"You have changed your zone, now your in {self.zone}")
+        if self.zone <4:
+            self.zone += 1
+            print(f"You have changed your zone, now your in {self.zone}")
+        else:
+            print("You can't change your zone!")

@@ -21,3 +21,9 @@ class Enemy():
         if damage > player.health:
             damage = player.health
         player.damage_received(damage)
+    
+    def drop_money(self, player):
+        money = self.level * 10
+        player.money += money
+    
+    

@@ -12,7 +12,7 @@ def Battle():
         print(monster.battle_cry())
 
         while monster.enemy_is_alive() and player.player_is_alive():
-            action = input("\nChoose an action:\n[A] Attack\n[B] Use Potion\n[Z] Change Zone\n[F] Run Enemy\n> ").strip().lower()
+            action = input("\nChoose an action:\n[A] Attack\n[B] Use Potion\n[Z] Change Zone\n[X] Back Zone\n[F] Run Enemy\n> ").strip().lower()
             
             if action == 'a':
                 battle_animation()
@@ -29,7 +29,11 @@ def Battle():
                 if not monster.enemy_is_alive():
                     print(f"\n{monster.name} Defeated!")
                     player.exp_wins(monster)
+                    monster.drop_money(player)
                     player.potion_drops()
+                    droped_item = monster.drop_loot()
+                    if droped_item:
+                        player.add_item_to_bag(droped_item.name)
                     print("\nPlayer Stats:")
                     player.stats()
 
@@ -37,9 +41,27 @@ def Battle():
                 player.potion_use()
                 
             elif action == 'z':
-                player.change_zone()
-                monster = spawn_monster(player.zone)
-                print(monster.battle_cry())
+                change = False  # Inicializa a variável para evitar erro
+                if player.money >= 50:
+                    player.money -= 50
+                    change = player.change_zone()
+                if change:
+                    monster = spawn_monster(player.zone)
+                    print(monster.battle_cry())
+                else:
+                    print("You don't have enough money!")
+
+            elif action == 'x':
+                change = False  # Mesma correção aqui
+                if player.money >= 50:
+                    player.money -= 50
+                    change = player.back_zone()
+                if change:
+                    monster = spawn_monster(player.zone)
+                    print(monster.battle_cry())
+                else:
+                    print("You don't have enough money!")
+            
             elif action == 'f':
                 print('LOSER! Try another one!')
                 monster = spawn_monster(player.zone)

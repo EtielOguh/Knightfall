@@ -4,16 +4,18 @@ class Player():
     def __init__(self):
         self.name = "Knight"
         self.level = 1
-        self.attack = 10   
+        self.attack = 200
+        self.defense = 0
         self.health = 100
         self.max_health = 100
         self.zone = 1
         self.right_hand = []
         self.left_hand = []
-        self.bag = ["Itens", "Exemple"]
+        self.bag = []
         self.potion = 0
         self.xp = 0
         self.xp_max = 30
+        self.money = 0
     
     def player_is_alive(self):
         return self.health > 0
@@ -32,7 +34,7 @@ class Player():
         print(f"\n{self.name} - level {self.level}")
         print(f"HP: {self.health}/{self.max_health} | Attack: {self.attack}\n")
         print(f"XP {self.xp}/{self.xp_max}")
-
+        print(f"MONEY R$ {self.money}")
 
     def potion_drops(player):
         drop_chance = randint(0,3)
@@ -51,6 +53,10 @@ class Player():
             
     def show_bag_itens(player):
         print(player.bag)
+    
+    def add_item_to_bag(self, item):
+        self.bag.append(item)
+        print(f"{item} added to your bag.")
     
     def exp_wins(self, monster):
         self.xp += monster.exp
@@ -74,5 +80,16 @@ class Player():
         if self.zone <4:
             self.zone += 1
             print(f"You have changed your zone, now your in {self.zone}")
+            return True
         else:
             print("You can't change your zone!")
+            return False
+        
+    def back_zone(self):
+        if self.zone > 1:
+            self.zone -= 1
+            print(f"You have changed your zone, now your in {self.zone}")
+            return True
+        else:
+            print("You can't change your zone!")
+            return False

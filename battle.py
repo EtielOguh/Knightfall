@@ -5,7 +5,6 @@ from animation import battle_animation
 def Battle():
     player = Player()
     print(f"Welcome to the jungle, {player.name}!")
-    player.show_bag_itens()
 
     while player.player_is_alive():
         monster = spawn_monster(player.zone)
@@ -36,6 +35,7 @@ def Battle():
                         player.add_item_to_bag(droped_item.name)
                     print("\nPlayer Stats:")
                     player.stats()
+                    player.show_bag_itens()
 
             elif action == 'b':
                 player.potion_use()

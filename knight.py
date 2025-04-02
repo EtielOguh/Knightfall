@@ -93,3 +93,4 @@ class Player():
         else:
             print("You can't change your zone!")
             return False
+    

@@ -1,12 +1,12 @@
 from random import randint
 
 class Player():
-    def __init__(self):
-        self.name = "Knight"
+    def __init__(self, name, health, attack, defense):
+        self.name = name
         self.level = 1
-        self.attack = 200
-        self.defense = 0
-        self.health = 100
+        self.attack = attack
+        self.defense = defense
+        self.health = health
         self.max_health = 100
         self.zone = 1
         self.right_hand = []

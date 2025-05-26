@@ -1,9 +1,8 @@
 from rules import spawn_monster
-from knight import Player
+from player.player_base import Player
 from animation import battle_animation
 
-def Battle():
-    player = Player()
+def Battle(player):
     print(f"Welcome to the jungle, {player.name}!")
 
     while player.player_is_alive():
@@ -30,9 +29,6 @@ def Battle():
                     player.exp_wins(monster)
                     monster.drop_money(player)
                     player.potion_drops()
-                    droped_item = monster.drop_loot()
-                    if droped_item:
-                        player.add_item_to_bag(droped_item.name)
                     print("\nPlayer Stats:")
                     player.stats()
                     player.show_bag_itens()

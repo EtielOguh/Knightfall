@@ -1,8 +1,6 @@
 from random import randint
 from monsters.mob import Enemy
 from random import choice
-from itens.swords import swords
-from itens.shields import shields
 
 class Joker(Enemy):
     def __init__(self):
@@ -23,7 +21,3 @@ class Joker(Enemy):
 
     def battle_cry(self):
         return f"{self.name} Appears! HP: {self.health}/{self.max_health}\n Im just a JOKE HAHAHAHAHAHAHAH"
-
-    def drop_loot(self):
-            print(f"{self.name} Joker is not a dropper, he just want to JOKE!")
-            return None

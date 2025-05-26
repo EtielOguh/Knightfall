@@ -1,8 +1,6 @@
 from random import randint
 from monsters.mob import Enemy
 from random import choice
-from itens.swords import swords
-from itens.shields import shields
 
 class Whiskerghost(Enemy):
     def __init__(self):
@@ -16,7 +14,6 @@ class Whiskerghost(Enemy):
             health=health,
             max_health=max_health
         )
-        self.drop_items = [swords[1], shields[1]]
 
     def _generate_attack(self, level):
         return randint(5 + level, 10 + level)
@@ -26,13 +23,3 @@ class Whiskerghost(Enemy):
 
     def battle_cry(self):
         return f"{self.name} Appears! HP: {self.health}/{self.max_health}\nWhiskerghost flickers in and out, giving you a spooky chill but no real harm."
-
-    def drop_loot(self):
-        drop_item = choice(self.drop_items)  
-
-        if randint(1, 100) <= 50:
-            print(f"{self.name} dropped {drop_item.name}!")
-            return drop_item
-        else:
-            print(f"{self.name} didn't drop anything this time.")
-            return None

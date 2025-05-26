@@ -1,7 +1,9 @@
 from battle import Battle
+from rules import chose_class
 
 def main():
-    Battle()
+    player = chose_class()
+    Battle(player)
     
 if __name__ == "__main__":
-    main()
+        main()

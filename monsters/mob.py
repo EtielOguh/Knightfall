@@ -1,4 +1,4 @@
-from random import randint, choice
+from random import randint
 
 class Enemy():
     def __init__(self,name, level, attack, health, max_health):
@@ -14,7 +14,6 @@ class Enemy():
     
     def damage_received(self, damage):
         self.health -= damage
-        #print(f"{self.name} received {damage} damage HP LEFT {self.health}/{self.max_health}")
         
     def attack_player(self, player):
         damage = randint (self.attack -1, self.attack +5)

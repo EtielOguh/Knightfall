@@ -1,8 +1,5 @@
-from itens import Item
+from .itens_base import Itens
 
-# List of swords
-swords = [
-    Item("Iron Sword", "sword", {"attack": 5}, 30),
-    Item("Steel Sword", "sword", {"attack": 8}, 20),
-    Item("Flaming Blade", "sword", {"attack": 12}, 10)
-]
+class Sword():
+    def __init__(self):
+        super().__init__(name= "Sword of Stone", attack = 10, defense = 0, type = 2)

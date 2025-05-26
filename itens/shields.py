@@ -1,8 +1,5 @@
-from itens import Item
+from .itens_base import Itens
 
-# List of shields
-shields = [
-    Item("Wooden Shield", "shield", {"defense": 3}, 40),
-    Item("Iron Shield", "shield", {"defense": 6}, 25),
-    Item("Dragon Shield", "shield", {"defense": 10}, 15)
-]
+class shield():
+    def __init__(self):
+        super().__init__(name= "Shield Of Stone", attack = 0, defense = 10, type = 1)

@@ -1,5 +1,6 @@
 from random import randint
-from mob import Enemy
+from monsters.mob import Enemy
+from random import choice
 
 class Bonewhisper(Enemy):
     def __init__(self):

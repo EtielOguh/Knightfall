@@ -1,4 +1,4 @@
-from rules import spawn_monster
+from rules import spawn_monster, try_drop_item
 from player.player_base import Player
 from animation import battle_animation
 
@@ -10,7 +10,7 @@ def Battle(player):
         print(monster.battle_cry())
 
         while monster.enemy_is_alive() and player.player_is_alive():
-            action = input("\nChoose an action:\n[A] Attack\n[B] Use Potion\n[Z] Change Zone\n[X] Back Zone\n[F] Run Enemy\n> ").strip().lower()
+            action = input("\nChoose an action:\n[A] Attack\n[B] Use Potion\n[Z] Change Zone\n[X] Back Zone\n[F] Run Enemy\n[I] Equip Iten\n> ").strip().lower()
             
             if action == 'a':
                 battle_animation()
@@ -29,6 +29,7 @@ def Battle(player):
                     player.exp_wins(monster)
                     monster.drop_money(player)
                     player.potion_drops()
+                    try_drop_item(player)
                     print("\nPlayer Stats:")
                     player.stats()
                     player.show_bag_itens()
@@ -62,5 +63,7 @@ def Battle(player):
                 print('LOSER! Try another one!')
                 monster = spawn_monster(player.zone)
                 print(monster.battle_cry())
+            elif action == 'i':
+                Player.equip_itens(player)
             else:
                 print("Invalid action!")

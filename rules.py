@@ -2,10 +2,13 @@ from monsters.zona1 import monster_zona1
 from monsters.zona2 import monster_zona2
 from monsters.zona3 import monster_zona3
 from monsters.zona4 import monster_zona4
-from random import choice
+from random import choice, randint
 from player.knight import Knight
 from player.thief import Thief
 from player.archer import Archer
+
+from itens.weapon import *
+
 
 def spawn_monster(zone):
     if zone == 1:
@@ -33,3 +36,21 @@ def chose_class():
         player = Knight()
         
     return player
+
+def get_droppable_items(player_type):
+    if player_type == 1:  # Knight
+        return [SwordOfValor(), IronGreatsword(), BladeOfKings(),
+                ShieldOfStone(), DragonShield(), AegisOfHonor()]
+    elif player_type == 2:  # Archer
+        return [BowOfFire(), WindstrikerBow(), ElvenLongbow()]
+    elif player_type == 3:  # Thief
+        return [DaggerOfNight(), SilentBlade(), VenomfangDagger()]
+    return []
+    
+def try_drop_item(player):
+    chance = randint(0, 3)  # 25% de chance
+    if chance == 3:
+        items = get_droppable_items(player.class_type)
+        dropped_item = choice(items)
+        player.add_item_to_bag(dropped_item)
+        print(f"Lucky! Item Found: {dropped_item.name}")

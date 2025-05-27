@@ -1,8 +1,9 @@
 from random import randint
 
 class Player():
-    def __init__(self, name, health, attack, defense):
+    def __init__(self, name, health, attack, defense, type):
         self.name = name
+        self.class_type = type
         self.level = 1
         self.attack = attack
         self.defense = defense
@@ -52,7 +53,8 @@ class Player():
             print("You don't have potion to use")
             
     def show_bag_itens(player):
-        print(player.bag)
+        for item in player.bag:
+            print(item)
     
     def add_item_to_bag(self, item):
         self.bag.append(item)
@@ -94,3 +96,41 @@ class Player():
             print("You can't change your zone!")
             return False
     
+    def equip_itens(self):
+        if not self.bag:
+            print("Sua bag está vazia!")
+            return
+        
+        print("\nItens na sua bag:")
+        for item in self.bag:
+            print(item)
+        item = self.bag[int(input("\nDigite o Número do item: "))]
+
+
+        for item in self.bag[:]:  # Usa uma cópia da lista para evitar problemas ao remover
+            # Decide se vai para mão direita (tem ataque) ou esquerda (escudo)
+            if item.attack > 0:
+                if self.right_hand:
+                    old = self.right_hand.pop() if self.right_hand else None
+                    self.attack -= old.attack
+                    self.defense -= old.defense
+                    print(f"{old.name} foi quebrado.")
+                self.right_hand.append(item)
+            else:
+                if self.left_hand:
+                    old = self.left_hand.pop() if self.left_hand else None
+                    self.attack -= old.attack
+                    self.defense -= old.defense
+                    print(f"{old.name} foi quebrado.")
+                self.left_hand.append(item)
+
+            # Aplica atributos do novo item
+            self.attack += item.attack
+            self.defense += item.defense
+            self.bag.remove(item)
+            print(f"{item.name} foi equipado com sucesso!")
+            return  # Equipa só um item e sai do método
+
+        print("Item não encontrado na bag.")
+
+        

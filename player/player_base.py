@@ -1,4 +1,25 @@
 from random import randint
+import json
+from itens.weapon import (
+    BowOfFire, WindstrikerBow, ElvenLongbow,
+    SwordOfValor, IronGreatsword, BladeOfKings,
+    ShieldOfStone, DragonShield, AegisOfHonor,
+    DaggerOfNight, SilentBlade, VenomfangDagger
+)
+item_classes = {
+    "Bow of Fire": BowOfFire,
+    "Windstriker Bow": WindstrikerBow,
+    "Elven Longbow": ElvenLongbow,
+    "Sword of Valor": SwordOfValor,
+    "Iron Greatsword": IronGreatsword,
+    "Blade of Kings": BladeOfKings,
+    "Shield of Stone": ShieldOfStone,
+    "Dragon Shield": DragonShield,
+    "Aegis of Honor": AegisOfHonor,
+    "Dagger of Night": DaggerOfNight,
+    "Silent Blade": SilentBlade,
+    "Venomfang Dagger": VenomfangDagger
+}
 
 class Player():
     def __init__(self, name, health, attack, defense, type):
@@ -133,4 +154,61 @@ class Player():
 
         print("Item não encontrado na bag.")
 
-        
+
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "class_type": self.class_type,
+            "level": self.level,
+            "attack": self.attack,
+            "defense": self.defense,
+            "health": self.health,
+            "max_health": self.max_health,
+            "zone": self.zone,
+            "xp": self.xp,
+            "xp_max": self.xp_max,
+            "money": self.money,
+            "potion": self.potion,
+            "bag": [vars(item) for item in self.bag],
+            "right_hand": [vars(item) for item in self.right_hand],
+            "left_hand": [vars(item) for item in self.left_hand]
+        }
+
+    @staticmethod
+    def save_player(player, filename="save_data.json"):
+        with open(filename, "w") as f:
+            json.dump(player.to_dict(), f, indent=4)
+
+    @staticmethod
+    def load_player(filename="save_data.json"):
+        with open(filename, "r") as f:
+            data = json.load(f)
+
+        from player.knight import Knight
+        from player.archer import Archer
+        from player.thief import Thief
+
+        if data["class_type"] == 1:
+            player = Knight()
+        elif data["class_type"] == 2:
+            player = Archer()
+        elif data["class_type"] == 3:
+            player = Thief()
+
+        player.name = data["name"]
+        player.level = data["level"]
+        player.attack = data["attack"]
+        player.defense = data["defense"]
+        player.health = data["health"]
+        player.max_health = data["max_health"]
+        player.zone = data["zone"]
+        player.xp = data["xp"]
+        player.xp_max = data["xp_max"]
+        player.money = data["money"]
+        player.potion = data["potion"]
+
+        player.bag = [item_classes[i["name"]]() for i in data["bag"]]
+        player.right_hand = [item_classes[i["name"]]() for i in data["right_hand"]]
+        player.left_hand = [item_classes[i["name"]]() for i in data["left_hand"]]
+
+        return player

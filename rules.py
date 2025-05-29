@@ -6,6 +6,8 @@ from random import choice, randint
 from player.knight import Knight
 from player.thief import Thief
 from player.archer import Archer
+from player.player_base import Player
+import os
 
 from itens.weapon import *
 
@@ -36,6 +38,20 @@ def chose_class():
         player = Knight()
         
     return player
+
+def load_or_create_player():
+    if os.path.exists("save_data.json"):
+        try:
+            player = Player.load_player()
+            print(f"\n✅ Jogador {player.name} carregado com sucesso!")
+            return player
+        except Exception as e:
+            print(f"\n❌ Erro ao carregar o save: {e}")
+            print("Criando novo jogador...")
+    else:
+        print("Nenhum save encontrado. Criando novo jogador...")
+
+    return chose_class()
 
 def get_droppable_items(player_type):
     if player_type == 1:  # Knight

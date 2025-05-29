@@ -9,7 +9,7 @@ class BowOfFire(Itens_Base):
 
 class WindstrikerBow(Itens_Base):
     def __init__(self):
-        super().__init__(name="Windstriker Bow", attack=20, defense=1, type=2)
+        super().__init__(name="Windstriker Bow", attack=20, defense=0, type=2)
 
 class ElvenLongbow(Itens_Base):
     def __init__(self):
@@ -20,15 +20,15 @@ class ElvenLongbow(Itens_Base):
 # -----------------------
 class SwordOfValor(Itens_Base):
     def __init__(self):
-        super().__init__(name="Sword of Valor", attack=18, defense=2, type=1)
+        super().__init__(name="Sword of Valor", attack=18, defense=0, type=1)
 
 class IronGreatsword(Itens_Base):
     def __init__(self):
-        super().__init__(name="Iron Greatsword", attack=22, defense=1, type=1)
+        super().__init__(name="Iron Greatsword", attack=22, defense=0, type=1)
 
 class BladeOfKings(Itens_Base):
     def __init__(self):
-        super().__init__(name="Blade of Kings", attack=30, defense=3, type=1)
+        super().__init__(name="Blade of Kings", attack=30, defense=0, type=1)
 
 # -----------------------
 # Escudos para Knight (type = 1)
@@ -50,11 +50,11 @@ class AegisOfHonor(Itens_Base):
 # -----------------------
 class DaggerOfNight(Itens_Base):
     def __init__(self):
-        super().__init__(name="Dagger of Night", attack=12, defense=2, type=3)
+        super().__init__(name="Dagger of Night", attack=12, defense=0, type=3)
 
 class SilentBlade(Itens_Base):
     def __init__(self):
-        super().__init__(name="Silent Blade", attack=17, defense=1, type=3)
+        super().__init__(name="Silent Blade", attack=17, defense=0, type=3)
 
 class VenomfangDagger(Itens_Base):
     def __init__(self):

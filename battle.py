@@ -1,6 +1,7 @@
 from rules import spawn_monster, try_drop_item
 from player.player_base import Player
 from animation import battle_animation
+import sys
 
 def Battle(player):
     print(f"Welcome to the jungle, {player.name}!")
@@ -65,5 +66,11 @@ def Battle(player):
                 print(monster.battle_cry())
             elif action == 'i':
                 Player.equip_itens(player)
+                  
+            elif action == 's':
+                Player.save_player(player)
+                sys.exit()
+            
             else:
-                print("Invalid action!")
+                print("Invalid action!")                
+                

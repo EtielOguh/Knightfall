@@ -8,8 +8,9 @@ from player.thief import Thief
 from player.archer import Archer
 from player.player_base import Player
 import os
-
+from colorama import Fore
 from itens.weapon import *
+import os
 
 
 def spawn_monster(zone):
@@ -25,7 +26,15 @@ def spawn_monster(zone):
         raise ValueError("Invalid zone")
     
 def chose_class():
-    choice = input("Escolha sua classe (1-Knight, 2-Archer, 3-Thief): ")
+    print("+-----------------------------+")
+    print("|      CHOOSE YOUR CLASS      |")
+    print("+-----------------------------+")
+    print("| 1 – Knight                  |")
+    print("| 2 – Archer                  |")
+    print("| 3 – Thief                   |")
+    print("+-----------------------------+")
+    
+    choice = input("> Escolha (1, 2 ou 3): ").strip()
 
     if choice == "1":
         player = Knight()
@@ -34,7 +43,7 @@ def chose_class():
     elif choice == "3":
         player = Thief()
     else:
-        print("Escolha inválida, criando Knight por padrão.")
+        print("Invalid, now your class is a Knight for base")
         player = Knight()
         
     return player
@@ -46,10 +55,10 @@ def load_or_create_player():
             print(f"\n✅ Jogador {player.name} carregado com sucesso!")
             return player
         except Exception as e:
-            print(f"\n❌ Erro ao carregar o save: {e}")
-            print("Criando novo jogador...")
+            print(f"\n❌ Error! You don't have a save: {e}")
+            print( "Creating a new player...")
     else:
-        print("Nenhum save encontrado. Criando novo jogador...")
+        print( "No save found, creating a new player...")
 
     return chose_class()
 
@@ -70,3 +79,12 @@ def try_drop_item(player):
         dropped_item = choice(items)
         player.add_item_to_bag(dropped_item)
         print(f"Lucky! Item Found: {dropped_item.name}")
+
+def show_menu():
+    print("\nA) Attack     B) Potion     Z) Change     X) Back")
+    print("F) Run        I) Equip      E) Bag        S) Save/Exit")
+    action = input("Choose one > ").strip().lower()
+    return action
+
+def clear():
+    os.system('cls' if os.name == 'nt' else 'clear')

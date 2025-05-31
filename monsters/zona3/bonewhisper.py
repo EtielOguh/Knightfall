@@ -22,4 +22,4 @@ class Bonewhisper(Enemy):
         return 40 + (level * 20) + randint(0, 9)
 
     def battle_cry(self):
-        return f"{self.name} Appears! HP: {self.health}/{self.max_health}\nBonewhisper rattles its bones, but its attack is barely more than a nuisance."
+        return f"{self.name} Appears! ATK: {self.attack} HP: {self.health}/{self.max_health}\nBonewhisper rattles its bones, but its attack is barely more than a nuisance."

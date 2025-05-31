@@ -1,0 +1,17 @@
+{
+    "name": "Archer",
+    "class_type": 2,
+    "level": 2,
+    "attack": 33,
+    "defense": 3,
+    "health": 125,
+    "max_health": 150,
+    "zone": 1,
+    "xp": 40,
+    "xp_max": 80,
+    "money": 70,
+    "potion": 1,
+    "bag": [],
+    "right_hand": [],
+    "left_hand": []
+}

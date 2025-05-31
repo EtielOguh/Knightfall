@@ -20,4 +20,4 @@ class Joker(Enemy):
         return 40 + (level * 20) + randint(0, 9)
 
     def battle_cry(self):
-        return f"{self.name} Appears! HP: {self.health}/{self.max_health}\n Im just a JOKE HAHAHAHAHAHAHAH"
+        return f"{self.name} Appears! ATK: {self.attack} HP: {self.health}/{self.max_health}\n Im just a JOKE HAHAHAHAHAHAHAH"

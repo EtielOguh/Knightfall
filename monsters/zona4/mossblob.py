@@ -22,4 +22,4 @@ class Mossblob(Enemy):
         return 40 + (level * 20) + randint(0, 9)
 
     def battle_cry(self):
-        return f"{self.name} Appears! HP: {self.health}/{self.max_health}\nMossblob oozes slowly toward you, its slimy body slowing you down slightly."
+        return f"{self.name} Appears! ATK: {self.attack} HP: {self.health}/{self.max_health}\nMossblob oozes slowly toward you, its slimy body slowing you down slightly."

@@ -1,5 +1,7 @@
 from random import randint
 import json
+import rules
+
 from itens.weapon import (
     BowOfFire, WindstrikerBow, ElvenLongbow,
     SwordOfValor, IronGreatsword, BladeOfKings,
@@ -53,10 +55,7 @@ class Player():
         enemy.damage_received(damage)
     
     def stats(self):
-        print(f"\n{self.name} - level {self.level}")
-        print(f"HP: {self.health}/{self.max_health} | Attack: {self.attack}\n")
-        print(f"XP {self.xp}/{self.xp_max}")
-        print(f"MONEY R$ {self.money}")
+        print(f"Player Stats: {self.name} Lv:{self.level} | HP:{self.health}/{self.max_health} | Atk:{self.attack} | Def:{self.defense} | XP:{self.xp}/{self.xp_max} | $:{self.money} | Pot: {self.potion}\n")
 
     def potion_drops(player):
         drop_chance = randint(0,3)
@@ -74,8 +73,12 @@ class Player():
             print("You don't have potion to use")
             
     def show_bag_itens(player):
-        for item in player.bag:
-            print(item)
+        if not player.bag:
+            print("Empty Bag!")
+        else:
+            print("Bag Itens: ")
+            for item in player.bag:
+                print(f"- {item}")
     
     def add_item_to_bag(self, item):
         self.bag.append(item)
@@ -94,7 +97,7 @@ class Player():
         self.health = self.max_health
         self.xp_max = self.calculate_new_exp_max() 
 
-        print(f"Parabéns! Você subiu para o nível {self.level}. XP restante: {self.xp}/{self.xp_max}")
+        print(f"Level Up! {self.level}. Xp Left: {self.xp}/{self.xp_max}")
     
     def calculate_new_exp_max(self):
         return self.xp_max + 50
@@ -119,40 +122,51 @@ class Player():
     
     def equip_itens(self):
         if not self.bag:
-            print("Sua bag está vazia!")
+            print("Empty Bag!")
             return
-        
-        print("\nItens na sua bag:")
-        for item in self.bag:
-            print(item)
-        item = self.bag[int(input("\nDigite o Número do item: "))]
 
+        print("\nBag Items:")
+        for idx, item in enumerate(self.bag, 1):  # começa pelo 1
+            print(f"{idx}) {item}")
 
-        for item in self.bag[:]:  # Usa uma cópia da lista para evitar problemas ao remover
-            # Decide se vai para mão direita (tem ataque) ou esquerda (escudo)
-            if item.attack > 0:
-                if self.right_hand:
-                    old = self.right_hand.pop() if self.right_hand else None
-                    self.attack -= old.attack
-                    self.defense -= old.defense
-                    print(f"{old.name} foi quebrado.")
-                self.right_hand.append(item)
-            else:
-                if self.left_hand:
-                    old = self.left_hand.pop() if self.left_hand else None
-                    self.attack -= old.attack
-                    self.defense -= old.defense
-                    print(f"{old.name} foi quebrado.")
-                self.left_hand.append(item)
+        while True:
+            try:
+                choice = int(input("\nTell me the item number: "))
+                choice -= 1  # Ajusta para o índice da lista (começa em 0)
 
-            # Aplica atributos do novo item
-            self.attack += item.attack
-            self.defense += item.defense
-            self.bag.remove(item)
-            print(f"{item.name} foi equipado com sucesso!")
-            return  # Equipa só um item e sai do método
+                if choice < 0 or choice >= len(self.bag):
+                    print("Invalid item number!")
+                    continue
 
-        print("Item não encontrado na bag.")
+                selected_item = self.bag[choice]
+
+                # Decide se vai para mão direita (ataque) ou esquerda (defesa)
+                if selected_item.attack > 0:
+                    if self.right_hand:
+                        old = self.right_hand.pop()
+                        self.attack -= old.attack
+                        self.defense -= old.defense
+                        print(f"{old.name} broke.")
+                    self.right_hand.append(selected_item)
+                else:
+                    if self.left_hand:
+                        old = self.left_hand.pop()
+                        self.attack -= old.attack
+                        self.defense -= old.defense
+                        print(f"{old.name} broke.")
+                    self.left_hand.append(selected_item)
+
+                # Aplica atributos do novo item
+                self.attack += selected_item.attack
+                self.defense += selected_item.defense
+                self.bag.remove(selected_item)
+                
+                rules.clear()
+                print(f"{selected_item.name} has been successfully equipped!")
+                break  # Sai do loop após equipar
+
+            except ValueError:
+                print("Please enter a valid number!")
 
 
     def to_dict(self):

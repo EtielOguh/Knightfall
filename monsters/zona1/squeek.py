@@ -22,4 +22,4 @@ class Squeek(Enemy):
         return 40 + (level * 20) + randint(0, 9)
 
     def battle_cry(self):
-        return f"{self.name} Appears! HP: {self.health}/{self.max_health}\nSqueek darts past you, leaving a trail of squeaks, but no damage."
+        return f"{self.name} Appears! ATK: {self.attack} HP: {self.health}/{self.max_health}\nSqueek darts past you, leaving a trail of squeaks, but no damage."

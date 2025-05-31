@@ -1,17 +1,19 @@
-from rules import spawn_monster, try_drop_item
+from rules import spawn_monster, try_drop_item, show_menu, clear
 from player.player_base import Player
 from animation import battle_animation
 import sys
 
+
 def Battle(player):
-    print(f"Welcome to the jungle, {player.name}!")
+    print(f"Here is where your story begin! {player.name}!\n")
 
     while player.player_is_alive():
         monster = spawn_monster(player.zone)
-        print(monster.battle_cry())
 
         while monster.enemy_is_alive() and player.player_is_alive():
-            action = input("\nChoose an action:\n[A] Attack\n[B] Use Potion\n[Z] Change Zone\n[X] Back Zone\n[F] Run Enemy\n[I] Equip Iten\n> ").strip().lower()
+            player.stats()
+            print(monster.battle_cry())
+            action = show_menu()
             
             if action == 'a':
                 battle_animation()
@@ -26,16 +28,16 @@ def Battle(player):
                             player.potion_use()
 
                 if not monster.enemy_is_alive():
+                    clear()
                     print(f"\n{monster.name} Defeated!")
                     player.exp_wins(monster)
                     monster.drop_money(player)
                     player.potion_drops()
                     try_drop_item(player)
-                    print("\nPlayer Stats:")
-                    player.stats()
-                    player.show_bag_itens()
+                    Player.save_player(player)
 
             elif action == 'b':
+                clear()
                 player.potion_use()
                 
             elif action == 'z':
@@ -44,6 +46,7 @@ def Battle(player):
                     player.money -= 50
                     change = player.change_zone()
                 if change:
+                    clear()
                     monster = spawn_monster(player.zone)
                     print(monster.battle_cry())
                 else:
@@ -55,21 +58,28 @@ def Battle(player):
                     player.money -= 50
                     change = player.back_zone()
                 if change:
+                    clear()
                     monster = spawn_monster(player.zone)
                     print(monster.battle_cry())
                 else:
                     print("You don't have enough money!")
             
             elif action == 'f':
+                clear()
                 print('LOSER! Try another one!')
                 monster = spawn_monster(player.zone)
-                print(monster.battle_cry())
+                
             elif action == 'i':
+                clear()
                 Player.equip_itens(player)
                   
             elif action == 's':
                 Player.save_player(player)
                 sys.exit()
+            
+            elif action == 'e':
+                clear()
+                player.show_bag_itens()
             
             else:
                 print("Invalid action!")                

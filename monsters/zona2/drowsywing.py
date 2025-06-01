@@ -1,6 +1,6 @@
 from random import randint
 from monsters.mob import Enemy
-from random import choice
+from itens.rarity import Rarity
 
 class Drowsywing(Enemy):
     def __init__(self):
@@ -12,7 +12,8 @@ class Drowsywing(Enemy):
             level=level,
             attack=self._generate_attack(level),
             health=health,
-            max_health=max_health
+            max_health=max_health,
+            allowed_rarities=[Rarity.COMMON]
         )
 
     def _generate_attack(self, level):

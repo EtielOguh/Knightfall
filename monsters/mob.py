@@ -1,13 +1,14 @@
 from random import randint
 
 class Enemy():
-    def __init__(self,name, level, attack, health, max_health):
+    def __init__(self,name, level, attack, health, max_health, allowed_rarities):
         self.name = name
         self.level = level
         self.attack = attack
         self.health = health
         self.max_health = max_health
         self.exp = 10 * level
+        self.allowed_rarities = allowed_rarities
 
     def enemy_is_alive(self):
         return self.health > 0

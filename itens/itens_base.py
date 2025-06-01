@@ -7,5 +7,5 @@ class Itens_Base():
         self.rarity = rarity
         
     def __str__(self):
-        return f"{self.name} (ATK: {self.attack} | DEF: {self.defense} | RARITY: {self.rarity})"
+        return f"{self.name} (ATK: {self.attack} | DEF: {self.defense} | RARITY: {self.rarity.name})"
         

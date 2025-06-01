@@ -62,23 +62,30 @@ def load_or_create_player():
 
     return chose_class()
 
-def get_droppable_items(player_type):
-    if player_type == 1:  # Knight
-        return [SwordOfValor(), IronGreatsword(), BladeOfKings(),
-                ShieldOfStone(), DragonShield(), AegisOfHonor()]
-    elif player_type == 2:  # Archer
-        return [BowOfFire(), WindstrikerBow(), ElvenLongbow()]
-    elif player_type == 3:  # Thief
-        return [DaggerOfNight(), SilentBlade(), VenomfangDagger()]
-    return []
+def get_droppable_items(player_type, mob):
+    # Lista de itens por classe
+    items_by_class = {
+        1: [SwordOfValor(), IronGreatsword(), BladeOfKings()],     # Knight
+        2: [BowOfFire(), WindstrikerBow(), ElvenLongbow()],        # Archer
+        3: [DaggerOfNight(), SilentBlade(), VenomfangDagger()]     # Thief
+    }
+
+    # Filtra itens pela raridade permitida e pela zona do mob
+    return [
+        item for item in items_by_class.get(player_type, [])
+        if item.rarity in mob.allowed_rarities
+    ]
     
-def try_drop_item(player):
+def try_drop_item(player, mob):
     chance = randint(0, 3)  # 25% de chance
     if chance == 3:
-        items = get_droppable_items(player.class_type)
-        dropped_item = choice(items)
-        player.add_item_to_bag(dropped_item)
-        print(f"Lucky! Item Found: {dropped_item.name}")
+        possible_items = get_droppable_items(player.class_type, mob)
+        if possible_items:
+            dropped_item = choice(possible_items)
+            player.add_item_to_bag(dropped_item)
+            print(f"Lucky! {mob.name} dropped: {dropped_item.name}")
+        else:
+            print(f"{mob.name} didn't drop anything suitable for your class.")
 
 def show_menu():
     print("\nA) Attack     B) Potion     Z) Change     X) Back")

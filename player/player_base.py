@@ -3,6 +3,7 @@ import json
 from enum import Enum
 from itens.rarity import Rarity
 import rules
+from time import sleep
 
 from itens.weapon import (
     BowOfFire, WindstrikerBow, ElvenLongbow,
@@ -63,7 +64,7 @@ class Player():
         drop_chance = randint(0, 3)
         if drop_chance == 3:
             player.potion += 1
-            print(f"Potion drops: {player.potion}")
+            print(f"Potion drops: + 1")
 
     def potion_use(player):
         if player.potion > 0 and player.health < player.max_health:
@@ -118,17 +119,37 @@ class Player():
             return False
 
     def equip_itens(self):
-        if not self.bag:
-            print("Empty Bag!")
-            return
+        print("Currently Equipped Items:")
+    
+        if self.right_hand:
+            print(f"Right Hand: {self.right_hand[0]}")
+        else:
+            print("Right Hand: Empty")
+
+        if self.left_hand:
+            print(f"Left Hand: {self.left_hand[0]}")
+        else:
+            print("Left Hand: Empty")
+            if not self.bag:
+                rules.clear()
+                print("Empty Bag!\n")
+                return
 
         print("\nBag Items:")
         for idx, item in enumerate(self.bag, 1):
             print(f"{idx}) {item}")
+        print("0) Cancel and go back")
 
         while True:
             try:
                 choice = int(input("\nTell me the item number: ")) - 1
+
+                if choice == -1:
+                    print("Returning to the game...")
+                    sleep(2)
+                    rules.clear()
+                    return
+
                 if choice < 0 or choice >= len(self.bag):
                     print("Invalid item number!")
                     continue
@@ -160,6 +181,7 @@ class Player():
 
             except ValueError:
                 print("Please enter a valid number!")
+
 
     def serialize_item(self, item):
         data = vars(item).copy()

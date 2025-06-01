@@ -14,6 +14,7 @@ def Battle(player):
             player.stats()
             print(monster.battle_cry())
             action = show_menu()
+            Player.save_player(player)
             
             if action == 'a':
                 battle_animation()
@@ -34,7 +35,6 @@ def Battle(player):
                     monster.drop_money(player)
                     player.potion_drops()
                     try_drop_item(player, monster)
-                    Player.save_player(player)
 
             elif action == 'b':
                 clear()

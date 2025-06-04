@@ -4,59 +4,91 @@ from .rarity import Rarity
 # -----------------------
 # Armas para Knight (type = 1)
 # -----------------------
-class SwordOfValor(Itens_Base):
+class WoodSwoord(Itens_Base):
     def __init__(self):
-        super().__init__(name="Sword of Valor", attack=18, defense=0, type=1, rarity= Rarity.COMMON)
+        super().__init__(name="Wood Sword", attack=18, defense=0, type=1, rarity= Rarity.COMMON)
 
-class IronGreatsword(Itens_Base):
+class StoneSword(Itens_Base):
     def __init__(self):
-        super().__init__(name="Iron Greatsword", attack=22, defense=0, type=1,rarity= Rarity.COMMON)
+        super().__init__(name="Stone Sword", attack=22, defense=0, type=1,rarity= Rarity.UNCOMMON)
 
-class BladeOfKings(Itens_Base):
+class IronSword(Itens_Base):
     def __init__(self):
-        super().__init__(name="Blade of Kings", attack=30, defense=0, type=1, rarity= Rarity.COMMON)
+        super().__init__(name="Iron Sword", attack=30, defense=0, type=1, rarity= Rarity.RARE)
+
+class DiamondSword(Itens_Base):
+    def __init__(self):
+        super().__init__(name="Diamond Sword", attack=30, defense=0, type=1, rarity= Rarity.EPIC)
+
+class DragonSlayerSword(Itens_Base):
+    def __init__(self):
+        super().__init__(name="Dragon Slayer Sword", attack=30, defense=0, type=1, rarity= Rarity.DEVIL)
 
 # -----------------------
 # Escudos para Knight (type = 1)
 # -----------------------
-class ShieldOfStone(Itens_Base):
+class WoodShield(Itens_Base):
     def __init__(self):
-        super().__init__(name="Shield of Stone", attack=0, defense=10, type=1, rarity= Rarity.COMMON)
+        super().__init__(name="Wood Shield", attack=0, defense=10, type=1, rarity= Rarity.COMMON)
 
-class DragonShield(Itens_Base):
+class StoneShield(Itens_Base):
     def __init__(self):
-        super().__init__(name="Dragon Shield", attack=0, defense=15, type=1, rarity= Rarity.COMMON)
+        super().__init__(name="Stone Shiled", attack=0, defense=15, type=1, rarity= Rarity.UNCOMMON)
 
-class AegisOfHonor(Itens_Base):
+class IronShield(Itens_Base):
     def __init__(self):
-        super().__init__(name="Aegis of Honor", attack=0, defense=20, type=1, rarity= Rarity.COMMON)
+        super().__init__(name="Iron Shield", attack=0, defense=20, type=1, rarity= Rarity.RARE)
+
+class DiamondShield(Itens_Base):
+    def __init__(self):
+        super().__init__(name="Diamond Shield", attack=0, defense=20, type=1, rarity= Rarity.EPIC)
+
+class MasterMindShield(Itens_Base):
+    def __init__(self):
+        super().__init__(name="Master Mind Shield", attack=0, defense=0, type=1, rarity= Rarity.DEVIL)
 
 # -----------------------
 # Armas para Archer (type = 2)
 # -----------------------
-class BowOfFire(Itens_Base):
+class WoodBow(Itens_Base):
     def __init__(self):
-        super().__init__(name="Bow of Fire", attack=15, defense=0, type=2, rarity= Rarity.COMMON )
+        super().__init__(name="Wood Bow", attack=15, defense=0, type=2, rarity= Rarity.COMMON )
 
-class WindstrikerBow(Itens_Base):
+class StoneBow(Itens_Base):
     def __init__(self):
-        super().__init__(name="Windstriker Bow", attack=20, defense=0, type=2, rarity= Rarity.COMMON)
+        super().__init__(name="Stone Bow", attack=20, defense=0, type=2, rarity= Rarity.UNCOMMON)
 
-class ElvenLongbow(Itens_Base):
+class IronBow(Itens_Base):
     def __init__(self):
-        super().__init__(name="Elven Longbow", attack=25, defense=0, type=2, rarity= Rarity.COMMON)
+        super().__init__(name="Iron Bow", attack=25, defense=0, type=2, rarity= Rarity.RARE)
+
+class DiamondBow(Itens_Base):
+    def __init__(self):
+        super().__init__(name="Diamond bow", attack=25, defense=0, type=2, rarity= Rarity.EPIC)
+        
+class HellfangBow(Itens_Base):
+    def __init__(self):
+        super().__init__(name="Hellfang Bow", attack=25, defense=0, type=2, rarity= Rarity.DEVIL)
 
 # -----------------------
 # Armas para Thief (type = 3)
 # -----------------------
-class DaggerOfNight(Itens_Base):
+class WoodDagger(Itens_Base):
     def __init__(self):
-        super().__init__(name="Dagger of Night", attack=12, defense=0, type=3, rarity= Rarity.COMMON)
+        super().__init__(name="Wood Dagger", attack=12, defense=0, type=3, rarity= Rarity.COMMON)
 
-class SilentBlade(Itens_Base):
+class StoneDagger(Itens_Base):
     def __init__(self):
-        super().__init__(name="Silent Blade", attack=17, defense=0, type=3, rarity= Rarity.COMMON)
+        super().__init__(name="Stone Dagger", attack=17, defense=0, type=3, rarity= Rarity.UNCOMMON)
 
-class VenomfangDagger(Itens_Base):
+class IronDagger(Itens_Base):
     def __init__(self):
-        super().__init__(name="Venomfang Dagger", attack=20, defense=0, type=3, rarity= Rarity.COMMON)
+        super().__init__(name="Iron Dagger", attack=20, defense=0, type=3, rarity= Rarity.RARE)
+
+class DiamondDagger(Itens_Base):
+    def __init__(self):
+        super().__init__(name="Diamond Dagger", attack=20, defense=0, type=3, rarity= Rarity.EPIC)
+
+class HellspireDagger(Itens_Base):
+    def __init__(self):
+        super().__init__(name="Hellspire Dagger", attack=20, defense=0, type=3, rarity= Rarity.DEVIL)

@@ -4,7 +4,7 @@ from itens.rarity import Rarity
 
 class Mossblob(Enemy):
     def __init__(self):
-        level = 9
+        level = 10
         max_health = self._generate_max_health(level)
         health = max_health
         super().__init__(

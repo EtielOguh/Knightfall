@@ -5,3 +5,4 @@ class Rarity(Enum):
     UNCOMMON = 2
     RARE = 3
     EPIC = 4
+    DEVIL = 5

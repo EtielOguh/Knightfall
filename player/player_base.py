@@ -6,25 +6,34 @@ import rules
 from time import sleep
 
 from itens.weapon import (
-    BowOfFire, WindstrikerBow, ElvenLongbow,
-    SwordOfValor, IronGreatsword, BladeOfKings,
-    ShieldOfStone, DragonShield, AegisOfHonor,
-    DaggerOfNight, SilentBlade, VenomfangDagger
+WoodSwoord, WoodShield, WoodBow, WoodDagger,
+StoneSword, StoneShield, StoneBow, StoneDagger,
+IronSword, IronShield, IronBow, IronDagger,
+DiamondSword, DiamondShield, DiamondBow, DiamondDagger,
+HellfangBow, HellspireDagger, DragonSlayerSword, MasterMindShield
 )
 
 item_classes = {
-    "Bow of Fire": BowOfFire,
-    "Windstriker Bow": WindstrikerBow,
-    "Elven Longbow": ElvenLongbow,
-    "Sword of Valor": SwordOfValor,
-    "Iron Greatsword": IronGreatsword,
-    "Blade of Kings": BladeOfKings,
-    "Shield of Stone": ShieldOfStone,
-    "Dragon Shield": DragonShield,
-    "Aegis of Honor": AegisOfHonor,
-    "Dagger of Night": DaggerOfNight,
-    "Silent Blade": SilentBlade,
-    "Venomfang Dagger": VenomfangDagger
+    "Wood Sword": WoodSwoord,
+    "Wood Shield": WoodShield,
+    "Wood Bow": WoodBow,
+    "Wood Dagger": WoodDagger,
+    "Stone Sword": StoneSword,
+    "Stone Shield": StoneShield,
+    "Stone Bow": StoneBow,
+    "Stone Dagger": StoneDagger,
+    "Iron Sword": IronSword,
+    "Iron Shield": IronShield,
+    "Iron Bow": IronBow,
+    "Iron Dagger": IronDagger,
+    "Diamond Sword": DiamondSword,
+    "Diamond Shield": DiamondShield,
+    "Diamond Bow": DiamondBow,
+    "Diamond Dagger": DiamondDagger,
+    "Hellfang Bow": HellfangBow,
+    "Hellspire Dagger": HellspireDagger,
+    "Dragon Slayer Sword": DragonSlayerSword,
+    "Master Mind Shield": MasterMindShield
 }
 
 class Player():
@@ -98,11 +107,12 @@ class Player():
         self.attack += 3
         self.max_health += 50
         self.health = self.max_health
-        self.xp_max = self.calculate_new_exp_max(self.level)
+        self.xp_max = self.calculate_xp_max(self.level)
         print(f"Level Up! {self.level}. Xp Left: {self.xp}/{self.xp_max}")
 
-    def calculate_new_exp_max(self, level):
-        return 50 * level + self.xp_max
+    def calculate_xp_max(self, level):
+        # Função nova progressiva para XP máximo
+        return 30 + (level - 1) * 50 + int((level - 1)**2 * 10)
 
     def change_zone(self):
         if self.zone < 4:

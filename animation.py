@@ -7,5 +7,5 @@ def battle_animation():
         for swords_seq in swords:
             sys.stdout.write(f"\rBattling {swords_seq}   ")
             sys.stdout.flush()
-            time.sleep(0.5)
+            time.sleep(0.2)
     print("\rBattling 🗡🗡🗡 Complete!")

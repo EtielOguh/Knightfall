@@ -9,8 +9,8 @@ class Joker(Enemy):
         super().__init__(
             name="Joker",
             level=level,
-            attack=10,
-            health= 30,
+            attack=5,
+            health= 70,
             max_health=30,
             allowed_rarities=[Rarity.COMMON]
         )

@@ -2,17 +2,18 @@ from monsters.zona1 import monster_zona1
 from monsters.zona2 import monster_zona2
 from monsters.zona3 import monster_zona3
 from monsters.zona4 import monster_zona4
+from monsters.boss import boss_zone
 from random import choice, randint
 from player.knight import Knight
 from player.thief import Thief
 from player.archer import Archer
 from player.player_base import Player
 import os
-from colorama import Fore
 from itens.weapon import *
-import os
 
-
+def boss_fight():
+    return choice(boss_zone)()
+    
 def spawn_monster(zone):
     if zone == 1:
         return choice(monster_zona1)()

@@ -1,4 +1,4 @@
-from rules import spawn_monster, try_drop_item, show_menu, clear
+from rules import spawn_monster, try_drop_item, show_menu, clear, boss_fight
 from player.player_base import Player
 from animation import battle_animation
 import sys
@@ -84,6 +84,10 @@ def Battle(player):
             elif action == 'e':
                 clear()
                 player.show_bag_itens()
+
+            elif action == 'l':
+                clear()
+                monster = boss_fight()
             
             else:
                 print("Invalid action!")                

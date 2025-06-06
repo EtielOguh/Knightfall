@@ -53,6 +53,7 @@ class Player():
         self.xp = 0
         self.xp_max = 100
         self.money = 0
+        self.dynamic_zone = False
 
     def player_is_alive(self):
         return self.health > 0

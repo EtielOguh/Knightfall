@@ -26,6 +26,12 @@ def spawn_monster(zone):
     else:
         raise ValueError("Invalid zone")
     
+def dynamic_zone_on(player):
+    return True
+def dynamic_zone_of(player):
+    return False
+
+    
 def chose_class():
     print("+-----------------------------+")
     print("|      CHOOSE YOUR CLASS      |")

@@ -17,10 +17,11 @@ class Enemy():
         self.health -= damage
         
     def attack_player(self, player):
-        damage = randint (self.attack -1, self.attack +5)
-        if damage > player.health:
-            damage = player.health
-        player.damage_received(damage)
+            damage = randint(self.attack - 1, self.attack + 5)
+            damage = max(0, damage - player.defense)  # defesa reduz dano
+            if damage > player.health:
+                damage = player.health
+            player.health -= damage
     
     def drop_money(self, player):
         money = self.level * 10

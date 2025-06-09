@@ -2,17 +2,18 @@ from monsters.zona1 import monster_zona1
 from monsters.zona2 import monster_zona2
 from monsters.zona3 import monster_zona3
 from monsters.zona4 import monster_zona4
+from monsters.boss import boss_zone
 from random import choice, randint
 from player.knight import Knight
 from player.thief import Thief
 from player.archer import Archer
 from player.player_base import Player
 import os
-from colorama import Fore
 from itens.weapon import *
-import os
 
-
+def boss_fight():
+    return choice(boss_zone)()
+    
 def spawn_monster(zone):
     if zone == 1:
         return choice(monster_zona1)()
@@ -24,6 +25,12 @@ def spawn_monster(zone):
         return choice(monster_zona4)()
     else:
         raise ValueError("Invalid zone")
+    
+def dynamic_zone_on(player):
+    return True
+def dynamic_zone_of(player):
+    return False
+
     
 def chose_class():
     print("+-----------------------------+")
@@ -62,24 +69,27 @@ def load_or_create_player():
 
     return chose_class()
 
-def get_droppable_items(player_type, mob):
+def get_droppable_items(player, mob):
     # Lista de itens por classe
     items_by_class = {
-        1: [SwordOfValor(), IronGreatsword(), BladeOfKings()],     # Knight
-        2: [BowOfFire(), WindstrikerBow(), ElvenLongbow()],        # Archer
-        3: [DaggerOfNight(), SilentBlade(), VenomfangDagger()]     # Thief
+        1: [WoodSwoord(), StoneSword(), IronSword(), DiamondSword(), DragonSlayerSword(),
+            WoodShield(), StoneShield(), IronShield(), DiamondShield()],     # Knight
+        2: [WoodBow(), StoneBow(), IronBow(), DiamondBow(), HellfangBow()],        # Archer
+        3: [WoodDagger(), StoneDagger(), IronDagger(), DiamondBow(), HellspireDagger()]     # Thief
     }
 
-    # Filtra itens pela raridade permitida e pela zona do mob
-    return [
-        item for item in items_by_class.get(player_type, [])
+    # Filtra os itens que têm raridade permitida no mob
+    droppable_items = [
+        item for item in items_by_class.get(player.class_type, [])
         if item.rarity in mob.allowed_rarities
     ]
+
+    return droppable_items
     
 def try_drop_item(player, mob):
     chance = randint(0, 3)  # 25% de chance
     if chance == 3:
-        possible_items = get_droppable_items(player.class_type, mob)
+        possible_items = get_droppable_items(player, mob)
         if possible_items:
             dropped_item = choice(possible_items)
             player.add_item_to_bag(dropped_item)

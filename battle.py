@@ -1,4 +1,4 @@
-from rules import spawn_monster, try_drop_item, show_menu, clear, boss_fight
+from rules import spawn_monster, try_drop_item, show_menu, clear, boss_fight, dynamic_zone_of, dynamic_zone_on
 from player.player_base import Player
 from animation import battle_animation
 import sys
@@ -8,8 +8,8 @@ def Battle(player):
     print(f"Here is where your story begin! {player.name}!\n")
 
     while player.player_is_alive():
-        monster = spawn_monster(player.zone)
-
+        monster = spawn_monster(player.zone, player)
+            
         while monster.enemy_is_alive() and player.player_is_alive():
             player.stats()
             print(monster.battle_cry())
@@ -48,7 +48,7 @@ def Battle(player):
                 if change:
                     clear()
                     print(f"Now you are in Zone! {player.zone} | -$50 Bucks ${player.money} Left!\n")
-                    monster = spawn_monster(player.zone)
+                    monster = spawn_monster(player.zone, player)
                     print(monster.battle_cry())
                 else:
                     print("You don't have enough money!\n")
@@ -62,7 +62,7 @@ def Battle(player):
                         player.money -= 50
                         clear()
                         print(f"Now you are in Zone! {player.zone} | -$50 Bucks ${player.money} Left!\n")
-                        monster = spawn_monster(player.zone)
+                        monster = spawn_monster(player.zone, player)
                         print(monster.battle_cry())
                     else:
                         clear()
@@ -71,7 +71,7 @@ def Battle(player):
             elif action == 'f':
                 clear()
                 print('LOSER! Try another one!\n')
-                monster = spawn_monster(player.zone)
+                monster = spawn_monster(player.zone, player)
                 
             elif action == 'i':
                 clear()
@@ -85,10 +85,19 @@ def Battle(player):
                 clear()
                 player.show_bag_itens()
 
-            elif action == 'l':
+            elif action == 'p':
                 clear()
-                monster = boss_fight()
-            
+                monster = boss_fight(player.zone)
+                        
+            elif action == "d":
+                clear()
+                player.dynamic_zone = True
+                monster = spawn_monster(player.zone, player)
+                
+            elif action == "h":
+                clear()
+                player.dynamic_zone = False
+                monster = spawn_monster(player.zone, player)
             else:
                 print("Invalid action!")                
                 

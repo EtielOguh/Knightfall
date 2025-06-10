@@ -10,9 +10,9 @@ class Joker(Enemy):
             name="Joker",
             level=level,
             attack=5,
-            health= 70,
-            max_health=30,
-            allowed_rarities=[Rarity.COMMON]
+            health= 50,
+            max_health=50,
+            allowed_rarities=[None]
         )
 
 

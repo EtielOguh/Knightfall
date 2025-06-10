@@ -2,6 +2,7 @@ from monsters.zona1 import monster_zona1
 from monsters.zona2 import monster_zona2
 from monsters.zona3 import monster_zona3
 from monsters.zona4 import monster_zona4
+from monsters.Infinityzone import monster_dynamic
 from monsters.boss import boss_zone
 from random import choice, randint
 from player.knight import Knight
@@ -11,11 +12,17 @@ from player.player_base import Player
 import os
 from itens.weapon import *
 
-def boss_fight():
-    return choice(boss_zone)()
+def boss_fight(zone):
+    if zone > 1:
+        return choice(boss_zone)()
+    else:
+        return ("Invalid Zone")
     
-def spawn_monster(zone):
-    if zone == 1:
+    
+def spawn_monster(zone, player):
+    if player.dynamic_zone == True:
+       return choice(monster_dynamic)(player.level)
+    elif zone == 1:
         return choice(monster_zona1)()
     elif zone == 2:
         return choice(monster_zona2)()
@@ -24,10 +31,11 @@ def spawn_monster(zone):
     elif zone == 4:
         return choice(monster_zona4)()
     else:
-        raise ValueError("Invalid zone")
+        raise ValueError("Invalid Zone")
     
 def dynamic_zone_on(player):
     return True
+
 def dynamic_zone_of(player):
     return False
 
@@ -41,7 +49,7 @@ def chose_class():
     print("| 3 – Thief                   |")
     print("+-----------------------------+")
     
-    choice = input("> Escolha (1, 2 ou 3): ").strip()
+    choice = input("> Choose (1, 2 ou 3): ").strip()
 
     if choice == "1":
         player = Knight()
@@ -87,19 +95,37 @@ def get_droppable_items(player, mob):
     return droppable_items
     
 def try_drop_item(player, mob):
-    chance = randint(0, 3)  # 25% de chance
-    if chance == 3:
-        possible_items = get_droppable_items(player, mob)
-        if possible_items:
-            dropped_item = choice(possible_items)
-            player.add_item_to_bag(dropped_item)
-            print(f"Lucky! {mob.name} dropped: {dropped_item.name}")
-        else:
-            print(f"{mob.name} didn't drop anything suitable for your class.")
+    from random import randint
+
+    rarities_with_chances = {
+        Rarity.DEVIL: 0.5,
+        Rarity.EPIC: 1,
+        Rarity.RARE: 3,
+        Rarity.UNCOMMON: 5,
+        Rarity.COMMON: 10
+    }
+
+    possible_items = get_droppable_items(player, mob)
+
+    if not possible_items:
+        print(f"{mob.name} didn't drop anything suitable for your class.")
+        return
+
+    for rarity, chance in rarities_with_chances.items():
+        roll = randint(1, 1000)  # escala maior pra permitir 0.5%
+        if roll <= chance * 10:  # ex: 0.5% vira 5 em 1000
+            items_of_rarity = [item for item in possible_items if item.rarity == rarity]
+            if items_of_rarity:
+                dropped_item = choice(items_of_rarity)
+                player.add_item_to_bag(dropped_item)
+                print(f"Lucky! {mob.name} dropped: {dropped_item.name} ({rarity.name})")
+                return
+
+    print(f"{mob.name} didn't drop anything this time.")
 
 def show_menu():
-    print("\nA) Attack     B) Potion     Z) Change     X) Back")
-    print("F) Run        I) Equip      E) Bag        S) Save/Exit")
+    print("\nA) Attack Enemy     B) Potion     Z) Change Zone   X) Back Zone   D) Dynamic Zone ON     P) Boss Fight")
+    print("F) Run Enemy       I) Equip Iten     E) Show Bag        S) Save/Exit    H) Dynamic Zone OFF")
     action = input("Choose one > ").strip().lower()
     return action
 

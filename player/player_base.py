@@ -91,7 +91,7 @@ class Player():
         else:
             print("Bag Itens: ")
             for item in player.bag:
-                print(f"- {item}")
+                print(item, end="\n\n")
 
     def add_item_to_bag(self, item):
         self.bag.append(item)
@@ -157,7 +157,7 @@ class Player():
 
                 if choice == -1:
                     print("Returning to the game...")
-                    sleep(2)
+                    sleep(0.5)
                     rules.clear()
                     return
 
@@ -215,6 +215,7 @@ class Player():
             "money": self.money,
             "potion": self.potion,
             "bag": [self.serialize_item(item) for item in self.bag],
+            "dynamic_zone": self.dynamic_zone,
             "right_hand": [self.serialize_item(item) for item in self.right_hand],
             "left_hand": [self.serialize_item(item) for item in self.left_hand]
         }

@@ -95,15 +95,33 @@ def get_droppable_items(player, mob):
     return droppable_items
     
 def try_drop_item(player, mob):
-    chance = randint(0, 3)  # 25% de chance
-    if chance == 3:
-        possible_items = get_droppable_items(player, mob)
-        if possible_items:
-            dropped_item = choice(possible_items)
-            player.add_item_to_bag(dropped_item)
-            print(f"Lucky! {mob.name} dropped: {dropped_item.name}")
-        else:
-            print(f"{mob.name} didn't drop anything suitable for your class.")
+    from random import randint
+
+    rarities_with_chances = {
+        Rarity.DEVIL: 0.5,
+        Rarity.EPIC: 1,
+        Rarity.RARE: 3,
+        Rarity.UNCOMMON: 5,
+        Rarity.COMMON: 10
+    }
+
+    possible_items = get_droppable_items(player, mob)
+
+    if not possible_items:
+        print(f"{mob.name} didn't drop anything suitable for your class.")
+        return
+
+    for rarity, chance in rarities_with_chances.items():
+        roll = randint(1, 1000)  # escala maior pra permitir 0.5%
+        if roll <= chance * 10:  # ex: 0.5% vira 5 em 1000
+            items_of_rarity = [item for item in possible_items if item.rarity == rarity]
+            if items_of_rarity:
+                dropped_item = choice(items_of_rarity)
+                player.add_item_to_bag(dropped_item)
+                print(f"Lucky! {mob.name} dropped: {dropped_item.name} ({rarity.name})")
+                return
+
+    print(f"{mob.name} didn't drop anything this time.")
 
 def show_menu():
     print("\nA) Attack Enemy     B) Potion     Z) Change Zone   X) Back Zone   D) Dynamic Zone ON     P) Boss Fight")

@@ -255,21 +255,21 @@ class Player():
 
         player.bag = []
         for i in data["bag"]:
-            item = item_classes[i["name"]]()
+            item = item_classes[i["name"]](price=i.get("price"))
             if "rarity" in i:
                 item.rarity = Rarity[i["rarity"]]
             player.bag.append(item)
 
         player.right_hand = []
         for i in data["right_hand"]:
-            item = item_classes[i["name"]]()
+            item = item_classes[i["name"]](price=i.get("price"))
             if "rarity" in i:
                 item.rarity = Rarity[i["rarity"]]
             player.right_hand.append(item)
 
         player.left_hand = []
         for i in data["left_hand"]:
-            item = item_classes[i["name"]]()
+            item = item_classes[i["name"]](price=i.get("price"))
             if "rarity" in i:
                 item.rarity = Rarity[i["rarity"]]
             player.left_hand.append(item)

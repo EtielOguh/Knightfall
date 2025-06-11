@@ -1,0 +1,27 @@
+{
+    "name": "Archer",
+    "class_type": 2,
+    "level": 3,
+    "attack": 36,
+    "defense": 3,
+    "health": 99,
+    "max_health": 200,
+    "zone": 1,
+    "xp": 100,
+    "xp_max": 170,
+    "money": 325,
+    "potion": 6,
+    "bag": [
+        {
+            "name": "Wood Bow",
+            "attack": 15,
+            "defense": 0,
+            "type": 2,
+            "rarity": "COMMON",
+            "price": 30
+        }
+    ],
+    "dynamic_zone": false,
+    "right_hand": [],
+    "left_hand": []
+}

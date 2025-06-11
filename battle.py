@@ -1,4 +1,4 @@
-from rules import spawn_monster, try_drop_item, show_menu, clear, boss_fight, dynamic_zone_of, dynamic_zone_on
+from rules import spawn_monster, try_drop_item, show_menu, clear, boss_fight, merchant
 from player.player_base import Player
 from animation import battle_animation
 import sys
@@ -98,6 +98,12 @@ def Battle(player):
                 clear()
                 player.dynamic_zone = False
                 monster = spawn_monster(player.zone, player)
+
+            elif action == "m":
+                clear()
+                merchant(player)
+                
+
             else:
                 print("Invalid action!")                
                 

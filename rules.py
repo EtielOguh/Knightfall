@@ -34,17 +34,9 @@ def spawn_monster(zone, player):
     else:
         raise ValueError("Invalid Zone")
 
-
 def chose_class():
-    print("+-----------------------------+")
-    print("|      CHOOSE YOUR CLASS      |")
-    print("+-----------------------------+")
-    print("| 1 – Knight                  |")
-    print("| 2 – Archer                  |")
-    print("| 3 – Thief                   |")
-    print("+-----------------------------+")
-    
-    choice = input("> Choose (1, 2 ou 3): ").strip()
+    print("1 – Knight | 2 – Archer | 3 – Thief")
+    choice = input("> Choose (1, 2, or 3): ").strip()
 
     if choice == "1":
         player = Knight()

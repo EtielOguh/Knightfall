@@ -31,6 +31,7 @@ def show_full_menu():
 
 
 def Battle(player):
+    clear()
     print(f"Here is where your story begin! {player.name}!\n")
 
     while player.player_is_alive():

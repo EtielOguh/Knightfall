@@ -1,24 +1,51 @@
-from rules import spawn_monster, try_drop_item, show_menu, clear, boss_fight, dynamic_zone_of, dynamic_zone_on
+from rules import spawn_monster, try_drop_item, show_menu, clear, boss_fight, merchant
 from player.player_base import Player
 from animation import battle_animation
 import sys
 
 
+def show_battle_menu():
+    valid = ['a', 'f', 'p', 'm']
+    while True:
+        print("\n=== Battle Menu ===")
+        print("A) Attack   F) Runaway   P) Use Potion   M) Open Full Menu\n")
+        choice = input("Choose your action: ").lower()
+        if choice in valid:
+            return choice
+        clear()
+        print("Invalid action! Try again.")
+
+
+def show_full_menu():
+    valid = ['z', 'x', 'i', 's', 'e', 'p', 'd', 'h', 'm', 'q']
+    while True:
+        print("\n=== Full Menu ===")
+        print("Z) Next Zone (-$50)   X) Back Zone (-$50)   I) Equip Items")
+        print("S) Save and Exit   E) Show Bag   P) Boss Fight   D) Enable Dynamic Zone")
+        print("H) Disable Dynamic Zone   M) Merchant   Q) Back to Battle\n")
+        choice = input("Choose your option: ").lower()
+        if choice in valid:
+            return choice
+        clear()
+        print("Invalid action! Try again.")
+
+
 def Battle(player):
+    clear()
     print(f"Here is where your story begin! {player.name}!\n")
 
     while player.player_is_alive():
         monster = spawn_monster(player.zone, player)
-            
+
         while monster.enemy_is_alive() and player.player_is_alive():
             player.stats()
             print(monster.battle_cry())
-            action = show_menu()
+            action = show_battle_menu()
             Player.save_player(player)
-            
+
             if action == 'a':
                 battle_animation()
-                
+
                 while monster.enemy_is_alive() and player.player_is_alive():
                     player.attack_enemy(monster)
 
@@ -36,68 +63,80 @@ def Battle(player):
                     player.potion_drops()
                     try_drop_item(player, monster)
 
-            elif action == 'b':
+            elif action == 'f':
+                clear()
+                print('LOSER! Try another one!\n')
+                monster = spawn_monster(player.zone, player)
+
+            elif action == 'p':
                 clear()
                 player.potion_use()
-                
-            elif action == 'z':
-                change = False  # Inicializa a variável para evitar erro
-                if player.money >= 50:
-                    player.money -= 50
-                    change = player.change_zone()
-                if change:
-                    clear()
-                    print(f"Now you are in Zone! {player.zone} | -$50 Bucks ${player.money} Left!\n")
-                    monster = spawn_monster(player.zone, player)
-                    print(monster.battle_cry())
-                else:
-                    print("You don't have enough money!\n")
 
-            elif action == 'x':
-                if player.money < 50:
-                    print("You don't have enough money!\n")
-                else:
-                    change = player.back_zone()
-                    if change:
+            elif action == 'm':
+                clear()
+                full_action = show_full_menu()
+                
+                if full_action == 'z':
+                    change = False
+                    if player.money >= 50:
                         player.money -= 50
+                        change = player.change_zone()
+                    if change:
                         clear()
                         print(f"Now you are in Zone! {player.zone} | -$50 Bucks ${player.money} Left!\n")
                         monster = spawn_monster(player.zone, player)
                         print(monster.battle_cry())
                     else:
                         clear()
-                        print("You can't change your zone!\n")
-            
-            elif action == 'f':
-                clear()
-                print('LOSER! Try another one!\n')
-                monster = spawn_monster(player.zone, player)
-                
-            elif action == 'i':
-                clear()
-                Player.equip_itens(player)
-                  
-            elif action == 's':
-                Player.save_player(player)
-                sys.exit()
-            
-            elif action == 'e':
-                clear()
-                player.show_bag_itens()
+                        print("You don't have enough money!\n")
 
-            elif action == 'p':
-                clear()
-                monster = boss_fight(player.zone)
-                        
-            elif action == "d":
-                clear()
-                player.dynamic_zone = True
-                monster = spawn_monster(player.zone, player)
-                
-            elif action == "h":
-                clear()
-                player.dynamic_zone = False
-                monster = spawn_monster(player.zone, player)
+                elif full_action == 'x':
+                    if player.money < 50:
+                        print("You don't have enough money!\n")
+                    else:
+                        change = player.back_zone()
+                        if change:
+                            player.money -= 50
+                            clear()
+                            print(f"Now you are in Zone! {player.zone} | -$50 Bucks ${player.money} Left!\n")
+                            monster = spawn_monster(player.zone, player)
+                            print(monster.battle_cry())
+                        else:
+                            clear()
+                            print("You can't change your zone!\n")
+
+                elif full_action == 'i':
+                    clear()
+                    Player.equip_itens(player)
+
+                elif full_action == 's':
+                    Player.save_player(player)
+                    sys.exit()
+
+                elif full_action == 'e':
+                    clear()
+                    player.show_bag_itens()
+
+                elif full_action == 'p':
+                    clear()
+                    monster = boss_fight(player.zone)
+
+                elif full_action == 'd':
+                    clear()
+                    player.dynamic_zone = True
+                    monster = spawn_monster(player.zone, player)
+
+                elif full_action == 'h':
+                    clear()
+                    player.dynamic_zone = False
+                    monster = spawn_monster(player.zone, player)
+
+                elif full_action == 'm':
+                    merchant(player)
+
+                elif full_action == 'q':
+                    clear()
+                    # volta para menu rápido sem fazer nada
+
             else:
-                print("Invalid action!")                
-                
+                print("Invalid action!")

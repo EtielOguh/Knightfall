@@ -11,6 +11,7 @@ from player.archer import Archer
 from player.player_base import Player
 import os
 from itens.weapon import *
+from time import sleep
 
 def boss_fight(zone):
     if zone > 1:
@@ -32,24 +33,10 @@ def spawn_monster(zone, player):
         return choice(monster_zona4)()
     else:
         raise ValueError("Invalid Zone")
-    
-def dynamic_zone_on(player):
-    return True
 
-def dynamic_zone_of(player):
-    return False
-
-    
 def chose_class():
-    print("+-----------------------------+")
-    print("|      CHOOSE YOUR CLASS      |")
-    print("+-----------------------------+")
-    print("| 1 – Knight                  |")
-    print("| 2 – Archer                  |")
-    print("| 3 – Thief                   |")
-    print("+-----------------------------+")
-    
-    choice = input("> Choose (1, 2 ou 3): ").strip()
+    print("1 – Knight | 2 – Archer | 3 – Thief")
+    choice = input("> Choose (1, 2, or 3): ").strip()
 
     if choice == "1":
         player = Knight()
@@ -131,3 +118,49 @@ def show_menu():
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
+
+def merchant(self):
+    print("\nBag Items:")
+    for idx, item in enumerate(self.bag, 1):
+        print(f"{idx}) {item}")
+    print("0) Cancel and go back")
+
+    while True:
+        try:
+            choice = int(input("\ntell me the item you want to sell: ")) - 1
+
+            if choice == -1:
+                print ("Returning to the game...")
+                clear()
+                return
+            if choice < 0 or choice >= len(self.bag):
+                print("Invalid number!")
+                continue
+
+            selected_item = self.bag[choice]
+
+            money_gained = selected_item.price
+            self.money += money_gained
+
+            self.bag.pop(choice)
+
+            print(f"You sold {selected_item.name} for R$ {selected_item.price} ")
+            print(f"Current money R$ {self.money}")
+
+            if len(self.bag) > 0:
+                out = input("Do you want to sell more itens: [y|n]")
+                if out == 'y':
+                    continue
+                if out == "n":
+                    break
+                else:
+                    print("Invalid option, returning to the game...")
+                    sleep(0.3)
+                    break
+            else:
+                print ("You don't have itens do sell. Returning to the game...")
+                sleep(0.3)
+                break
+
+        except ValueError:
+            print("Please Choose a right option!")

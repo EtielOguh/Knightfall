@@ -3,7 +3,7 @@ from monsters.zona2 import monster_zona2
 from monsters.zona3 import monster_zona3
 from monsters.zona4 import monster_zona4
 from monsters.Infinityzone import monster_dynamic
-from monsters.boss import boss_zone
+from monsters.boss import boss_zone_1, boss_zone_2,boss_zone_3, boss_zone_4
 from random import choice, randint
 from player.knight import Knight
 from player.thief import Thief
@@ -14,8 +14,14 @@ from itens.weapon import *
 from time import sleep
 
 def boss_fight(zone):
-    if zone > 1:
-        return choice(boss_zone)()
+    if zone ==1:
+        return choice(boss_zone_1)()
+    elif zone ==2:
+        return choice(boss_zone_2)()
+    elif zone == 3:
+        return choice(boss_zone_3)()
+    elif zone == 4:
+        return choice (boss_zone_4)()
     else:
         return ("Invalid Zone")
     

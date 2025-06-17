@@ -1,4 +1,4 @@
-from rules import spawn_monster, try_drop_item, show_menu, clear, boss_fight, merchant
+from rules import spawn_monster, try_drop_item, clear, boss_fight, merchant
 from player.player_base import Player
 from animation import battle_animation
 import sys

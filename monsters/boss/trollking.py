@@ -5,8 +5,10 @@ from itens.rarity import Rarity
 class Trollking(Enemy):
     def __init__(self):
         level = 9
+        attack = self._generate_attack(level)
         max_health = self._generate_max_health(level)
         health = max_health
+        
         super().__init__(
             name="Troll King",
             level=level,

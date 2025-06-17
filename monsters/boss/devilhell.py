@@ -5,12 +5,14 @@ from itens.rarity import Rarity
 class DevilHell(Enemy):
     def __init__(self):
         level = 9
+        attack = self._generate_attack(level)
         max_health = self._generate_max_health(level)
         health = max_health
+        
         super().__init__(
             name="Devil Hell",
             level=level,
-            attack=self._generate_attack(level),
+            attack=attack,
             health=health,
             max_health=max_health,
             allowed_rarities=[Rarity.DEVIL]

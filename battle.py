@@ -1,6 +1,7 @@
 from rules import spawn_monster, try_drop_item, clear, boss_fight, merchant
 from player.player_base import Player
 from animation import battle_animation
+from player.save_manager import save_player
 import sys
 
 
@@ -41,7 +42,6 @@ def Battle(player):
             player.stats()
             print(monster.battle_cry())
             action = show_battle_menu()
-            Player.save_player(player)
 
             if action == 'a':
                 battle_animation()
@@ -57,6 +57,7 @@ def Battle(player):
 
                 if not monster.enemy_is_alive():
                     clear()
+                    save_player(player)
                     print(f"\n{monster.name} Defeated!")
                     player.exp_wins(monster)
                     monster.drop_money(player)
@@ -110,7 +111,7 @@ def Battle(player):
                     Player.equip_itens(player)
 
                 elif full_action == 's':
-                    Player.save_player(player)
+                    save_player()
                     sys.exit()
 
                 elif full_action == 'e':

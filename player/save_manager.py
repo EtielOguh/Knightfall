@@ -1,6 +1,43 @@
+import os
 import json
-from itens.weapon import item_classes
 from itens.rarity import Rarity
+
+from itens.knight import knight_swords, knight_shields
+from itens.archer import archer_weapon
+from itens.thief import thief_dagger
+
+from itens.knight.knight_weapon import *
+from itens.archer.archer_weapon import *
+from itens.thief.thief_weapon import *
+
+# 🔗 Item classes automático
+item_classes = {
+    **{item.name: item.__class__ for item in knight_swords},
+    **{item.name: item.__class__ for item in knight_shields},
+    **{item.name: item.__class__ for item in archer_weapon},
+    **{item.name: item.__class__ for item in thief_dagger}
+}
+
+
+def chose_class():
+    from player.knight import Knight
+    from player.archer import Archer
+    from player.thief import Thief
+
+    print("1 – Knight | 2 – Archer | 3 – Thief")
+    choice = input("> Choose (1, 2, or 3): ").strip()
+
+    if choice == "1":
+        player = Knight()
+    elif choice == "2":
+        player = Archer()
+    elif choice == "3":
+        player = Thief()
+    else:
+        print("❌ Invalid choice, now your class is a Knight (default)")
+        player = Knight()
+
+    return player
 
 
 def serialize_item(item):
@@ -56,7 +93,6 @@ def load_player(filename="save_data.json"):
     else:
         raise Exception("❌ Classe inválida no save.")
 
-    # Carrega stats
     player.name = data["name"]
     player.level = data["level"]
     player.attack = data["attack"]
@@ -70,7 +106,6 @@ def load_player(filename="save_data.json"):
     player.potion = data["potion"]
     player.dynamic_zone = data.get("dynamic_zone", False)
 
-    # Carrega itens
     def load_items(item_list):
         items = []
         for i in item_list:
@@ -85,5 +120,19 @@ def load_player(filename="save_data.json"):
     player.left_hand = load_items(data.get("left_hand", []))
 
     print(f"✅ Save carregado com sucesso! Bem-vindo de volta, {player.name}.")
-
     return player
+
+
+def load_or_create_player():
+    if os.path.exists("save_data.json"):
+        try:
+            player = load_player()
+            print(f"\n✅ Jogador {player.name} carregado com sucesso!")
+            return player
+        except Exception as e:
+            print(f"\n❌ Erro ao carregar o save: {e}")
+            print("🔄 Criando um novo player...")
+    else:
+        print("🚫 Nenhum save encontrado, criando um novo player...")
+
+    return chose_class()

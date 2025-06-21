@@ -4,7 +4,7 @@ from monsters.zona3 import monster_zona3
 from monsters.zona4 import monster_zona4
 from monsters.Infinityzone import monster_dynamic
 from monsters.boss import boss_zone_1, boss_zone_2,boss_zone_3, boss_zone_4
-from random import choice, randint
+from random import choice
 from player.knight import Knight
 from player.thief import Thief
 from player.archer import Archer
@@ -43,35 +43,6 @@ def spawn_monster(zone, player):
     else:
         raise ValueError("Invalid Zone")
 
-def chose_class():
-    print("1 – Knight | 2 – Archer | 3 – Thief")
-    choice = input("> Choose (1, 2, or 3): ").strip()
-
-    if choice == "1":
-        player = Knight()
-    elif choice == "2":
-        player = Archer()
-    elif choice == "3":
-        player = Thief()
-    else:
-        print("Invalid, now your class is a Knight for base")
-        player = Knight()
-        
-    return player
-
-def load_or_create_player():
-    if os.path.exists("save_data.json"):
-        try:
-            player = Player.load_player()
-            print(f"\n✅ Jogador {player.name} carregado com sucesso!")
-            return player
-        except Exception as e:
-            print(f"\n❌ Error! You don't have a save: {e}")
-            print( "Creating a new player...")
-    else:
-        print( "No save found, creating a new player...")
-
-    return chose_class()
 
 def get_droppable_items(player, mob):
     # Lista de itens por classe

@@ -8,8 +8,9 @@ import sys
 def show_battle_menu():
     valid = ['a', 'f', 'p', 'm']
     while True:
-        print("\n=== Battle Menu ===")
-        print("A) Attack   F) Runaway   P) Use Potion   M) Open Full Menu\n")
+        print("\n====================== Battle Menu =======================")
+        print("A) Attack   F) Runaway   P) Use Potion   M) Open Full Menu")
+        print("==========================================================")
         choice = input("Choose your action: ").lower()
         if choice in valid:
             return choice
@@ -32,8 +33,6 @@ def show_full_menu():
 
 
 def Battle(player):
-    clear()
-    print(f"Here is where your story begin! {player.name}!\n")
 
     while player.player_is_alive():
         monster = spawn_monster(player.zone, player)
@@ -111,7 +110,7 @@ def Battle(player):
                     Player.equip_itens(player)
 
                 elif full_action == 's':
-                    save_player()
+                    save_player(player)
                     sys.exit()
 
                 elif full_action == 'e':
@@ -120,7 +119,12 @@ def Battle(player):
 
                 elif full_action == 'p':
                     clear()
-                    monster = boss_fight(player.zone)
+                    boss = boss_fight(player.zone, player.level)
+                    if boss:
+                        monster = boss
+                    else:
+                        print("\nReturning to the game... No boss fight started.\n")
+                        
 
                 elif full_action == 'd':
                     clear()

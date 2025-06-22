@@ -34,7 +34,7 @@ def chose_class():
     elif choice == "3":
         player = Thief()
     else:
-        print("❌ Invalid choice, now your class is a Knight (default)")
+        print("Invalid choice, now your class is a Knight (default)")
         player = Knight()
 
     return player
@@ -73,7 +73,7 @@ def save_player(player, filename="save_data.json"):
 
     with open(filename, "w") as f:
         json.dump(data, f, indent=4)
-    print("💾 Save realizado com sucesso!")
+    print("Successfully Save!")
 
 
 def load_player(filename="save_data.json"):
@@ -91,7 +91,7 @@ def load_player(filename="save_data.json"):
     elif data["class_type"] == 3:
         player = Thief()
     else:
-        raise Exception("❌ Classe inválida no save.")
+        raise Exception("Invalid Class.")
 
     player.name = data["name"]
     player.level = data["level"]
@@ -118,8 +118,6 @@ def load_player(filename="save_data.json"):
     player.bag = load_items(data.get("bag", []))
     player.right_hand = load_items(data.get("right_hand", []))
     player.left_hand = load_items(data.get("left_hand", []))
-
-    print(f"✅ Save carregado com sucesso! Bem-vindo de volta, {player.name}.")
     return player
 
 
@@ -127,12 +125,12 @@ def load_or_create_player():
     if os.path.exists("save_data.json"):
         try:
             player = load_player()
-            print(f"\n✅ Jogador {player.name} carregado com sucesso!")
+            print(f"Player {player.name} Loaded successfully!")
             return player
         except Exception as e:
-            print(f"\n❌ Erro ao carregar o save: {e}")
-            print("🔄 Criando um novo player...")
+            print(f"\n Error!: {e}")
+            print("Creating a new player...")
     else:
-        print("🚫 Nenhum save encontrado, criando um novo player...")
+        print("No save file found. Starting a new player...")
 
     return chose_class()

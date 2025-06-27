@@ -1,9 +1,7 @@
 from random import randint
-import json
-from enum import Enum
-from itens.rarity import Rarity
 import rules
 from time import sleep
+from copy import deepcopy
 
 class Player():
     def __init__(self, name, health, attack, defense, type):
@@ -60,9 +58,21 @@ class Player():
         else:
             print("Bag Itens: ")
             for item in player.bag:
-                print(item, end="\n\n")
+                if hasattr(item, 'quantity'):
+                    print(f"{item} x{item.quantity}")
+                else:
+                    print(item)
+
 
     def add_item_to_bag(self, item):
+        # Só empilha se o item tiver atributo 'quantity' e 'name' (joias por ex)
+        if hasattr(item, 'quantity') and hasattr(item, 'name'):
+            for bag_item in self.bag:
+                if bag_item.name == item.name:
+                    bag_item.quantity += item.quantity
+                    print(f"{item.quantity}x {item.name} stacked in your bag. Total: {bag_item.quantity}")
+                    return
+        # Se não achou igual ou não tem quantity, adiciona normal
         self.bag.append(item)
         print(f"{item} added to your bag.")
 
@@ -100,7 +110,7 @@ class Player():
 
     def equip_itens(self):
         print("Currently Equipped Items:")
-    
+
         if self.right_hand:
             print(f"Right Hand: {self.right_hand[0]}")
         else:
@@ -110,14 +120,18 @@ class Player():
             print(f"Left Hand: {self.left_hand[0]}")
         else:
             print("Left Hand: Empty")
-            if not self.bag:
-                rules.clear()
-                print("Empty Bag!\n")
-                return
+
+        if not self.bag:
+            rules.clear()
+            print("Empty Bag!\n")
+            return
 
         print("\nBag Items:")
         for idx, item in enumerate(self.bag, 1):
-            print(f"{idx}) {item}")
+            if hasattr(item, "quantity"):
+                print(f"{idx}) {item.name} x{item.quantity}")
+            else:
+                print(f"{idx}) {item.name}")
         print("0) Cancel and go back")
 
         while True:
@@ -136,27 +150,36 @@ class Player():
 
                 selected_item = self.bag[choice]
 
-                if selected_item.attack > 0:
+                # Cópia do item com quantity = 1 pra equipar
+                if hasattr(selected_item, "quantity") and selected_item.quantity > 1:
+                    selected_item.quantity -= 1
+                    item_to_equip = deepcopy(selected_item)
+                    item_to_equip.quantity = 1
+                else:
+                    item_to_equip = selected_item
+                    self.bag.remove(selected_item)
+
+                # Equipa o item na mão correta
+                if item_to_equip.attack > 0:
                     if self.right_hand:
                         old = self.right_hand.pop()
                         self.attack -= old.attack
                         self.defense -= old.defense
                         print(f"{old.name} broke.")
-                    self.right_hand.append(selected_item)
+                    self.right_hand.append(item_to_equip)
                 else:
                     if self.left_hand:
                         old = self.left_hand.pop()
                         self.attack -= old.attack
                         self.defense -= old.defense
                         print(f"{old.name} broke.")
-                    self.left_hand.append(selected_item)
+                    self.left_hand.append(item_to_equip)
 
-                self.attack += selected_item.attack
-                self.defense += selected_item.defense
-                self.bag.remove(selected_item)
+                self.attack += item_to_equip.attack
+                self.defense += item_to_equip.defense
 
                 rules.clear()
-                print(f"{selected_item.name} has been successfully equipped!")
+                print(f"{item_to_equip.name} has been successfully equipped!")
                 break
 
             except ValueError:

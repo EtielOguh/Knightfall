@@ -1,0 +1,56 @@
+{
+    "name": "Knight",
+    "class_type": 1,
+    "level": 10,
+    "attack": 82,
+    "defense": 25,
+    "health": 508,
+    "max_health": 550,
+    "zone": 1,
+    "xp": 830,
+    "xp_max": 1290,
+    "money": 5010,
+    "potion": 24,
+    "dynamic_zone": true,
+    "bag": [
+        {
+            "name": "Jewel of Soul",
+            "type": 1,
+            "quantity": 64
+        },
+        {
+            "name": "Jewel Of Bless",
+            "type": 2,
+            "quantity": 16
+        },
+        {
+            "name": "Jewel Of Life",
+            "type": 3,
+            "quantity": 64
+        }
+    ],
+    "right_hand": [
+        {
+            "name": "Iron Sword",
+            "base_attack": 30,
+            "defense": 0,
+            "type": 1,
+            "rarity": "RARE",
+            "buff": 0,
+            "quantity": 1,
+            "price": 34
+        }
+    ],
+    "left_hand": [
+        {
+            "name": "Diamond Shield",
+            "base_attack": 0,
+            "defense": 20,
+            "type": 1,
+            "rarity": "EPIC",
+            "buff": 0,
+            "quantity": 1,
+            "price": 24
+        }
+    ]
+}

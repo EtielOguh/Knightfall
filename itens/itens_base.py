@@ -34,5 +34,5 @@ class Itens_Base:
 
 
     def __str__(self):
-        return f"{self.name} (ATK: {self.attack} | DEF: {self.defense} | RARITY: {self.rarity.name} | PRICE: R$ {self.price})"
+        return f"{self.name} (ATK: {self.attack} | DEF: {self.defense} | RARITY: {self.rarity.name} | PRICE: R$ {self.price} | QUANTITY: {self.quantity})"
 

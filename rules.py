@@ -3,21 +3,58 @@ from monsters.zona2 import monster_zona2
 from monsters.zona3 import monster_zona3
 from monsters.zona4 import monster_zona4
 from monsters.Infinityzone import monster_dynamic
-from monsters.boss import boss_zone
-from random import choice, randint
-from player.knight import Knight
-from player.thief import Thief
-from player.archer import Archer
-from player.player_base import Player
+from monsters.boss import boss_zone_1, boss_zone_2,boss_zone_3, boss_zone_4, boss_final
+from random import choice
 import os
 from itens.weapon import *
+from itens.archer import archer_weapon
+from itens.knight import knight_swords, knight_shields
+from itens.thief import thief_dagger
 from time import sleep
 
-def boss_fight(zone):
-    if zone > 1:
-        return choice(boss_zone)()
-    else:
-        return ("Invalid Zone")
+from random import choice
+
+from random import choice
+
+def boss_fight(zone, player_level):
+    bosses_by_zone = {
+        1: boss_zone_1,
+        2: boss_zone_2,
+        3: boss_zone_3,
+        4: boss_zone_4
+    }
+
+    while True:
+        try:
+            player_choice = int(input(
+                "\nWhich boss do you want to fight against?\n"
+                "1 - Boss from current zone\n"
+                "2 - Final boss (Requires level 10+)\n"
+                ">>> "
+            ))
+        except ValueError:
+            print("Invalid input. Type 1 or 2.")
+            continue
+
+        if player_choice == 1:
+            bosses = bosses_by_zone.get(zone)
+            if bosses:
+                return choice(bosses)()
+            else:
+                print("Invalid zone! Returning to the game.")
+                return None 
+
+        elif player_choice == 2:
+            if player_level >= 10:
+                return choice(boss_final)()
+            else:
+                print("You need to be at least level 10 for the final boss. Returning to the game.")
+                return None
+
+        else:
+            print("Invalid option. Type 1 or 2.")
+            continue
+
     
     
 def spawn_monster(zone, player):
@@ -34,43 +71,13 @@ def spawn_monster(zone, player):
     else:
         raise ValueError("Invalid Zone")
 
-def chose_class():
-    print("1 – Knight | 2 – Archer | 3 – Thief")
-    choice = input("> Choose (1, 2, or 3): ").strip()
-
-    if choice == "1":
-        player = Knight()
-    elif choice == "2":
-        player = Archer()
-    elif choice == "3":
-        player = Thief()
-    else:
-        print("Invalid, now your class is a Knight for base")
-        player = Knight()
-        
-    return player
-
-def load_or_create_player():
-    if os.path.exists("save_data.json"):
-        try:
-            player = Player.load_player()
-            print(f"\n✅ Jogador {player.name} carregado com sucesso!")
-            return player
-        except Exception as e:
-            print(f"\n❌ Error! You don't have a save: {e}")
-            print( "Creating a new player...")
-    else:
-        print( "No save found, creating a new player...")
-
-    return chose_class()
 
 def get_droppable_items(player, mob):
     # Lista de itens por classe
     items_by_class = {
-        1: [WoodSwoord(), StoneSword(), IronSword(), DiamondSword(), DragonSlayerSword(),
-            WoodShield(), StoneShield(), IronShield(), DiamondShield()],     # Knight
-        2: [WoodBow(), StoneBow(), IronBow(), DiamondBow(), HellfangBow()],        # Archer
-        3: [WoodDagger(), StoneDagger(), IronDagger(), DiamondBow(), HellspireDagger()]     # Thief
+        1: knight_swords + knight_shields,  # Knight
+        2: archer_weapon,                   # Archer
+        3: thief_dagger                     # Thief
     }
 
     # Filtra os itens que têm raridade permitida no mob
@@ -80,35 +87,39 @@ def get_droppable_items(player, mob):
     ]
 
     return droppable_items
-    
-def try_drop_item(player, mob):
-    from random import randint
 
+
+def try_drop_item(player, mob):
+    from random import randint, choice
+
+    # Chances de drop por raridade (em %)
     rarities_with_chances = {
-        Rarity.DEVIL: 0.5,
-        Rarity.EPIC: 1,
-        Rarity.RARE: 3,
-        Rarity.UNCOMMON: 5,
-        Rarity.COMMON: 10
+        Rarity.DEVIL: 0.5,      # 0.5%
+        Rarity.EPIC: 1,         # 1%
+        Rarity.RARE: 3,         # 3%
+        Rarity.UNCOMMON: 5,     # 5%
+        Rarity.COMMON: 10       # 10%
     }
 
     possible_items = get_droppable_items(player, mob)
 
     if not possible_items:
-        print(f"{mob.name} didn't drop anything suitable for your class.")
-        return
+        print(f"\n{mob.name} Didn't drop anything useful for your class.")
+        return None
 
     for rarity, chance in rarities_with_chances.items():
-        roll = randint(1, 1000)  # escala maior pra permitir 0.5%
-        if roll <= chance * 10:  # ex: 0.5% vira 5 em 1000
+        roll = randint(1, 1000)  # Escala de 1000 pra suportar 0.5%
+        if roll <= chance * 10:  # Ex: 0.5% vira 5 em 1000
             items_of_rarity = [item for item in possible_items if item.rarity == rarity]
             if items_of_rarity:
                 dropped_item = choice(items_of_rarity)
                 player.add_item_to_bag(dropped_item)
-                print(f"Lucky! {mob.name} dropped: {dropped_item.name} ({rarity.name})")
-                return
+                print(f"\n Luck! {mob.name} dropped: {dropped_item.name} ({rarity.name})")
+                return dropped_item
 
-    print(f"{mob.name} didn't drop anything this time.")
+    print(f"\n💨 {mob.name} Nothing dropped this time.")
+    return None
+
 
 def show_menu():
     print("\nA) Attack Enemy     B) Potion     Z) Change Zone   X) Back Zone   D) Dynamic Zone ON     P) Boss Fight")

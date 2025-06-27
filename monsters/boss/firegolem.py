@@ -2,7 +2,7 @@ from random import randint
 from monsters.mob import Enemy
 from itens.rarity import Rarity
 
-class DevilHell(Enemy):
+class Firegolem(Enemy):
     def __init__(self):
         level = 9
         attack = self._generate_attack(level)
@@ -10,12 +10,12 @@ class DevilHell(Enemy):
         health = max_health
         
         super().__init__(
-            name="Devil Hell",
+            name="Fire golem",
             level=level,
             attack=attack,
             health=health,
             max_health=max_health,
-            allowed_rarities=[Rarity.DEVIL]
+            allowed_rarities=[Rarity.UNCOMMON]
         )
 
     def _generate_attack(level):

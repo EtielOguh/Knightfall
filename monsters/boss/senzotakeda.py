@@ -2,7 +2,7 @@ from random import randint
 from monsters.mob import Enemy
 from itens.rarity import Rarity
 
-class DevilHell(Enemy):
+class Senzotakeda(Enemy):
     def __init__(self):
         level = 9
         attack = self._generate_attack(level)
@@ -10,7 +10,7 @@ class DevilHell(Enemy):
         health = max_health
         
         super().__init__(
-            name="Devil Hell",
+            name="Senzo Takeda",
             level=level,
             attack=attack,
             health=health,

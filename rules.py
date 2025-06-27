@@ -4,18 +4,15 @@ from monsters.zona3 import monster_zona3
 from monsters.zona4 import monster_zona4
 from monsters.Infinityzone import monster_dynamic
 from monsters.boss import boss_zone_1, boss_zone_2,boss_zone_3, boss_zone_4, boss_final
-from random import choice
+from random import choice, random, randint
 import os
-from itens.weapon import *
 from itens.archer import archer_weapon
 from itens.knight import knight_swords, knight_shields
 from itens.thief import thief_dagger
 from time import sleep
-
-from random import choice
-
-from random import choice
-
+from itens.stone import Jewel_group
+from itens.rarity import Rarity
+    
 def boss_fight(zone, player_level):
     bosses_by_zone = {
         1: boss_zone_1,
@@ -71,6 +68,23 @@ def spawn_monster(zone, player):
     else:
         raise ValueError("Invalid Zone")
 
+def try_drop_stone(player, mob, drop_chance=0.2):
+    if 1 <= mob.level <= 3:
+        target_type = 1
+    elif 4 <= mob.level <= 6:
+        target_type = 2
+    else:
+        target_type = 3
+
+    matching_jewels = [jewel for jewel in Jewel_group if jewel.type == target_type]
+
+    if random() < drop_chance and matching_jewels:
+        dropped_stone = choice(matching_jewels)
+        player.add_item_to_bag(dropped_stone)
+        print(f"\n✨ {mob.name} dropped: {dropped_stone.name}")
+        return dropped_stone
+
+    return None
 
 def get_droppable_items(player, mob):
     # Lista de itens por classe
@@ -90,7 +104,6 @@ def get_droppable_items(player, mob):
 
 
 def try_drop_item(player, mob):
-    from random import randint, choice
 
     # Chances de drop por raridade (em %)
     rarities_with_chances = {

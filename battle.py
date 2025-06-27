@@ -1,8 +1,9 @@
-from rules import spawn_monster, try_drop_item, clear, boss_fight, merchant
+from rules import spawn_monster, try_drop_item, clear, boss_fight, merchant, try_drop_stone
 from player.player_base import Player
 from animation import battle_animation
 from player.save_manager import save_player
 import sys
+
 
 
 def show_battle_menu():
@@ -61,6 +62,7 @@ def Battle(player):
                     player.exp_wins(monster)
                     monster.drop_money(player)
                     player.potion_drops()
+                    try_drop_stone(player, monster)
                     try_drop_item(player, monster)
 
             elif action == 'f':

@@ -16,6 +16,7 @@ class DevilHell(Enemy):
             health=health,
             max_health=max_health,
             allowed_rarities=[Rarity.DEVIL]
+            
         )
 
     def _generate_attack(level):

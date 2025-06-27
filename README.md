@@ -22,21 +22,6 @@ As versões atuais estão em *Work in Progress*, com novos conteúdos sendo cria
 
 ---
 
-## 🔧 Como instalar
-
-1. Remova versões antigas (se tiver).
-2. Clone ou baixe este repositório:
-   ```bash
-   git clone https://github.com/EtielOguh/Knightfall.git
-   ```
-3. Copie a pasta `Knightfall` para a pasta `mods` do Starbound:
-   ```
-   .../Steam/steamapps/common/Starbound/mods
-   ```
-4. Abra o jogo e divirta-se!
-
----
-
 ## 💬 Contribuições
 
 Quer sugerir algo ou ajudar?  

@@ -65,16 +65,21 @@ class Player():
 
 
     def add_item_to_bag(self, item):
-        # Só empilha se o item tiver atributo 'quantity' e 'name' (joias por ex)
+        # Só empilha se o item for empilhável (tem quantity) e for do mesmo tipo
         if hasattr(item, 'quantity') and hasattr(item, 'name'):
             for bag_item in self.bag:
-                if bag_item.name == item.name:
+                if (
+                    bag_item.name == item.name
+                    and getattr(bag_item, 'type', None) == getattr(item, 'type', None)
+                ):
                     bag_item.quantity += item.quantity
                     print(f"{item.quantity}x {item.name} stacked in your bag. Total: {bag_item.quantity}")
                     return
-        # Se não achou igual ou não tem quantity, adiciona normal
+
+        # Caso contrário, adiciona como item separado
         self.bag.append(item)
-        print(f"{item} added to your bag.")
+        print(f"{item.name} x{getattr(item, 'quantity', 1)} added to your bag.")
+
 
     def exp_wins(self, monster):
         self.xp += monster.exp
@@ -126,8 +131,15 @@ class Player():
             print("Empty Bag!\n")
             return
 
+        # Filtra só itens que não são stones (joias)
+        visible_items = [item for item in self.bag if not getattr(item, "is_stone", False)]
+
+        if not visible_items:
+            print("No equipable items in bag.\n")
+            return
+
         print("\nBag Items:")
-        for idx, item in enumerate(self.bag, 1):
+        for idx, item in enumerate(visible_items, 1):
             if hasattr(item, "quantity"):
                 print(f"{idx}) {item.name} x{item.quantity}")
             else:
@@ -136,21 +148,21 @@ class Player():
 
         while True:
             try:
-                choice = int(input("\nTell me the item number: ")) - 1
+                choice = int(input("\nTell me the item number: "))
 
-                if choice == -1:
+                if choice == 0:
                     print("Returning to the game...")
                     sleep(0.5)
                     rules.clear()
                     return
 
-                if choice < 0 or choice >= len(self.bag):
+                if choice < 1 or choice > len(visible_items):
                     print("Invalid item number!")
                     continue
 
-                selected_item = self.bag[choice]
+                selected_item = visible_items[choice - 1]
 
-                # Cópia do item com quantity = 1 pra equipar
+                # Se tem mais de 1 na pilha, tira 1 pra equipar
                 if hasattr(selected_item, "quantity") and selected_item.quantity > 1:
                     selected_item.quantity -= 1
                     item_to_equip = deepcopy(selected_item)
@@ -159,7 +171,7 @@ class Player():
                     item_to_equip = selected_item
                     self.bag.remove(selected_item)
 
-                # Equipa o item na mão correta
+                # Equipa na mão correta
                 if item_to_equip.attack > 0:
                     if self.right_hand:
                         old = self.right_hand.pop()

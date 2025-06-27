@@ -1,10 +1,11 @@
 from .stone import Stone
-from ..rarity import Rarity
 
 class JewelofBless(Stone):
-    def __init__(self):
+    def __init__(self, price = None):
         super().__init__(
             name="Jewel Of Bless",
             type=2,
-            quantity= 1
+            quantity= 1,
+            price = price,
+            is_stone = True
         )

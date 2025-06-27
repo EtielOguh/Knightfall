@@ -10,13 +10,18 @@ from itens.knight.knight_weapon import *
 from itens.archer.archer_weapon import *
 from itens.thief.thief_weapon import *
 
-# 🔗 Item classes automático
+from itens.stone import Jewel_group  # Importa as classes das joias
+
+# 🔗 Item classes automático (armas)
 item_classes = {
     **{item.name: item.__class__ for item in knight_swords},
     **{item.name: item.__class__ for item in knight_shields},
     **{item.name: item.__class__ for item in archer_weapon},
     **{item.name: item.__class__ for item in thief_dagger}
 }
+
+# Adiciona as classes das joias ao dicionário de classes
+item_classes.update({cls().name: cls for cls in Jewel_group})
 
 
 def chose_class():
@@ -44,6 +49,10 @@ def serialize_item(item):
     data = vars(item).copy()
     if hasattr(item, "rarity"):
         data["rarity"] = item.rarity.name
+    if hasattr(item, "quantity"):
+        data["quantity"] = item.quantity
+    if hasattr(item, "type"):
+        data["type"] = item.type
     return data
 
 
@@ -109,10 +118,16 @@ def load_player(filename="save_data.json"):
     def load_items(item_list):
         items = []
         for i in item_list:
-            item = item_classes[i["name"]](price=i.get("price"))
-            if "rarity" in i:
-                item.rarity = Rarity[i["rarity"]]
-            items.append(item)
+            cls = item_classes.get(i["name"])
+            if cls:
+                item = cls(price=i.get("price", 0))
+                if "rarity" in i:
+                    item.rarity = Rarity[i["rarity"]]
+                if "quantity" in i:
+                    item.quantity = i["quantity"]
+                if "type" in i:
+                    item.type = i["type"]
+                items.append(item)
         return items
 
     player.bag = load_items(data.get("bag", []))

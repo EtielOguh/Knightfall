@@ -6,6 +6,7 @@ from monsters.Infinityzone import monster_dynamic
 from monsters.boss import boss_zone_1, boss_zone_2,boss_zone_3, boss_zone_4, boss_final
 from random import choice, random, randint
 import os
+from copy import deepcopy
 from itens.archer import archer_weapon
 from itens.knight import knight_swords, knight_shields
 from itens.thief import thief_dagger
@@ -67,8 +68,9 @@ def spawn_monster(zone, player):
         return choice(monster_zona4)()
     else:
         raise ValueError("Invalid Zone")
+    
 
-def try_drop_stone(player, mob, drop_chance=0.2):
+def try_drop_stone(mob, player, drop_chance=0.2):
     if 1 <= mob.level <= 3:
         target_type = 1
     elif 4 <= mob.level <= 6:
@@ -76,15 +78,22 @@ def try_drop_stone(player, mob, drop_chance=0.2):
     else:
         target_type = 3
 
-    matching_jewels = [jewel for jewel in Jewel_group if jewel.type == target_type]
+    # Cria lista de CLASSES que combinam com o tipo do mob
+    matching_stone_classes = [
+        stone_class for stone_class in Jewel_group
+        if stone_class().type == target_type
+    ]
 
-    if random() < drop_chance and matching_jewels:
-        dropped_stone = choice(matching_jewels)
-        player.add_item_to_bag(dropped_stone)
-        print(f"\n✨ {mob.name} dropped: {dropped_stone.name}")
-        return dropped_stone
+    if random() < drop_chance and matching_stone_classes:
+        selected_class = choice(matching_stone_classes)
+        new_stone = selected_class()
+        new_stone.quantity = randint(1, 3)  # nova instância, nova quantity
+        player.add_item_to_bag(new_stone)
+        print(f"\n✨ {mob.name} dropped: {new_stone.name} x{new_stone.quantity}")
+        return new_stone
 
     return None
+
 
 def get_droppable_items(player, mob):
     # Lista de itens por classe

@@ -10,6 +10,7 @@ from copy import deepcopy
 from itens.archer import archer_weapon
 from itens.knight import knight_swords, knight_shields
 from itens.thief import thief_dagger
+from itens.mage import mage_staffs
 from time import sleep
 from itens.stone import Jewel_group
 from itens.rarity import Rarity
@@ -87,9 +88,9 @@ def try_drop_stone(mob, player, drop_chance=0.2):
     if random() < drop_chance and matching_stone_classes:
         selected_class = choice(matching_stone_classes)
         new_stone = selected_class()
-        new_stone.quantity = randint(1, 3)  # nova instância, nova quantity
+        new_stone.quantity += 1
         player.add_item_to_bag(new_stone)
-        print(f"\n✨ {mob.name} dropped: {new_stone.name} x{new_stone.quantity}")
+
         return new_stone
 
     return None
@@ -100,7 +101,8 @@ def get_droppable_items(player, mob):
     items_by_class = {
         1: knight_swords + knight_shields,  # Knight
         2: archer_weapon,                   # Archer
-        3: thief_dagger                     # Thief
+        3: thief_dagger, # Thief
+        4: mage_staffs # Mage Itens
     }
 
     # Filtra os itens que têm raridade permitida no mob
@@ -126,7 +128,7 @@ def try_drop_item(player, mob):
     possible_items = get_droppable_items(player, mob)
 
     if not possible_items:
-        print(f"\n{mob.name} Didn't drop anything useful for your class.")
+        print(f"{mob.name} Didn't drop anything useful for your class.")
         return None
 
     for rarity, chance in rarities_with_chances.items():
@@ -136,10 +138,9 @@ def try_drop_item(player, mob):
             if items_of_rarity:
                 dropped_item = choice(items_of_rarity)
                 player.add_item_to_bag(dropped_item)
-                print(f"\n Luck! {mob.name} dropped: {dropped_item.name} ({rarity.name})")
+                print(f"{mob.name} Dropped: {dropped_item.name} | Attack: {dropped_item.attack} | Rarrity: ({rarity.name})")
                 return dropped_item
 
-    print(f"\n💨 {mob.name} Nothing dropped this time.")
     return None
 
 

@@ -2,13 +2,21 @@ import os
 import json
 from itens.rarity import Rarity
 
+from player.knight import Knight
+from player.archer import Archer
+from player.thief import Thief
+from player.mage import Mage
+    
 from itens.knight import knight_swords, knight_shields
 from itens.archer import archer_weapon
 from itens.thief import thief_dagger
+from itens.mage import mage_staffs
 
+#import dos itens das classes
 from itens.knight.knight_weapon import *
 from itens.archer.archer_weapon import *
 from itens.thief.thief_weapon import *
+from itens.mage.mage_weapon import *
 
 from itens.stone import Jewel_group  # Importa as classes das joias
 
@@ -17,7 +25,8 @@ item_classes = {
     **{item.name: item.__class__ for item in knight_swords},
     **{item.name: item.__class__ for item in knight_shields},
     **{item.name: item.__class__ for item in archer_weapon},
-    **{item.name: item.__class__ for item in thief_dagger}
+    **{item.name: item.__class__ for item in thief_dagger},
+    **{item.name: item.__class__ for item in mage_staffs}
 }
 
 # Adiciona as classes das joias ao dicionário de classes
@@ -25,12 +34,9 @@ item_classes.update({cls().name: cls for cls in Jewel_group})
 
 
 def chose_class():
-    from player.knight import Knight
-    from player.archer import Archer
-    from player.thief import Thief
 
-    print("1 – Knight | 2 – Archer | 3 – Thief")
-    choice = input("> Choose (1, 2, or 3): ").strip()
+    print("1 – Knight | 2 – Archer | 3 – Thief | 4 - Mage")
+    choice = input("> Choose (1, 2, 3 or 4): ").strip()
 
     if choice == "1":
         player = Knight()
@@ -38,6 +44,8 @@ def chose_class():
         player = Archer()
     elif choice == "3":
         player = Thief()
+    elif choice == "4":
+        player = Mage()
     else:
         print("Invalid choice, now your class is a Knight (default)")
         player = Knight()
@@ -82,7 +90,6 @@ def save_player(player, filename="save_data.json"):
 
     with open(filename, "w") as f:
         json.dump(data, f, indent=4)
-    print("Successfully Save!")
 
 
 def load_player(filename="save_data.json"):
@@ -99,6 +106,8 @@ def load_player(filename="save_data.json"):
         player = Archer()
     elif data["class_type"] == 3:
         player = Thief()
+    elif data["class_type"] == 4:
+        player = Mage()
     else:
         raise Exception("Invalid Class.")
 

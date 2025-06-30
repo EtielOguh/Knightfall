@@ -5,7 +5,7 @@ class JewelofSoul(Stone):
         super().__init__(
             name="Jewel of Soul",
             type=1,
-            quantity= 1,
+            quantity= 0,
             price = price,
             is_stone = True
         )

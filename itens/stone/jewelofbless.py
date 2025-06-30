@@ -5,7 +5,7 @@ class JewelofBless(Stone):
         super().__init__(
             name="Jewel Of Bless",
             type=2,
-            quantity= 1,
+            quantity= 0,
             price = price,
             is_stone = True
         )

@@ -2,6 +2,7 @@ from random import randint
 import rules
 from time import sleep
 from copy import deepcopy
+from itens.stone import Stone
 
 class Player():
     def __init__(self, name, health, attack, defense, type):
@@ -11,6 +12,7 @@ class Player():
         self.attack = attack
         self.defense = defense
         self.health = health
+        self.mana = 100
         self.max_health = 100
         self.zone = 1
         self.right_hand = []
@@ -35,7 +37,7 @@ class Player():
         enemy.damage_received(damage)
 
     def stats(self):
-        print(f"Player Stats: {self.name} Lv:{self.level} | HP:{self.health}/{self.max_health} | Atk:{self.attack} | Def:{self.defense} | XP:{self.xp}/{self.xp_max} | $:{self.money} | Pot: {self.potion}\n")
+        print(f"\nPlayer Stats: {self.name} Lv:{self.level} | HP:{self.health}/{self.max_health} | Atk:{self.attack} | Def:{self.defense} | XP:{self.xp}/{self.xp_max} | $:{self.money} | Pot: {self.potion}\n")
 
     def potion_drops(player):
         drop_chance = randint(0, 3)
@@ -58,9 +60,6 @@ class Player():
         else:
             print("Bag Itens: ")
             for item in player.bag:
-                if hasattr(item, 'quantity'):
-                    print(f"{item} x{item.quantity}")
-                else:
                     print(item)
 
 
@@ -73,7 +72,8 @@ class Player():
                     and getattr(bag_item, 'type', None) == getattr(item, 'type', None)
                 ):
                     bag_item.quantity += item.quantity
-                    print(f"{item.quantity}x {item.name} stacked in your bag. Total: {bag_item.quantity}")
+                    if isinstance(item, Stone):
+                        print(f"{item.quantity}x {item.name} stacked in your bag. Total: {bag_item.quantity}")
                     return
 
         # Caso contrário, adiciona como item separado
@@ -140,10 +140,7 @@ class Player():
 
         print("\nBag Items:")
         for idx, item in enumerate(visible_items, 1):
-            if hasattr(item, "quantity"):
-                print(f"{idx}) {item.name} x{item.quantity}")
-            else:
-                print(f"{idx}) {item.name}")
+                print(f"{idx}) Name: {item.name} | Attack: {item.base_attack} | Defence: {item.defense} | Quantity: x{item.quantity}")
         print("0) Cancel and go back")
 
         while True:

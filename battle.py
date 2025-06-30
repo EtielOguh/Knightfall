@@ -48,7 +48,7 @@ def Battle(player):
                 if not monster.enemy_is_alive():
                     clear()
                     save_player(player)
-                    print(f"\n{monster.name} Defeated!")
+                    print(f"{monster.name} Defeated!")
                     player.exp_wins(monster)
                     monster.drop_money(player)
                     player.potion_drops()

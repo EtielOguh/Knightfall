@@ -1,42 +1,33 @@
-from rules import spawn_monster, try_drop_item, clear, boss_fight, merchant
+from rules import spawn_monster, try_drop_item, clear, boss_fight, merchant, try_drop_stone
 from player.player_base import Player
 from animation import battle_animation
 from player.save_manager import save_player
 import sys
 
 
+
 def show_battle_menu():
     valid = ['a', 'f', 'p', 'm']
-    while True:
-        print("\n====================== Battle Menu =======================")
-        print("A) Attack   F) Runaway   P) Use Potion   M) Open Full Menu")
-        print("==========================================================")
-        choice = input("Choose your action: ").lower()
-        if choice in valid:
-            return choice
-        clear()
-        print("Invalid action! Try again.")
-
+    print("\n====================== Battle Menu =======================")
+    print("A) Attack   F) Runaway   P) Use Potion   M) Open Full Menu")
+    print("==========================================================")
+    choice = input("Choose your action: ").lower()
+    return choice
 
 def show_full_menu():
     valid = ['z', 'x', 'i', 's', 'e', 'p', 'd', 'h', 'm', 'q']
-    while True:
-        print("\n=== Full Menu ===")
-        print("Z) Next Zone (-$50)   X) Back Zone (-$50)   I) Equip Items")
-        print("S) Save and Exit   E) Show Bag   P) Boss Fight   D) Enable Dynamic Zone")
-        print("H) Disable Dynamic Zone   M) Merchant   Q) Back to Battle\n")
-        choice = input("Choose your option: ").lower()
-        if choice in valid:
-            return choice
-        clear()
-        print("Invalid action! Try again.")
+    print("\n=== Full Menu ===")
+    print("Z) Next Zone (-$50)   X) Back Zone (-$50)   I) Equip Items")
+    print("S) Save and Exit   E) Show Bag   P) Boss Fight   D) Enable Dynamic Zone")
+    print("H) Disable Dynamic Zone   M) Merchant   Q) Back to Battle\n")
+    choice = input("Choose your option: ").lower()
+    return choice
 
 
 def Battle(player):
-
+    monster = spawn_monster(player.zone, player)
+    
     while player.player_is_alive():
-        monster = spawn_monster(player.zone, player)
-
         while monster.enemy_is_alive() and player.player_is_alive():
             player.stats()
             print(monster.battle_cry())
@@ -57,16 +48,19 @@ def Battle(player):
                 if not monster.enemy_is_alive():
                     clear()
                     save_player(player)
-                    print(f"\n{monster.name} Defeated!")
+                    print(f"{monster.name} Defeated!")
                     player.exp_wins(monster)
                     monster.drop_money(player)
                     player.potion_drops()
+                    try_drop_stone(monster, player)
                     try_drop_item(player, monster)
+                    monster = spawn_monster(player.zone, player)
 
             elif action == 'f':
                 clear()
                 print('LOSER! Try another one!\n')
                 monster = spawn_monster(player.zone, player)
+                break
 
             elif action == 'p':
                 clear()
@@ -145,3 +139,4 @@ def Battle(player):
 
             else:
                 print("Invalid action!")
+            

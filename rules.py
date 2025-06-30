@@ -4,18 +4,17 @@ from monsters.zona3 import monster_zona3
 from monsters.zona4 import monster_zona4
 from monsters.Infinityzone import monster_dynamic
 from monsters.boss import boss_zone_1, boss_zone_2,boss_zone_3, boss_zone_4, boss_final
-from random import choice
+from random import choice, random, randint
 import os
-from itens.weapon import *
+from copy import deepcopy
 from itens.archer import archer_weapon
 from itens.knight import knight_swords, knight_shields
 from itens.thief import thief_dagger
+from itens.mage import mage_staffs
 from time import sleep
-
-from random import choice
-
-from random import choice
-
+from itens.stone import Jewel_group
+from itens.rarity import Rarity
+    
 def boss_fight(zone, player_level):
     bosses_by_zone = {
         1: boss_zone_1,
@@ -70,6 +69,31 @@ def spawn_monster(zone, player):
         return choice(monster_zona4)()
     else:
         raise ValueError("Invalid Zone")
+    
+
+def try_drop_stone(mob, player, drop_chance=0.2):
+    if 1 <= mob.level <= 3:
+        target_type = 1
+    elif 4 <= mob.level <= 6:
+        target_type = 2
+    else:
+        target_type = 3
+
+    # Cria lista de CLASSES que combinam com o tipo do mob
+    matching_stone_classes = [
+        stone_class for stone_class in Jewel_group
+        if stone_class().type == target_type
+    ]
+
+    if random() < drop_chance and matching_stone_classes:
+        selected_class = choice(matching_stone_classes)
+        new_stone = selected_class()
+        new_stone.quantity += 1
+        player.add_item_to_bag(new_stone)
+
+        return new_stone
+
+    return None
 
 
 def get_droppable_items(player, mob):
@@ -77,7 +101,8 @@ def get_droppable_items(player, mob):
     items_by_class = {
         1: knight_swords + knight_shields,  # Knight
         2: archer_weapon,                   # Archer
-        3: thief_dagger                     # Thief
+        3: thief_dagger, # Thief
+        4: mage_staffs # Mage Itens
     }
 
     # Filtra os itens que têm raridade permitida no mob
@@ -90,7 +115,6 @@ def get_droppable_items(player, mob):
 
 
 def try_drop_item(player, mob):
-    from random import randint, choice
 
     # Chances de drop por raridade (em %)
     rarities_with_chances = {
@@ -104,7 +128,7 @@ def try_drop_item(player, mob):
     possible_items = get_droppable_items(player, mob)
 
     if not possible_items:
-        print(f"\n{mob.name} Didn't drop anything useful for your class.")
+        print(f"{mob.name} Didn't drop anything useful for your class.")
         return None
 
     for rarity, chance in rarities_with_chances.items():
@@ -114,10 +138,9 @@ def try_drop_item(player, mob):
             if items_of_rarity:
                 dropped_item = choice(items_of_rarity)
                 player.add_item_to_bag(dropped_item)
-                print(f"\n Luck! {mob.name} dropped: {dropped_item.name} ({rarity.name})")
+                print(f"{mob.name} Dropped: {dropped_item.name} | Attack: {dropped_item.attack} | Rarrity: ({rarity.name})")
                 return dropped_item
 
-    print(f"\n💨 {mob.name} Nothing dropped this time.")
     return None
 
 

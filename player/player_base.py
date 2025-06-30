@@ -1,9 +1,8 @@
 from random import randint
-import json
-from enum import Enum
-from itens.rarity import Rarity
 import rules
 from time import sleep
+from copy import deepcopy
+from itens.stone import Stone
 
 class Player():
     def __init__(self, name, health, attack, defense, type):
@@ -13,6 +12,7 @@ class Player():
         self.attack = attack
         self.defense = defense
         self.health = health
+        self.mana = 100
         self.max_health = 100
         self.zone = 1
         self.right_hand = []
@@ -37,7 +37,7 @@ class Player():
         enemy.damage_received(damage)
 
     def stats(self):
-        print(f"Player Stats: {self.name} Lv:{self.level} | HP:{self.health}/{self.max_health} | Atk:{self.attack} | Def:{self.defense} | XP:{self.xp}/{self.xp_max} | $:{self.money} | Pot: {self.potion}\n")
+        print(f"\nPlayer Stats: {self.name} Lv:{self.level} | HP:{self.health}/{self.max_health} | Atk:{self.attack} | Def:{self.defense} | XP:{self.xp}/{self.xp_max} | $:{self.money} | Pot: {self.potion}\n")
 
     def potion_drops(player):
         drop_chance = randint(0, 3)
@@ -60,11 +60,26 @@ class Player():
         else:
             print("Bag Itens: ")
             for item in player.bag:
-                print(item, end="\n\n")
+                    print(item)
+
 
     def add_item_to_bag(self, item):
+        # Só empilha se o item for empilhável (tem quantity) e for do mesmo tipo
+        if hasattr(item, 'quantity') and hasattr(item, 'name'):
+            for bag_item in self.bag:
+                if (
+                    bag_item.name == item.name
+                    and getattr(bag_item, 'type', None) == getattr(item, 'type', None)
+                ):
+                    bag_item.quantity += item.quantity
+                    if isinstance(item, Stone):
+                        print(f"{item.quantity}x {item.name} stacked in your bag. Total: {bag_item.quantity}")
+                    return
+
+        # Caso contrário, adiciona como item separado
         self.bag.append(item)
-        print(f"{item} added to your bag.")
+        print(f"{item.name} x{getattr(item, 'quantity', 1)} added to your bag.")
+
 
     def exp_wins(self, monster):
         self.xp += monster.exp
@@ -100,7 +115,7 @@ class Player():
 
     def equip_itens(self):
         print("Currently Equipped Items:")
-    
+
         if self.right_hand:
             print(f"Right Hand: {self.right_hand[0]}")
         else:
@@ -110,53 +125,70 @@ class Player():
             print(f"Left Hand: {self.left_hand[0]}")
         else:
             print("Left Hand: Empty")
-            if not self.bag:
-                rules.clear()
-                print("Empty Bag!\n")
-                return
+
+        if not self.bag:
+            rules.clear()
+            print("Empty Bag!\n")
+            return
+
+        # Filtra só itens que não são stones (joias)
+        visible_items = [item for item in self.bag if not getattr(item, "is_stone", False)]
+
+        if not visible_items:
+            print("No equipable items in bag.\n")
+            return
 
         print("\nBag Items:")
-        for idx, item in enumerate(self.bag, 1):
-            print(f"{idx}) {item}")
+        for idx, item in enumerate(visible_items, 1):
+                print(f"{idx}) Name: {item.name} | Attack: {item.base_attack} | Defence: {item.defense} | Quantity: x{item.quantity}")
         print("0) Cancel and go back")
 
         while True:
             try:
-                choice = int(input("\nTell me the item number: ")) - 1
+                choice = int(input("\nTell me the item number: "))
 
-                if choice == -1:
+                if choice == 0:
                     print("Returning to the game...")
                     sleep(0.5)
                     rules.clear()
                     return
 
-                if choice < 0 or choice >= len(self.bag):
+                if choice < 1 or choice > len(visible_items):
                     print("Invalid item number!")
                     continue
 
-                selected_item = self.bag[choice]
+                selected_item = visible_items[choice - 1]
 
-                if selected_item.attack > 0:
+                # Se tem mais de 1 na pilha, tira 1 pra equipar
+                if hasattr(selected_item, "quantity") and selected_item.quantity > 1:
+                    selected_item.quantity -= 1
+                    item_to_equip = deepcopy(selected_item)
+                    item_to_equip.quantity = 1
+                else:
+                    item_to_equip = selected_item
+                    self.bag.remove(selected_item)
+
+                # Equipa na mão correta
+                if item_to_equip.attack > 0:
                     if self.right_hand:
                         old = self.right_hand.pop()
                         self.attack -= old.attack
                         self.defense -= old.defense
                         print(f"{old.name} broke.")
-                    self.right_hand.append(selected_item)
+                    self.right_hand.append(item_to_equip)
                 else:
                     if self.left_hand:
                         old = self.left_hand.pop()
                         self.attack -= old.attack
                         self.defense -= old.defense
                         print(f"{old.name} broke.")
-                    self.left_hand.append(selected_item)
+                    self.left_hand.append(item_to_equip)
 
-                self.attack += selected_item.attack
-                self.defense += selected_item.defense
-                self.bag.remove(selected_item)
+                self.attack += item_to_equip.attack
+                self.defense += item_to_equip.defense
 
                 rules.clear()
-                print(f"{selected_item.name} has been successfully equipped!")
+                print(f"{item_to_equip.name} has been successfully equipped!")
                 break
 
             except ValueError:

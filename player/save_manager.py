@@ -81,7 +81,8 @@ def save_player(player, filename="save_data.json"):
         "xp": player.xp,
         "xp_max": player.xp_max,
         "money": player.money,
-        "potion": player.potion,
+        "mana_potions": player.manapotions,
+        "heal_potions": player.healpotions,
         "dynamic_zone": player.dynamic_zone,
         "bag": serialize_items(player.bag),
         "right_hand": serialize_items(player.right_hand),
@@ -121,7 +122,8 @@ def load_player(filename="save_data.json"):
     player.xp = data["xp"]
     player.xp_max = data["xp_max"]
     player.money = data["money"]
-    player.potion = data["potion"]
+    player.manapotions = data["mana_potions"]
+    player.healpotions = data["heal_potions"]
     player.dynamic_zone = data.get("dynamic_zone", False)
 
     def load_items(item_list):

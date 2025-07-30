@@ -23,11 +23,11 @@ def show_battle_menu():
 
 def print_battle_status(player, monster):
     print("=" * 70)
-    print(f"🧪 POTIONS: {player.potion}   🗡️ PLAYER DMG: {player.attack}   💀 MONSTER DMG: {monster.attack}")
-    print(f"🎖️ PLAYER LVL: {player.level}   📊 XP: {player.xp}/{player.xp_max}   🌍 ZONE: {player.zone}")
+    print(f"POTIONS Heal: {player.healpotions} | Mana: {player.manapotions}  PLAYER DMG: {player.attack}   MONSTER DMG: {monster.attack}")
+    print(f"PLAYER LVL: {player.level}   XP: {player.xp}/{player.xp_max}   ZONE: {player.zone}")
     print("-" * 70)
-    print(f"🧍 {player.name:<10} ❤️ {player.health:>3}/{player.max_health:<3}   Lv {player.level:<2}   VS   "
-          f"👾 {monster.name:<10} ❤️ {monster.health:>3}/{monster.max_health:<3}   Lv {monster.level:<2}")
+    print(f" {player.name:<10} {player.health:>3}/{player.max_health:<3}   Lv {player.level:<2}   VS   "
+          f" {monster.name:<10} {monster.health:>3}/{monster.max_health:<3}   Lv {monster.level:<2}")
     print("=" * 70)
 
 
@@ -36,7 +36,7 @@ def turn_based_battle(player, monster):
     while player.player_is_alive() and monster.enemy_is_alive():
         clear()
         print_battle_status(player, monster)
-        print("\nA) Attack   P) Potion   F) Run")
+        print("\nA) Attack   P) Potion   F) Run  S)Skill Damage")
         action = input("> ").lower()
 
         if action == 'a':
@@ -61,8 +61,16 @@ def turn_based_battle(player, monster):
 
         elif action == 'f':
             print("You ran away from the battle!\n")
-            return False 
-
+            return False
+        
+        elif action == 's':
+            print("Skills: ")
+            for i, s in enumerate (player.skills):
+                print(f"{i}) {s['name']} - Mana: {s['mana_cost']} - {s['description']}")
+            
+            choice = input = int(input("Choose your skill: "))
+            player.use_skill(choice, monster)
+            
         else:
             print("Invalid action!")
 
@@ -127,7 +135,17 @@ def Battle(player):
 
             elif action == 'p':
                 clear()
-                player.potion_use()
+                print("Which potion:")
+                print("[1] Heal Potion")
+                print("[2] Mana Potion")
+                choice = input("Choice: ")
+
+                if choice == '1':
+                    player.use_heal_potion()
+                elif choice == '2':
+                    player.use_mana_potion()
+                else:
+                    print("Invalid Option")
 
             elif action == 'm':
                 clear()

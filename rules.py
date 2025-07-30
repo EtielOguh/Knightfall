@@ -144,12 +144,6 @@ def try_drop_item(player, mob):
     return None
 
 
-def show_menu():
-    print("\nA) Attack Enemy     B) Potion     Z) Change Zone   X) Back Zone   D) Dynamic Zone ON     P) Boss Fight")
-    print("F) Run Enemy       I) Equip Iten     E) Show Bag        S) Save/Exit    H) Dynamic Zone OFF")
-    action = input("Choose one > ").strip().lower()
-    return action
-
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 

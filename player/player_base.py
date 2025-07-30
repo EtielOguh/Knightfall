@@ -10,19 +10,24 @@ class Player():
         self.class_type = type
         self.level = 1
         self.attack = attack
+        self.skills = []
+        self.all_skills = []
         self.defense = defense
         self.health = health
         self.mana = 100
+        self.mana_max = 100
         self.max_health = 100
         self.zone = 1
         self.right_hand = []
         self.left_hand = []
         self.bag = []
-        self.potion = 0
+        self.healpotions = 0
+        self.manapotions = 0
         self.xp = 0
         self.xp_max = 100
         self.money = 0
         self.dynamic_zone = False
+        
 
     def player_is_alive(self):
         return self.health > 0
@@ -35,25 +40,71 @@ class Player():
         if damage > enemy.health:
             damage = enemy.health
         enemy.damage_received(damage)
-
+    
+    def use_skill(self, skill_index, enemy):
+        if skill_index < 0 or skill_index >= len(self.skills):
+            print ("Invalid Skill!")
+        
+        skill = self.skills[skill_index]
+        if self.mana >= skill["mana_cost"]:
+            self.mana -= skill["mana_cost"]
+            skill["execute"](enemy)
+            print(f"Mana:{self.mana}/{self.mana_max}")
+        else:
+            print("No mana!")
+            
+    def unlock_skills(self):
+        self.skills = [
+            s for s in self.all_skills if self.level >= s["required_level"]
+        ]
+    
+    def level_up(self):
+            self.level += 1
+            self.xp -= self.xp_max
+            self.attack += 3
+            self.max_health += 50
+            self.mana_max += 20
+            self.health = self.max_health
+            self.mana = self.mana_max
+            self.xp_max = self.calculate_xp_max(self.level)
+            self.unlock_skills()
+            print(f"Level Up! {self.level}. Xp Left: {self.xp}/{self.xp_max}")
+    
     def stats(self):
-        print(f"\nPlayer Stats: {self.name} Lv:{self.level} | HP:{self.health}/{self.max_health} | Atk:{self.attack} | Def:{self.defense} | XP:{self.xp}/{self.xp_max} | $:{self.money} | Pot: {self.potion}\n")
+        print(f"\nPlayer Stats: {self.name} Lv:{self.level} | HP:{self.health}/{self.max_health} | Atk:{self.attack} | Def:{self.defense} | XP:{self.xp}/{self.xp_max} | $:{self.money} | Potions -  Heal: {self.healpotions} Mana: {self.manapotions}\n")
 
+    
     def potion_drops(player):
-        drop_chance = randint(0, 3)
-        if drop_chance == 3:
-            player.potion += 1
-            print(f"Potion drops: + 1")
+        drop_chance = randint(0, 9)
+        if drop_chance == 9:
+            player.healpotions += 1
+            print("Heal Potion drop: +1")
+        elif drop_chance == 8:
+            player.manapotions += 1
+            print("Mana Potion drop: +1")
 
-    def potion_use(player):
-        if player.potion > 0 and player.health < player.max_health:
+    def use_heal_potion(player):
+        if player.healpotions > 0 and player.health < player.max_health:
             heal_amount = min(40, player.max_health - player.health)
             player.health += heal_amount
-            player.potion -= 1
-            print(f"Potion used your HP now is: {player.health}/{player.max_health}")
-        elif player.potion == 0:
-            print("You don't have potion to use")
+            player.healpotions -= 1
+            print(f"Heal potion used. HP: {player.health}/{player.max_health}")
+        elif player.healpotions == 0:
+            print("You don't have a heal potion.")
+        else:
+            print("You're already at full HP.")
 
+    def use_mana_potion(player):
+        if player.manapotions > 0 and player.mana < player.max_mana:
+            mana_restore = min(30, player.max_mana - player.mana)
+            player.mana += mana_restore
+            player.manapotions -= 1
+            print(f"Mana potion used. Mana: {player.mana}/{player.max_mana}")
+        elif player.manapotions == 0:
+            print("You don't have a mana potion.")
+        else:
+            print("You're already at full Mana.")
+            
     def show_bag_itens(player):
         if not player.bag:
             print("Empty Bag!")
@@ -86,14 +137,6 @@ class Player():
         while self.xp >= self.xp_max:
             self.level_up()
 
-    def level_up(self):
-        self.level += 1
-        self.xp -= self.xp_max
-        self.attack += 3
-        self.max_health += 50
-        self.health = self.max_health
-        self.xp_max = self.calculate_xp_max(self.level)
-        print(f"Level Up! {self.level}. Xp Left: {self.xp}/{self.xp_max}")
 
     def calculate_xp_max(self, level):
         # Função nova progressiva para XP máximo

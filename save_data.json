@@ -1,0 +1,37 @@
+{
+    "name": "Knight",
+    "class_type": 1,
+    "level": 1,
+    "attack": 25,
+    "defense": 5,
+    "health": 32,
+    "max_health": 100,
+    "zone": 1,
+    "xp": 60,
+    "xp_max": 100,
+    "money": 60,
+    "mana_potions": 1,
+    "heal_potions": 0,
+    "dynamic_zone": true,
+    "bag": [
+        {
+            "name": "Wood Shield",
+            "base_attack": 0,
+            "defense": 10,
+            "type": 1,
+            "rarity": "COMMON",
+            "buff": 0,
+            "quantity": 1,
+            "price": 25
+        },
+        {
+            "name": "Jewel of Soul",
+            "type": 1,
+            "quantity": 1,
+            "price": 10,
+            "is_stone": true
+        }
+    ],
+    "right_hand": [],
+    "left_hand": []
+}

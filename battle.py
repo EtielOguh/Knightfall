@@ -5,6 +5,7 @@ from player.save_manager import save_player
 import sys
 
 
+
 def show_full_menu():
     valid = ['z', 'x', 'i', 's', 'e', 'p', 'd', 'h', 'm', 'q']
     print("\n=== Full Menu ===")
@@ -37,7 +38,7 @@ def turn_based_battle(player, monster):
         clear()
         print_battle_status(player, monster)
         print("\nA) Attack   P) Potion   F) Run  S)Skill Damage")
-        action = input("> ").lower()
+        action = input("> ")
 
         if action == 'a':
             dmg = player.attack_enemy(monster)
@@ -68,8 +69,8 @@ def turn_based_battle(player, monster):
             for i, s in enumerate (player.skills):
                 print(f"{i}) {s['name']} - Mana: {s['mana_cost']} - {s['description']}")
             
-            choice = input = int(input("Choose your skill: "))
-            player.use_skill(choice, monster)
+            skill_choice = int(input("Choose your skill: "))
+            player.use_skill(skill_choice, monster)
             
         else:
             print("Invalid action!")

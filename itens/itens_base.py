@@ -1,13 +1,14 @@
 from random import randint
 
 class Itens_Base:
-    def __init__(self, name, attack, defense, type, rarity, buff,quantity, price = None):
+    def __init__(self, name, attack, defense, type, rarity, buff,quantity, slot, price = None):
         self.name = name
         self.base_attack = attack
         self.defense = defense
         self.type = type
         self.rarity = rarity
         self.buff = buff
+        self.slot = slot
         self.quantity = quantity
         self.price = price if price is not None else self.gerar_preco()
 

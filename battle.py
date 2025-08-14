@@ -55,11 +55,6 @@ def turn_based_battle(player, monster):
             if monster.enemy_is_alive():
                 mdmg = monster.attack_player(player)
                 print(f"{monster.name} hits you for {mdmg} damage!")
-
-            if player.health <= 20 or monster.attack > player.health:
-                if player.potion > 0:
-                    print("Auto-using potion...")
-                    player.potion_use()
                     
         elif action == 'p':
             print("Which potion:")
@@ -87,6 +82,7 @@ def turn_based_battle(player, monster):
             
             skill_choice = int(input("Choose your skill: "))
             player.use_skill(skill_choice - 1, monster)
+            sleep(1)
             
         else:
             print("Invalid action!")
@@ -113,8 +109,8 @@ def Battle(player):
                         monster.attack_player(player)
 
                     if player.health <= 20 or monster.attack > player.health:
-                        if player.potion > 0:
-                            player.potion_use()
+                        if player.healpotions > 0:
+                            player.use_healpotions()
 
                 if not monster.enemy_is_alive():
                     clear()

@@ -11,6 +11,8 @@ from itens.archer import archer_weapon
 from itens.knight import knight_swords, knight_shields
 from itens.thief import thief_dagger
 from itens.mage import mage_staffs
+from itens.healm import universal_healm
+from itens.armor import universal_armors
 from time import sleep
 from itens.stone import Jewel_group
 from itens.rarity import Rarity
@@ -96,18 +98,26 @@ def try_drop_stone(mob, player, drop_chance=0.2):
     return None
 
 
+universal_items = universal_healm # Capacete de Couro, Capacete de Ferro, etc.
+
 def get_droppable_items(player, mob):
     # Lista de itens por classe
     items_by_class = {
         1: knight_swords + knight_shields,  # Knight
         2: archer_weapon,                   # Archer
-        3: thief_dagger, # Thief
-        4: mage_staffs # Mage Itens
+        3: thief_dagger,                    # Thief
+        4: mage_staffs                      # Mage Itens
     }
+
+    # Pega os itens específicos da classe do jogador
+    class_specific_items = items_by_class.get(player.class_type, [])
+
+    # Combina os itens específicos com os itens universais
+    all_possible_drops = class_specific_items + universal_items + universal_armors
 
     # Filtra os itens que têm raridade permitida no mob
     droppable_items = [
-        item for item in items_by_class.get(player.class_type, [])
+        item for item in all_possible_drops
         if item.rarity in mob.allowed_rarities
     ]
 

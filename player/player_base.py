@@ -166,17 +166,21 @@ class Player():
             return False
 
     def equip_itens(self):
-        print("Currently Equipped Items:")
+        print("\n--- Currently Equipped Items ---")
 
-        if self.right_hand:
-            print(f"Right Hand: {self.right_hand[0]}")
-        else:
-            print("Right Hand: Empty")
+        equipment_slots = {
+            "Right Hand": self.right_hand,
+            "Left Hand ": self.left_hand,
+            "Armor     ": self.body,
+            "Head      ": self.head
+        }
 
-        if self.left_hand:
-            print(f"Left Hand: {self.left_hand[0]}")
-        else:
-            print("Left Hand: Empty")
+        for slot_name, items_list in equipment_slots.items():
+            item_name = items_list[0].name if items_list else "Empty"
+            print(f"| {slot_name} | {item_name}")
+
+        print("--------------------------------\n")
+
 
         if not self.bag:
             rules.clear()

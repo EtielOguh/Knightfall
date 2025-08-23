@@ -180,6 +180,7 @@ class Player():
             print(f"| {slot_name} | {item_name}")
 
         print("--------------------------------\n")
+    
 
 
         if not self.bag:

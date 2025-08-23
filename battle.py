@@ -6,7 +6,6 @@ import sys
 from time import sleep
 
 
-
 def show_full_menu():
     valid = ['z', 'x', 'i', 's', 'e', 'p', 'd', 'h', 'm', 'q']
     print("\n=== Full Menu ===")

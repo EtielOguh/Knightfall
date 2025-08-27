@@ -8,7 +8,7 @@ from player.thief import Thief
 from player.mage import Mage
     
 from itens.knight import knight_swords, knight_shields
-from itens.archer import archer_weapon
+from itens.archer import archer_weapons
 from itens.thief import thief_dagger
 from itens.mage import mage_staffs
 
@@ -24,7 +24,7 @@ from itens.stone import Jewel_group  # Importa as classes das joias
 item_classes = {
     **{item.name: item.__class__ for item in knight_swords},
     **{item.name: item.__class__ for item in knight_shields},
-    **{item.name: item.__class__ for item in archer_weapon},
+    **{item.name: item.__class__ for item in archer_weapons},
     **{item.name: item.__class__ for item in thief_dagger},
     **{item.name: item.__class__ for item in mage_staffs}
 }

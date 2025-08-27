@@ -7,7 +7,7 @@ from monsters.boss import boss_zone_1, boss_zone_2,boss_zone_3, boss_zone_4, bos
 from random import choice, random, randint
 import os
 from copy import deepcopy
-from itens.archer import archer_weapon
+from itens.archer import archer_weapons
 from itens.knight import knight_swords, knight_shields
 from itens.thief import thief_dagger
 from itens.mage import mage_staffs
@@ -98,13 +98,13 @@ def try_drop_stone(mob, player, drop_chance=0.2):
     return None
 
 
-universal_items = universal_healm # Capacete de Couro, Capacete de Ferro, etc.
+universal_items = universal_healm + universal_armors # Capacete de Couro, Capacete de Ferro, etc.
 
 def get_droppable_items(player, mob):
     # Lista de itens por classe
     items_by_class = {
         1: knight_swords + knight_shields,  # Knight
-        2: archer_weapon,                   # Archer
+        2: archer_weapons,                   # Archer
         3: thief_dagger,                    # Thief
         4: mage_staffs                      # Mage Itens
     }
@@ -113,7 +113,7 @@ def get_droppable_items(player, mob):
     class_specific_items = items_by_class.get(player.class_type, [])
 
     # Combina os itens específicos com os itens universais
-    all_possible_drops = class_specific_items + universal_items + universal_armors
+    all_possible_drops = class_specific_items + universal_items 
 
     # Filtra os itens que têm raridade permitida no mob
     droppable_items = [

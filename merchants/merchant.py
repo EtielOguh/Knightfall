@@ -1,7 +1,9 @@
+from itens.itensmerchant.itens_for_sell import get_sellers_items
+
 class Merchant:
-    def __init__(self, name, items_for_sale):
-        self.name = name
-        self.items_for_sale = items_for_sale
+    def __init__(self):
+        self.name = "Doom HardMob"
+        self.items_for_sale = []
 
     def show_menu(self, player):
         while True:
@@ -32,7 +34,7 @@ class Merchant:
                 print("Você não tem itens para vender.")
                 return
 
-            player.display_bag()
+            player.show_bag_itens()
             print("0) Cancelar e voltar")
 
             try:
@@ -58,6 +60,7 @@ class Merchant:
                 print("Por favor, digite um número válido.")
 
     def buy_items(self, player):
+        self.items_for_sale = get_sellers_items(player)
         while True:
             print(f"\n--- Itens à venda na {self.name}'s Shop ---")
             for idx, item in enumerate(self.items_for_sale, 1):

@@ -4,4 +4,4 @@ from .archer_weapon import IronBow
 from .archer_weapon import DiamondBow
 from .archer_weapon import HellfangBow
 
-archer_weapon = [WoodBow(), StoneBow (), IronBow(), DiamondBow(), HellfangBow()]
+archer_weapons = [WoodBow(), StoneBow (), IronBow(), DiamondBow(), HellfangBow()]

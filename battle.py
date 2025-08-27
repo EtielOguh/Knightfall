@@ -1,9 +1,10 @@
-from rules import spawn_monster, try_drop_item, clear, boss_fight, merchant, try_drop_stone
+from rules import spawn_monster, try_drop_item, clear, boss_fight, try_drop_stone
 from player.player_base import Player
 from animation import battle_animation
 from player.save_manager import save_player
 import sys
 from time import sleep
+from merchants.merchant import Merchant
 
 
 def show_full_menu():
@@ -215,7 +216,8 @@ def Battle(player):
                     monster = spawn_monster(player.zone, player)
 
                 elif full_action == 'm':
-                    merchant(player)
+                    meu_mercador = Merchant()
+                    meu_mercador.show_menu(player)
 
                 elif full_action == 'q':
                     clear()

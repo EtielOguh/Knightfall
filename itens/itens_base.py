@@ -1,5 +1,13 @@
 from random import randint
+from .rarity import Rarity
 
+rarity_multiplier = {
+        Rarity.COMMON : 1.0,
+        Rarity.UNCOMMON: 1.5,
+        Rarity.RARE: 2.5,
+        Rarity.EPIC: 3.5,
+        Rarity.DEVIL: 5.0
+    }
 class Itens_Base:
     def __init__(self, name, attack, defense, type, rarity, buff,quantity, slot, price = None):
         self.name = name
@@ -12,9 +20,12 @@ class Itens_Base:
         self.quantity = quantity
         self.price = price if price is not None else self.gerar_preco()
 
+
     def gerar_preco(self):
-        return randint(20, 40)
-    
+        base_value = 50
+        multiplier = rarity_multiplier.get(self.rarity, 1.0)
+        return base_value * multiplier
+
     @property
     def attack(self):
         multiplicadores = {

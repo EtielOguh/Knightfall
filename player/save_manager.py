@@ -71,7 +71,7 @@ def serialize_items(items):
 
 def save_player(player, filename="save_data.json"):
     data = {
-        "name": player.player_name,
+        "name": player.name,
         "class_type": player.class_type,
         "level": player.level,
         "attack": player.attack,
@@ -104,7 +104,6 @@ def load_player(filename="save_data.json"):
     from player.mage import Mage
 
     name = data["name"]
-    
     if data["class_type"] == 1:
         player = Knight(name)
     elif data["class_type"] == 2:

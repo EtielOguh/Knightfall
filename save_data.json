@@ -4,20 +4,20 @@
     "level": 1,
     "attack": 25,
     "defense": 5,
-    "health": 40,
+    "health": 50,
     "max_health": 100,
     "zone": 1,
-    "xp": 30,
+    "xp": 90,
     "xp_max": 100,
-    "money": 30,
-    "mana_potions": 0,
+    "money": 90,
+    "mana_potions": 1,
     "heal_potions": 0,
     "dynamic_zone": false,
     "bag": [
         {
             "name": "Jewel of Soul",
             "type": 1,
-            "quantity": 2,
+            "quantity": 3,
             "price": 10,
             "is_stone": true
         }

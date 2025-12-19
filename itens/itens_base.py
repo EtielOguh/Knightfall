@@ -25,6 +25,29 @@ class Itens_Base:
         base_value = 50
         multiplier = rarity_multiplier.get(self.rarity, 1.0)
         return base_value * multiplier
+    
+    def buff_itens(player):
+        while True:
+            if not player.bag:
+                print("You don't have itens")
+                return
+            
+            player.show_bag_itens()
+            print("0) Cancel and Back")
+
+            try:
+                choice = int(input("\nChoose one item to buff:")) - 1
+
+                if choice == -1:
+                    return
+                    
+                if choice < 0 or choice >= len(player.bag):
+                    print("Invalid number! Try again!")
+                    continue
+
+            except ValueError:
+                print ("Wrong number, try again")
+
 
     @property
     def attack(self):
@@ -40,9 +63,11 @@ class Itens_Base:
             8: 3.0,
             9: 3.5
         }
+        
         multiplicador = multiplicadores.get(self.buff, 1.0)
         return int(self.base_attack * multiplicador)
     
+
 
 
     def __str__(self):

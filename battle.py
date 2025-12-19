@@ -18,8 +18,7 @@ def show_full_menu():
 
 def show_battle_menu():
     print("\n====================== Battle Menu =======================")
-    print("A) Attack   F) Runaway   P) Use Potion   M) Open Full Menu")
-    print("B) Enter Battle Mode (Turn-Based)")
+    print("A) Attack (Turn Mode)  F) Runaway   P) Use Potion   M) Open Full Menu")
     print("==========================================================")
     return input("Choose your action: ").lower()
 
@@ -100,30 +99,6 @@ def Battle(player):
             action = show_battle_menu()
 
             if action == 'a':
-                battle_animation()
-
-                while monster.enemy_is_alive() and player.player_is_alive():
-                    player.attack_enemy(monster)
-
-                    if monster.enemy_is_alive():
-                        monster.attack_player(player)
-
-                    if player.health <= 20 or monster.attack > player.health:
-                        if player.healpotions > 0:
-                            player.use_healpotions()
-
-                if not monster.enemy_is_alive():
-                    clear()
-                    save_player(player)
-                    print(f"{monster.name} Defeated!")
-                    player.exp_wins(monster)
-                    monster.drop_money(player)
-                    player.potion_drops()
-                    try_drop_stone(monster, player)
-                    try_drop_item(player, monster)
-                    monster = spawn_monster(player.zone, player)
-
-            elif action == 'b':
                 clear()
                 print("You enter full Battle Mode!\n")
                 result = turn_based_battle(player, monster)

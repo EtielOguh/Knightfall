@@ -37,15 +37,16 @@ def chose_class():
 
     print("1 – Knight | 2 – Archer | 3 – Thief | 4 - Mage")
     choice = input("> Choose (1, 2, 3 or 4): ").strip()
+    name = input("> Choose your name: ").strip()
 
     if choice == "1":
-        player = Knight()
+        player = Knight(name)
     elif choice == "2":
-        player = Archer()
+        player = Archer(name)
     elif choice == "3":
-        player = Thief()
+        player = Thief(name)
     elif choice == "4":
-        player = Mage()
+        player = Mage(name)
     else:
         print("Invalid choice, now your class is a Knight (default)")
         player = Knight()
@@ -70,7 +71,7 @@ def serialize_items(items):
 
 def save_player(player, filename="save_data.json"):
     data = {
-        "name": player.name,
+        "name": player.player_name,
         "class_type": player.class_type,
         "level": player.level,
         "attack": player.attack,
@@ -100,15 +101,18 @@ def load_player(filename="save_data.json"):
     from player.knight import Knight
     from player.archer import Archer
     from player.thief import Thief
+    from player.mage import Mage
 
+    name = data["name"]
+    
     if data["class_type"] == 1:
-        player = Knight()
+        player = Knight(name)
     elif data["class_type"] == 2:
-        player = Archer()
+        player = Archer(name)
     elif data["class_type"] == 3:
-        player = Thief()
+        player = Thief(name)
     elif data["class_type"] == 4:
-        player = Mage()
+        player = Mage(name)
     else:
         raise Exception("Invalid Class.")
 

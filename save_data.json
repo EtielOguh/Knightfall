@@ -1,39 +1,27 @@
 {
-    "name": "Mage",
-    "class_type": 4,
-    "level": 7,
-    "attack": 73,
-    "defense": 27,
-    "health": 369,
-    "max_health": 400,
+    "name": "Hugo",
+    "class_type": 1,
+    "level": 1,
+    "attack": 25,
+    "defense": 5,
+    "health": 40,
+    "max_health": 100,
     "zone": 1,
-    "xp": 280,
-    "xp_max": 690,
-    "money": 1840,
-    "mana_potions": 5,
-    "heal_potions": 10,
-    "dynamic_zone": true,
+    "xp": 30,
+    "xp_max": 100,
+    "money": 30,
+    "mana_potions": 0,
+    "heal_potions": 0,
+    "dynamic_zone": false,
     "bag": [
         {
-            "name": "Jewel Of Bless",
-            "type": 2,
-            "quantity": 7,
-            "price": 20,
+            "name": "Jewel of Soul",
+            "type": 1,
+            "quantity": 2,
+            "price": 10,
             "is_stone": true
         }
     ],
-    "right_hand": [
-        {
-            "name": "Arcane Staff",
-            "base_attack": 30,
-            "defense": 0,
-            "type": 4,
-            "rarity": "RARE",
-            "buff": 0,
-            "slot": "right_hand",
-            "quantity": 1,
-            "price": 38
-        }
-    ],
+    "right_hand": [],
     "left_hand": []
 }

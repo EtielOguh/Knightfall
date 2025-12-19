@@ -10,7 +10,7 @@ def get_archer_skills(player):
         {
         "name": "Multi Shot",
         "mana_cost": 30,
-        "description": "Atira 5 flechas causando dano.",
+        "description": "Shotting five arrows in a row",
         "execute": lambda enemy: multi_shot(player,enemy),
         "required_level": 1
         }

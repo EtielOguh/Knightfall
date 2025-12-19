@@ -5,8 +5,8 @@ from copy import deepcopy
 from itens.stone import Stone
 
 class Player():
-    def __init__(self, name, health, attack, defense, type):
-        self.name = name
+    def __init__(self, player_name, health, attack, defense, type):
+        self.name = player_name
         self.class_type = type
         self.level = 1
         self.attack = attack

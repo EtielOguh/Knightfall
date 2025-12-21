@@ -5,6 +5,7 @@ from player.save_manager import save_player
 import sys
 from time import sleep
 from merchants.merchant import Merchant
+from itens.itens_base import Itens_Base
 
 
 def show_full_menu():
@@ -193,6 +194,9 @@ def Battle(player):
                 elif full_action == 'm':
                     meu_mercador = Merchant()
                     meu_mercador.show_menu(player)
+
+                elif full_action == 'b':
+                    Itens_Base.buff_itens(player)
 
                 elif full_action == 'q':
                     clear()

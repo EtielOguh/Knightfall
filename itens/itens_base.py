@@ -1,6 +1,6 @@
 from random import randint
 from .rarity import Rarity
-
+from .rulesbuff import can_buff, apply_buff
 rarity_multiplier = {
         Rarity.COMMON : 1.0,
         Rarity.UNCOMMON: 1.5,
@@ -26,6 +26,7 @@ class Itens_Base:
         multiplier = rarity_multiplier.get(self.rarity, 1.0)
         return base_value * multiplier
     
+
     def buff_itens(player):
         while True:
             if not player.bag:
@@ -48,6 +49,14 @@ class Itens_Base:
             except ValueError:
                 print ("Wrong number, try again")
 
+            item = player.bag[choice]
+
+            if not can_buff(item):
+                print("This item cannot be buffed! Sorry")
+                continue
+
+            apply_buff(item)
+            print(f"{item.name} has been buffed! now your item is lvl {item.buff}")
 
     @property
     def attack(self):

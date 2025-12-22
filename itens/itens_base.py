@@ -25,6 +25,38 @@ class Itens_Base:
         base_value = 50
         multiplier = rarity_multiplier.get(self.rarity, 1.0)
         return base_value * multiplier
+
+    def buff_equipped_items(player):
+        while True:
+            equip_map = player.show_equip_itens()
+            print("0) Cancel and Back")
+
+            if not equip_map:
+                return
+
+            try:
+                choice = int(input("\nChoose equipped item to buff: "))
+
+                if choice == 0:
+                    return
+
+                if choice not in equip_map:
+                    print("Invalid choice!")
+                    continue
+
+            except ValueError:
+                print("Wrong number, try again")
+                continue
+
+            item = equip_map[choice]
+
+            if not can_buff(item):
+                print("This item cannot be buffed.")
+                continue
+
+            apply_buff(item)
+            print(f"{item.name} has been buffed! Now it is +{item.buff} 🔥")
+
     
 
     def buff_itens(player):

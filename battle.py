@@ -11,7 +11,7 @@ from itens.itens_base import Itens_Base
 def show_full_menu():
     valid = ['z', 'x', 'i', 's', 'e', 'p', 'd', 'h', 'm', 'q']
     print("\n=== Full Menu ===")
-    print("Z) Next Zone (-$50)   X) Back Zone (-$50)   I) Equip Items")
+    print("Z) Next Zone (-$50)   X) Back Zone (-$50)   I) Equip Items  B) Buff Item")
     print("S) Save and Exit   E) Show Bag   P) Boss Fight   D) Enable Dynamic Zone")
     print("H) Disable Dynamic Zone   M) Merchant   Q) Back to Battle\n")
     choice = input("Choose your option: ").lower()

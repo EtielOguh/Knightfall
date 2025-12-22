@@ -114,14 +114,36 @@ class Player():
         else:
             print("You're already at full Mana.")
             
-    def show_bag_itens(player):
-        if not player.bag:
-            print("Empty Bag!")
-        else:
-            print("Bag Itens: ")
-            for item in player.bag:
-                    print(item)
+    def show_bag_itens(self):
+        for i, item in enumerate(self.bag, start=1):
+            if hasattr(item, "buff"):
+                print(f"{i}) {item.name} +{item.buff}")
+            else:
+                print(f"{i}) {item.name} x {item.quantity}")
+                
+    def show_equip_itens(self):
+        equip_slots = {
+            "Right Hand": self.right_hand,
+            "Left Hand": self.left_hand,
+            "Head": self.head,
+            "Body": self.body,
+            "Hands": self.hands
+        }
 
+        index = 1
+        equip_map = {}
+
+        for slot_name, slot_items in equip_slots.items():
+            if slot_items:
+                item = slot_items[0]
+                equip_map[index] = item
+                print(f"{index}) {slot_name}: {item.name} +{item.buff}")
+                index += 1
+
+        if not equip_map:
+            print("No equipped items.")
+
+        return equip_map
 
     def add_item_to_bag(self, item):
         # Só empilha se o item for empilhável (tem quantity) e for do mesmo tipo

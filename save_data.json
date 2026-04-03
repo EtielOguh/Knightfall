@@ -4,14 +4,14 @@
     "level": 4,
     "attack": 34,
     "defense": 5,
-    "health": 250,
+    "health": 242,
     "max_health": 250,
     "zone": 1,
-    "xp": 40,
+    "xp": 190,
     "xp_max": 270,
-    "money": 400,
-    "mana_potions": 2,
-    "heal_potions": 2,
+    "money": 550,
+    "mana_potions": 3,
+    "heal_potions": 3,
     "dynamic_zone": true,
     "bag": [
         {
@@ -20,17 +20,6 @@
             "quantity": 7,
             "price": 10,
             "is_stone": true
-        },
-        {
-            "name": "Steel Helmet",
-            "base_attack": 0,
-            "defense": 25,
-            "type": 0,
-            "rarity": "RARE",
-            "buff": 0,
-            "slot": "head",
-            "quantity": 1,
-            "price": 125.0
         }
     ],
     "right_hand": [],

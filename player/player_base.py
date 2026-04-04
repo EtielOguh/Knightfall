@@ -167,58 +167,60 @@ class Player():
         else:
             return False
 
-    def equip_itens(self):
-        print("\n--- Currently Equipped Items ---")
 
-        equipment_slots = {
-            "Right Hand": self.right_hand,
-            "Left Hand ": self.left_hand,
-            "Armor     ": self.body,
-            "Head      ": self.head
-        }
-
-        for slot_name, items_list in equipment_slots.items():
-            item_name = items_list[0].name if items_list else "Empty"
-            print(f"| {slot_name} | {item_name}")
-
-        print("--------------------------------\n")
-    
-
-
-        if not self.bag:
-            rules.clear()
-            print("Empty Bag!\n")
-            return
-
-        # Filtra só itens que não são stones (joias)
-        visible_items = [item for item in self.bag if not getattr(item, "is_stone", False)]
-
-        if not visible_items:
-            print("No equipable items in bag.\n")
-            return
-
-        print("\nBag Items:")
-        for idx, item in enumerate(visible_items, 1):
-                print(f"{idx}) Name: {item.name} | Attack: {item.base_attack} | Defence: {item.defense} | Quantity: x{item.quantity}")
-        print("0) Cancel and go back")
-
+    def equip_items(self):
         while True:
+            rules.clear()
+
+            equipment_slots = {
+                "Right Hand": self.right_hand,
+                "Left Hand": self.left_hand,
+                "Body": self.body,
+                "Head": self.head
+            }
+
+            print("[EQUIPMENT]\n")
+            for slot_name, items_list in equipment_slots.items():
+                item_name = items_list[0].name if items_list else "Empty"
+                print(f"{slot_name:<11}: {item_name}")
+
+            visible_items = [item for item in self.bag if not getattr(item, "is_stone", False)]
+
+            print("\n[BAG]\n")
+            if visible_items:
+                for idx, item in enumerate(visible_items, 1):
+                    print(
+                        f"{idx}) {item.name:<18} "
+                        f"ATK: {item.base_attack:<3} "
+                        f"DEF: {item.defense:<3} "
+                        f"QTY: x{item.quantity}"
+                    )
+            else:
+                print("No equipable items available.")
+
+            print("\n0) Back")
+
             try:
-                choice = int(input("\nTell me the item number: "))
+                choice = int(input("\nSelect item: "))
 
                 if choice == 0:
-                    print("Returning to the game...")
+                    print("Returning...")
                     sleep(0.5)
                     rules.clear()
                     return
 
+                if not visible_items:
+                    print("No items to equip.")
+                    sleep(0.8)
+                    continue
+
                 if choice < 1 or choice > len(visible_items):
-                    print("Invalid item number!")
+                    print("Invalid item number.")
+                    sleep(0.8)
                     continue
 
                 selected_item = visible_items[choice - 1]
 
-                # Se tem mais de 1 na pilha, tira 1 pra equipar
                 if hasattr(selected_item, "quantity") and selected_item.quantity > 1:
                     selected_item.quantity -= 1
                     item_to_equip = deepcopy(selected_item)
@@ -227,47 +229,35 @@ class Player():
                     item_to_equip = selected_item
                     self.bag.remove(selected_item)
 
-                # Equipamentos por slots
+                slot_map = {
+                    "right_hand": self.right_hand,
+                    "left_hand": self.left_hand,
+                    "head": self.head,
+                    "body": self.body
+                }
 
-                if item_to_equip.slot == "right_hand":
-                    if self.right_hand:
-                        old = self.right_hand.pop()
-                        self.attack -= old.attack
-                        self.defense -= old.defense
-                        print(f"{old.name} broke!")
-                    self.right_hand.append(item_to_equip)
-                
-                elif item_to_equip.slot == "left_hand":
-                    if self.left_hand:
-                        old = self.left_hand.pop()
-                        self.attack -= old.attack
-                        self.defense -= old.defense
-                        print(f"{old.name} broke!")
-                    self.left_hand.append(item_to_equip)
-                
-                elif item_to_equip.slot == "head":
-                    if self.head:
-                        old = self.head.pop()
-                        self.attack -= old.attack
-                        self.defense -= old.defense
-                        print(f"{old.name} broke!")
-                    self.head.append(item_to_equip)
+                target_slot = slot_map.get(item_to_equip.slot)
 
-                elif item_to_equip.slot == "body":
-                    if self.body:
-                        old = self.body.pop()
-                        self.attack -= old.attack
-                        self.defense -= old.defense
-                        print(f"{old.name} broke!")
-                    self.body.append(item_to_equip)
-                
-                else:
+                if target_slot is None:
                     print(f"Cannot equip {item_to_equip.name}. Invalid slot.")
                     self.bag.append(item_to_equip)
-                    break
+                    sleep(1)
+                    continue
 
+                if target_slot:
+                    old_item = target_slot.pop()
+                    self.attack -= old_item.attack
+                    self.defense -= old_item.defense
+                    self.bag.append(old_item)
+                    print(f"Unequipped: {old_item.name}")
+
+                target_slot.append(item_to_equip)
                 self.attack += item_to_equip.attack
                 self.defense += item_to_equip.defense
 
+                print(f"Equipped: {item_to_equip.name}")
+                sleep(0.8)
+
             except ValueError:
-                print("Please enter a valid number!")
+                print("Enter a valid number.")
+                sleep(0.8)

@@ -155,7 +155,7 @@ class BattleSystem:
 
         elif action == "i":
             clear()
-            Player.equip_itens(self.player)
+            Player.equip_items(self.player)
 
         elif action == "s":
             from player.save_manager import save_player

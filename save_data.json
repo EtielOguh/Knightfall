@@ -1,0 +1,27 @@
+{
+    "name": "luma",
+    "class_type": 2,
+    "level": 4,
+    "attack": 39,
+    "defense": 3,
+    "health": 246,
+    "max_health": 250,
+    "zone": 2,
+    "xp": 40,
+    "xp_max": 270,
+    "money": 350,
+    "mana_potions": 2,
+    "heal_potions": 0,
+    "dynamic_zone": true,
+    "bag": [
+        {
+            "name": "Jewel of Soul",
+            "type": 1,
+            "quantity": 3,
+            "price": 10,
+            "is_stone": true
+        }
+    ],
+    "right_hand": [],
+    "left_hand": []
+}

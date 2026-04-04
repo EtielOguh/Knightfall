@@ -5,8 +5,8 @@ from copy import deepcopy
 from itens.stone import Stone
 
 class Player():
-    def __init__(self, name, health, attack, defense, type):
-        self.name = name
+    def __init__(self, player_name, health, attack, defense, type):
+        self.name = player_name
         self.class_type = type
         self.level = 1
         self.attack = attack
@@ -20,6 +20,9 @@ class Player():
         self.zone = 1
         self.right_hand = []
         self.left_hand = []
+        self.head = []
+        self.body = []
+        self.hands = []
         self.bag = []
         self.healpotions = 0
         self.manapotions = 0
@@ -71,48 +74,56 @@ class Player():
             print(f"Level Up! {self.level}. Xp Left: {self.xp}/{self.xp_max}")
     
     def stats(self):
-        print(f"\nPlayer Stats: {self.name} Lv:{self.level} | HP:{self.health}/{self.max_health} | Atk:{self.attack} | Def:{self.defense} | XP:{self.xp}/{self.xp_max} | $:{self.money} | Potions -  Heal: {self.healpotions} Mana: {self.manapotions}\n")
+        print(f"{self.name} Lv.{self.level}")
+        print(f"HP {self.health}/{self.max_health} | MP {self.mana}/{self.mana_max}")
+        print(f"ATK {self.attack} | DEF {self.defense}")
+        print(f"XP {self.xp}/{self.xp_max} | $ {self.money}")
 
     
-    def potion_drops(player):
+    def potion_drops(self):
+        dropped = []
         drop_chance = randint(0, 9)
+
         if drop_chance == 9:
-            player.healpotions += 1
-            print("Heal Potion drop: +1")
+            self.healpotions += 1
+            dropped.append("Heal Potion")
+
         elif drop_chance == 8:
-            player.manapotions += 1
-            print("Mana Potion drop: +1")
+            self.manapotions += 1
+            dropped.append("Mana Potion")
 
-    def use_heal_potion(player):
-        if player.healpotions > 0 and player.health < player.max_health:
-            heal_amount = min(40, player.max_health - player.health)
-            player.health += heal_amount
-            player.healpotions -= 1
-            print(f"Heal potion used. HP: {player.health}/{player.max_health}")
-        elif player.healpotions == 0:
-            print("You don't have a heal potion.")
-        else:
-            print("You're already at full HP.")
-
-    def use_mana_potion(player):
-        if player.manapotions > 0 and player.mana < player.max_mana:
-            mana_restore = min(30, player.max_mana - player.mana)
-            player.mana += mana_restore
-            player.manapotions -= 1
-            print(f"Mana potion used. Mana: {player.mana}/{player.max_mana}")
-        elif player.manapotions == 0:
-            print("You don't have a mana potion.")
-        else:
-            print("You're already at full Mana.")
+        return dropped
             
-    def show_bag_itens(player):
-        if not player.bag:
-            print("Empty Bag!")
-        else:
-            print("Bag Itens: ")
-            for item in player.bag:
-                    print(item)
+    def show_bag_itens(self):
+        for i, item in enumerate(self.bag, start=1):
+            if hasattr(item, "buff"):
+                print(f"{i}) {item.name} +{item.buff}")
+            else:
+                print(f"{i}) {item.name} x {item.quantity}")
+                
+    def show_equip_itens(self):
+        equip_slots = {
+            "Right Hand": self.right_hand,
+            "Left Hand": self.left_hand,
+            "Head": self.head,
+            "Body": self.body,
+            "Hands": self.hands
+        }
 
+        index = 1
+        equip_map = {}
+
+        for slot_name, slot_items in equip_slots.items():
+            if slot_items:
+                item = slot_items[0]
+                equip_map[index] = item
+                print(f"{index}) {slot_name}: {item.name} +{item.buff}")
+                index += 1
+
+        if not equip_map:
+            print("No equipped items.")
+
+        return equip_map
 
     def add_item_to_bag(self, item):
         # Só empilha se o item for empilhável (tem quantity) e for do mesmo tipo
@@ -156,53 +167,60 @@ class Player():
         else:
             return False
 
-    def equip_itens(self):
-        print("Currently Equipped Items:")
 
-        if self.right_hand:
-            print(f"Right Hand: {self.right_hand[0]}")
-        else:
-            print("Right Hand: Empty")
-
-        if self.left_hand:
-            print(f"Left Hand: {self.left_hand[0]}")
-        else:
-            print("Left Hand: Empty")
-
-        if not self.bag:
-            rules.clear()
-            print("Empty Bag!\n")
-            return
-
-        # Filtra só itens que não são stones (joias)
-        visible_items = [item for item in self.bag if not getattr(item, "is_stone", False)]
-
-        if not visible_items:
-            print("No equipable items in bag.\n")
-            return
-
-        print("\nBag Items:")
-        for idx, item in enumerate(visible_items, 1):
-                print(f"{idx}) Name: {item.name} | Attack: {item.base_attack} | Defence: {item.defense} | Quantity: x{item.quantity}")
-        print("0) Cancel and go back")
-
+    def equip_items(self):
         while True:
+            rules.clear()
+
+            equipment_slots = {
+                "Right Hand": self.right_hand,
+                "Left Hand": self.left_hand,
+                "Body": self.body,
+                "Head": self.head
+            }
+
+            print("[EQUIPMENT]\n")
+            for slot_name, items_list in equipment_slots.items():
+                item_name = items_list[0].name if items_list else "Empty"
+                print(f"{slot_name:<11}: {item_name}")
+
+            visible_items = [item for item in self.bag if not getattr(item, "is_stone", False)]
+
+            print("\n[BAG]\n")
+            if visible_items:
+                for idx, item in enumerate(visible_items, 1):
+                    print(
+                        f"{idx}) {item.name:<18} "
+                        f"ATK: {item.base_attack:<3} "
+                        f"DEF: {item.defense:<3} "
+                        f"QTY: x{item.quantity}"
+                    )
+            else:
+                print("No equipable items available.")
+
+            print("\n0) Back")
+
             try:
-                choice = int(input("\nTell me the item number: "))
+                choice = int(input("\nSelect item: "))
 
                 if choice == 0:
-                    print("Returning to the game...")
+                    print("Returning...")
                     sleep(0.5)
                     rules.clear()
                     return
 
+                if not visible_items:
+                    print("No items to equip.")
+                    sleep(0.8)
+                    continue
+
                 if choice < 1 or choice > len(visible_items):
-                    print("Invalid item number!")
+                    print("Invalid item number.")
+                    sleep(0.8)
                     continue
 
                 selected_item = visible_items[choice - 1]
 
-                # Se tem mais de 1 na pilha, tira 1 pra equipar
                 if hasattr(selected_item, "quantity") and selected_item.quantity > 1:
                     selected_item.quantity -= 1
                     item_to_equip = deepcopy(selected_item)
@@ -211,28 +229,35 @@ class Player():
                     item_to_equip = selected_item
                     self.bag.remove(selected_item)
 
-                # Equipa na mão correta
-                if item_to_equip.attack > 0:
-                    if self.right_hand:
-                        old = self.right_hand.pop()
-                        self.attack -= old.attack
-                        self.defense -= old.defense
-                        print(f"{old.name} broke.")
-                    self.right_hand.append(item_to_equip)
-                else:
-                    if self.left_hand:
-                        old = self.left_hand.pop()
-                        self.attack -= old.attack
-                        self.defense -= old.defense
-                        print(f"{old.name} broke.")
-                    self.left_hand.append(item_to_equip)
+                slot_map = {
+                    "right_hand": self.right_hand,
+                    "left_hand": self.left_hand,
+                    "head": self.head,
+                    "body": self.body
+                }
 
+                target_slot = slot_map.get(item_to_equip.slot)
+
+                if target_slot is None:
+                    print(f"Cannot equip {item_to_equip.name}. Invalid slot.")
+                    self.bag.append(item_to_equip)
+                    sleep(1)
+                    continue
+
+                if target_slot:
+                    old_item = target_slot.pop()
+                    self.attack -= old_item.attack
+                    self.defense -= old_item.defense
+                    self.bag.append(old_item)
+                    print(f"Unequipped: {old_item.name}")
+
+                target_slot.append(item_to_equip)
                 self.attack += item_to_equip.attack
                 self.defense += item_to_equip.defense
 
-                rules.clear()
-                print(f"{item_to_equip.name} has been successfully equipped!")
-                break
+                print(f"Equipped: {item_to_equip.name}")
+                sleep(0.8)
 
             except ValueError:
-                print("Please enter a valid number!")
+                print("Enter a valid number.")
+                sleep(0.8)

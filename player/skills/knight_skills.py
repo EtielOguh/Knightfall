@@ -3,14 +3,14 @@ def get_knight_skills(player):
             {
                 "name": "Power Slash",
                 "mana_cost": 30,
-                "description": "Corte poderoso que causa dano dobrado.",
+                "description": "A powerfull slash givin double damage.",
                 "execute": lambda enemy: power_slash(player, enemy),
                 "required_level": 1
             },
             {
                 "name": "Shield Bash",
                 "mana_cost": 40,
-                "description": "Bash com escudo que causa dano e reduz ataque.",
+                "description": "Bash your shield giving damage",
                 "execute": lambda enemy: shield_bash(player, enemy),
                 "required_level": 5
             }
@@ -19,10 +19,10 @@ def get_knight_skills(player):
 def power_slash(player, enemy):
     damage = player.attack * 2
     enemy.damage_received(damage)
-    print(f"{player.name} usou *Power Slash* e causou {damage} de dano!")
+    print(f"{player.name} used *Power Slash* and give {damage} damage!")
 
 def shield_bash(player, enemy):
     damage = int(player.attack * 1.2)
     enemy.damage_received(damage)
-    print(f"{player.name} usou *Shield Bash* e causou {damage} de dano!")
-    print("O ataque do inimigo foi reduzido temporariamente. (efeito fictício)")
+    enemy.attack - 2
+    print(f"{player.name} used *Shield Bash* and give {damage} damage!")

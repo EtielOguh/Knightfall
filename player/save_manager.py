@@ -8,7 +8,7 @@ from player.thief import Thief
 from player.mage import Mage
     
 from itens.knight import knight_swords, knight_shields
-from itens.archer import archer_weapon
+from itens.archer import archer_weapons
 from itens.thief import thief_dagger
 from itens.mage import mage_staffs
 
@@ -24,7 +24,7 @@ from itens.stone import Jewel_group  # Importa as classes das joias
 item_classes = {
     **{item.name: item.__class__ for item in knight_swords},
     **{item.name: item.__class__ for item in knight_shields},
-    **{item.name: item.__class__ for item in archer_weapon},
+    **{item.name: item.__class__ for item in archer_weapons},
     **{item.name: item.__class__ for item in thief_dagger},
     **{item.name: item.__class__ for item in mage_staffs}
 }
@@ -37,15 +37,16 @@ def chose_class():
 
     print("1 – Knight | 2 – Archer | 3 – Thief | 4 - Mage")
     choice = input("> Choose (1, 2, 3 or 4): ").strip()
+    name = input("> Choose your name: ").strip()
 
     if choice == "1":
-        player = Knight()
+        player = Knight(name)
     elif choice == "2":
-        player = Archer()
+        player = Archer(name)
     elif choice == "3":
-        player = Thief()
+        player = Thief(name)
     elif choice == "4":
-        player = Mage()
+        player = Mage(name)
     else:
         print("Invalid choice, now your class is a Knight (default)")
         player = Knight()
@@ -100,15 +101,17 @@ def load_player(filename="save_data.json"):
     from player.knight import Knight
     from player.archer import Archer
     from player.thief import Thief
+    from player.mage import Mage
 
+    name = data["name"]
     if data["class_type"] == 1:
-        player = Knight()
+        player = Knight(name)
     elif data["class_type"] == 2:
-        player = Archer()
+        player = Archer(name)
     elif data["class_type"] == 3:
-        player = Thief()
+        player = Thief(name)
     elif data["class_type"] == 4:
-        player = Mage()
+        player = Mage(name)
     else:
         raise Exception("Invalid Class.")
 

@@ -81,7 +81,6 @@ def try_drop_stone(mob, player, drop_chance=0.2):
     else:
         target_type = 3
 
-    # Cria lista de CLASSES que combinam com o tipo do mob
     matching_stone_classes = [
         stone_class for stone_class in Jewel_group
         if stone_class().type == target_type
@@ -92,11 +91,9 @@ def try_drop_stone(mob, player, drop_chance=0.2):
         new_stone = selected_class()
         new_stone.quantity += 1
         player.add_item_to_bag(new_stone)
-
         return new_stone
 
     return None
-
 
 universal_items = universal_healm + universal_armors # Capacete de Couro, Capacete de Ferro, etc.
 
@@ -125,34 +122,31 @@ def get_droppable_items(player, mob):
 
 
 def try_drop_item(player, mob):
-
-    # Chances de drop por raridade (em %)
     rarities_with_chances = {
-        Rarity.DEVIL: 0.5,      # 0.5%
-        Rarity.EPIC: 1,         # 1%
-        Rarity.RARE: 3,         # 3%
-        Rarity.UNCOMMON: 5,     # 5%
-        Rarity.COMMON: 10       # 10%
+        Rarity.DEVIL: 0.5,
+        Rarity.EPIC: 1,
+        Rarity.RARE: 3,
+        Rarity.UNCOMMON: 5,
+        Rarity.COMMON: 10
     }
 
     possible_items = get_droppable_items(player, mob)
 
     if not possible_items:
-        print(f"{mob.name} Didn't drop anything useful for your class.")
         return None
 
     for rarity, chance in rarities_with_chances.items():
-        roll = randint(1, 1000)  # Escala de 1000 pra suportar 0.5%
-        if roll <= chance * 10:  # Ex: 0.5% vira 5 em 1000
+        roll = randint(1, 1000)
+
+        if roll <= chance * 10:
             items_of_rarity = [item for item in possible_items if item.rarity == rarity]
+
             if items_of_rarity:
                 dropped_item = choice(items_of_rarity)
                 player.add_item_to_bag(dropped_item)
-                print(f"{mob.name} Dropped: {dropped_item.name} | Attack: {dropped_item.attack} | Rarrity: ({rarity.name})")
                 return dropped_item
 
     return None
-
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')

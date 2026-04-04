@@ -74,45 +74,25 @@ class Player():
             print(f"Level Up! {self.level}. Xp Left: {self.xp}/{self.xp_max}")
     
     def stats(self):
-            print("\n=== Player Stats ===")
-            print(f"Name: {self.name} | Level: {self.level}")
-            print(f"HP: {self.health}/{self.max_health} | Mana: {self.mana}/{self.mana_max}")
-            print(f"Attack: {self.attack} | Defense: {self.defense}")
-            print(f"XP: {self.xp}/{self.xp_max} | Money: {self.money}")
-            print(f"Potions: Heal - {self.healpotions} | Mana - {self.manapotions}")
-            print("====================")
+        print(f"{self.name} Lv.{self.level}")
+        print(f"HP {self.health}/{self.max_health} | MP {self.mana}/{self.mana_max}")
+        print(f"ATK {self.attack} | DEF {self.defense}")
+        print(f"XP {self.xp}/{self.xp_max} | $ {self.money}")
 
     
-    def potion_drops(player):
+    def potion_drops(self):
+        dropped = []
         drop_chance = randint(0, 9)
+
         if drop_chance == 9:
-            player.healpotions += 1
-            print("Heal Potion drop: +1")
+            self.healpotions += 1
+            dropped.append("Heal Potion")
+
         elif drop_chance == 8:
-            player.manapotions += 1
-            print("Mana Potion drop: +1")
+            self.manapotions += 1
+            dropped.append("Mana Potion")
 
-    def use_heal_potion(player):
-        if player.healpotions > 0 and player.health < player.max_health:
-            heal_amount = min(40, player.max_health - player.health)
-            player.health += heal_amount
-            player.healpotions -= 1
-            print(f"Heal potion used. HP: {player.health}/{player.max_health}")
-        elif player.healpotions == 0:
-            print("You don't have a heal potion.")
-        else:
-            print("You're already at full HP.")
-
-    def use_mana_potion(player):
-        if player.manapotions > 0 and player.mana < player.mana_max:
-            mana_restore = min(30, player.mana_max - player.mana)
-            player.mana += mana_restore
-            player.manapotions -= 1
-            print(f"Mana potion used. Mana: {player.mana}/{player.mana_max}")
-        elif player.manapotions == 0:
-            print("You don't have a mana potion.")
-        else:
-            print("You're already at full Mana.")
+        return dropped
             
     def show_bag_itens(self):
         for i, item in enumerate(self.bag, start=1):

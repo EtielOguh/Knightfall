@@ -18,13 +18,12 @@ class CombatUI:
         time.sleep(self.event_delay if pause is None else pause)
 
     def show_status(self, player, monster):
-        print("=" * 40)
-        print(f"{player.name} Lv.{player.level}")
-        print(f"HP {player.health}/{player.max_health} | MP {player.mana}/{player.mana_max}")
-        print("-" * 40)
-        print(f"{monster.name} Lv.{monster.level}")
-        print(f"HP {monster.health}/{monster.max_health}")
-        print("=" * 40)
+        width = 22
+        print("")
+        print(f"{player.name} Lv.{player.level}".ljust(width) + f"{monster.name} Lv.{monster.level}")
+        print(f"HP {player.health}/{player.max_health}".ljust(width) + f"HP {monster.health}/{monster.max_health}")
+        print(f"MP {player.mana}/{player.mana_max}".ljust(width) + f"ATK {monster.attack}")
+        print("")
 
     def show_turn_menu(self):
         print("\n[A] Attack  [P] Potion  [F] Run  [S] Skill")
@@ -35,18 +34,15 @@ class CombatUI:
         return input("Choose your action: ").lower()
 
     def show_full_menu(self):
-        print("\n=== Full Menu ===")
-        print("Z) Next Zone (-$50)")
-        print("X) Back Zone (-$50)")
-        print("I) Equip Items")
-        print("S) Save and Exit")
-        print("E) Show Bag")
-        print("P) Boss Fight")
-        print("D) Enable Dynamic Zone")
-        print("H) Disable Dynamic Zone")
-        print("M) Merchant")
-        print("Q) Back to Battle\n")
-        return input("Choose your option: ").lower()
+        print("\n[MENU]")
+        
+        print("Zone:      [Z] Next (-$50)   [X] Back (-$50)")
+        print("Actions:   [I] Equip         [E] Bag         [M] Merchant")
+        print("Combat:    [P] Boss Fight")
+        print("System:    [S] Save & Exit   [Q] Return")
+        print("Dynamic:   [D] Enable        [H] Disable")
+
+        return input("\n> ").lower()
 
     def show_potion_menu(self, player):
         heal_text = f"{player.healpotions} left" if player.healpotions > 0 else "Unavailable"

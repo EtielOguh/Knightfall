@@ -5,9 +5,10 @@ from copy import deepcopy
 from itens.stone import Stone
 
 class Player():
-    def __init__(self, player_name, health, attack, defense, type):
+    def __init__(self, player_name, health, attack, defense, type, class_name):
         self.name = player_name
         self.class_type = type
+        self.class_name = class_name
         self.level = 1
         self.attack = attack
         self.skills = []
@@ -126,21 +127,31 @@ class Player():
         return equip_map
 
     def add_item_to_bag(self, item):
-        # Só empilha se o item for empilhável (tem quantity) e for do mesmo tipo
-        if hasattr(item, 'quantity') and hasattr(item, 'name'):
-            for bag_item in self.bag:
-                if (
-                    bag_item.name == item.name
-                    and getattr(bag_item, 'type', None) == getattr(item, 'type', None)
-                ):
-                    bag_item.quantity += item.quantity
-                    if isinstance(item, Stone):
-                        print(f"{item.quantity}x {item.name} stacked in your bag. Total: {bag_item.quantity}")
-                    return
+        if isinstance(item, type):
+            raise ValueError(f"Expected an item instance, got class: {item.__name__}")
 
-        # Caso contrário, adiciona como item separado
+        is_stackable = hasattr(item, "quantity") and hasattr(item, "name")
+
+        if is_stackable:
+            for bag_item in self.bag:
+                same_name = bag_item.name == item.name
+                same_type = getattr(bag_item, "type", None) == getattr(item, "type", None)
+
+                if same_name and same_type:
+                    bag_item.quantity += item.quantity
+                    return {
+                        "action": "stacked",
+                        "item": bag_item,
+                        "added_quantity": item.quantity,
+                        "total_quantity": bag_item.quantity
+                    }
+
         self.bag.append(item)
-        print(f"{item.name} x{getattr(item, 'quantity', 1)} added to your bag.")
+        return {
+            "action": "added",
+            "item": item,
+            "added_quantity": getattr(item, "quantity", 1)
+        }
 
 
     def exp_wins(self, monster):

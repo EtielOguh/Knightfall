@@ -2,7 +2,7 @@ from itens.archer import archer_weapons
 from itens.knight import knight_shields, knight_swords
 from itens.thief import thief_dagger
 from itens.mage import mage_staffs
-from itens.healm import universal_healm
+from itens.healm import universal_helm
 from itens.armor import universal_armors
 from itens.rarity import Rarity
 
@@ -32,7 +32,7 @@ def get_sellers_items(player):
 
     class_specific_items = items_by_class.get(player.class_type, [])
 
-    all_possible_items = class_specific_items + universal_armors + universal_healm
+    all_possible_items = class_specific_items + universal_armors + universal_helm
 
     max_rarity_allowed = get_max_rarity_for_level(player.level)
 

@@ -5,7 +5,7 @@ class JewelOfLive(Stone):
         super().__init__(
             name="Jewel Of Life",
             type=3,
-            quantity=0,
+            quantity=1,
             price = price,
             is_stone = True
         )

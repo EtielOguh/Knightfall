@@ -1,77 +1,57 @@
-# 🛡️ Knightfall
+# Knightfall
 
-Mod para **Starbound** que adiciona novas facções, armas, armaduras, dungeons e muito mais ao jogo. Ideal pra quem quer expandir a experiência vanilla com conteúdo original.
+Projeto de RPG em Python focado na construção de sistemas e arquitetura de código, com ênfase em lógica, organização e escalabilidade — não em interface gráfica.
 
----
+## 📌 Sobre o projeto
 
-## 📌 O que tem no mod?
+O Knightfall foi desenvolvido como um laboratório prático para simular sistemas comuns em jogos e aplicações reais, como gerenciamento de estado, regras de negócio e modularização.
 
-- Facções novas e originais  
-- Sistema de progressão com classes  
-- Armas e armaduras exclusivas  
-- Dungeons personalizadas  
-- Naves, drones, augments e props  
-- Atualizações constantes
+O objetivo principal não é apenas criar um jogo, mas estruturar componentes reutilizáveis e evolutivos.
 
 ---
 
-## 🚧 Status do desenvolvimento
+## ⚙️ Funcionalidades atuais
 
-**Em desenvolvimento ativo!**  
-As versões atuais estão em *Work in Progress*, com novos conteúdos sendo criados, testados e balanceados.
-
----
-
-## 💬 Contribuições
-
-Quer sugerir algo ou ajudar?  
-- Crie uma **issue** aqui no GitHub  
-- Envie um **pull request** com sugestões ou melhorias  
-- Feedback sempre é bem-vindo!
+- ⚔️ Sistema de combate por turnos
+- 🎒 Inventário com empilhamento inteligente de itens
+- 🎯 Sistema de drop baseado em classe (Knight, Archer, Thief, Mage)
+- 📈 Progressão de personagem (level, atributos e recursos)
+- 💾 Persistência de dados utilizando JSON
+- 🧠 Estrutura de habilidades com possibilidade de expansão
 
 ---
 
-## 📁 Estrutura do projeto
+## 🧩 Arquitetura
 
-```
-├── itens/              → armas, armaduras e raridades
-│   ├── archer/
-│   ├── knight/
-│   ├── thief/
-│   ├── itens_base.py
-│   ├── rarity.py
-│   └── weapon.py
-│
-├── monsters/           → monstros e chefes
-│   └── boss/
-│       ├── devillhell.py
-│       ├── firegolem.py
-│       ├── goblinking.py
-│       ├── senzotakeda.py
-│       └── trolling.py
-│
-├── Infinityzone/       → zona infinita
-├── zona1/              → zona de monstros 1
-├── zona2/              → zona de monstros 2
-├── zona3/              → zona de monstros 3
-├── zona4/              → zona de monstros 4
-│
-├── player/             → lógica do jogador
-├── animation.py        → animações de batalha
-├── battle.py           → lógica de combate
-├── mob.py              → controle de monstros
-├── rules.py            → regras do jogo
-├── main.py             → ponto de entrada
-├── LICENSE             → licença do projeto
-└── README.md           → este arquivo
-```
+O projeto foi organizado buscando separação de responsabilidades:
+
+- `player/` → lógica do jogador e atributos
+- `monsters/` → definição e comportamento de inimigos
+- `itens/` → estrutura de itens e regras de uso
+- `battle.py` → sistema de combate
+- `rules.py` → regras de progressão e lógica auxiliar
+- `main.py` → fluxo principal do jogo
+
+A estrutura foi pensada para permitir crescimento sem necessidade de refatorações complexas.
 
 ---
 
-## 📃 Licença
+## 🔍 Destaques técnicos
 
-Veja o arquivo [LICENSE](LICENSE) para mais informações.
+### Inventário inteligente
+Implementação de lógica para diferenciar itens empilháveis e únicos, evitando duplicação desnecessária e mantendo consistência dos dados.
+
+### Sistema de combate desacoplado
+O combate é tratado como um módulo separado, permitindo evolução independente da lógica do jogador ou dos inimigos.
+
+### Persistência simples e funcional
+Uso de JSON para salvar o estado do jogador, facilitando testes e continuidade do jogo.
 
 ---
 
-Feito por [EtielOguh](https://github.com/EtielOguh) 💙  
+## 🚀 Como executar
+
+```bash
+git clone https://github.com/EtielOguh/Knightfall.git
+cd Knightfall
+python main.py

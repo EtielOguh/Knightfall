@@ -2,7 +2,7 @@
 
 Projeto de RPG em Python focado na construção de sistemas e arquitetura de código, com ênfase em lógica, organização e escalabilidade — não em interface gráfica.
 
-## 📌 Sobre o projeto
+## Sobre o projeto
 
 O Knightfall foi desenvolvido como um laboratório prático para simular sistemas comuns em jogos e aplicações reais, como gerenciamento de estado, regras de negócio e modularização.
 
@@ -10,18 +10,18 @@ O objetivo principal não é apenas criar um jogo, mas estruturar componentes re
 
 ---
 
-## ⚙️ Funcionalidades atuais
+## Funcionalidades atuais
 
-- ⚔️ Sistema de combate por turnos
-- 🎒 Inventário com empilhamento inteligente de itens
-- 🎯 Sistema de drop baseado em classe (Knight, Archer, Thief, Mage)
-- 📈 Progressão de personagem (level, atributos e recursos)
-- 💾 Persistência de dados utilizando JSON
-- 🧠 Estrutura de habilidades com possibilidade de expansão
+-  Sistema de combate por turnos
+-  Inventário com empilhamento inteligente de itens
+-  Sistema de drop baseado em classe (Knight, Archer, Thief, Mage)
+-  Progressão de personagem (level, atributos e recursos)
+-  Persistência de dados utilizando JSON
+-  Estrutura de habilidades com possibilidade de expansão
 
 ---
 
-## 🧩 Arquitetura
+##  Arquitetura
 
 O projeto foi organizado buscando separação de responsabilidades:
 
@@ -36,7 +36,7 @@ A estrutura foi pensada para permitir crescimento sem necessidade de refatoraç�
 
 ---
 
-## 🔍 Destaques técnicos
+##  Destaques técnicos
 
 ### Inventário inteligente
 Implementação de lógica para diferenciar itens empilháveis e únicos, evitando duplicação desnecessária e mantendo consistência dos dados.
@@ -49,7 +49,7 @@ Uso de JSON para salvar o estado do jogador, facilitando testes e continuidade d
 
 ---
 
-## 🚀 Como executar
+##  Como executar
 
 ```bash
 git clone https://github.com/EtielOguh/Knightfall.git

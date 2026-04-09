@@ -53,3 +53,5 @@ build/
 *.sqlite3
 *.db
 *.bak
+
+save_data.json

@@ -29,10 +29,7 @@ class BattleRewards:
             drops.extend(potion_drops)
 
         if stone_drop:
-            if hasattr(stone_drop, "quantity") and stone_drop.quantity > 1:
-                drops.append(f"{stone_drop.name} x1")
-            else:
-                drops.append(stone_drop.name)
+            drops.append(stone_drop.name)
 
         if item_drop:
             drops.append(f"{item_drop.name} [{item_drop.rarity.name}]")

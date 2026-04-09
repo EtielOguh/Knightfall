@@ -11,26 +11,25 @@ from itens.knight import knight_swords, knight_shields
 from itens.archer import archer_weapons
 from itens.thief import thief_dagger
 from itens.mage import mage_staffs
-
-#import dos itens das classes
-from itens.knight.knight_weapon import *
-from itens.archer.archer_weapon import *
-from itens.thief.thief_weapon import *
-from itens.mage.mage_weapon import *
+from itens.healm import universal_helm
+from itens.armor import universal_armors
 
 from itens.stone import Jewel_group  # Importa as classes das joias
 
-# 🔗 Item classes automático (armas)
-item_classes = {
-    **{item.name: item.__class__ for item in knight_swords},
-    **{item.name: item.__class__ for item in knight_shields},
-    **{item.name: item.__class__ for item in archer_weapons},
-    **{item.name: item.__class__ for item in thief_dagger},
-    **{item.name: item.__class__ for item in mage_staffs}
-}
+all_equipment = (
+    knight_swords +
+    knight_shields +
+    archer_weapons +
+    thief_dagger +
+    mage_staffs +
+    universal_helm +
+    universal_armors
+)
 
-# Adiciona as classes das joias ao dicionário de classes
-item_classes.update({cls().name: cls for cls in Jewel_group})
+item_classes = {
+    **{cls().name: cls for cls in all_equipment},
+    **{cls().name: cls for cls in Jewel_group},
+}
 
 
 def chose_class():
@@ -88,6 +87,8 @@ def save_player(player, filename="save_data.json"):
         "bag": serialize_items(player.bag),
         "right_hand": serialize_items(player.right_hand),
         "left_hand": serialize_items(player.left_hand),
+        "head": serialize_items(player.head),
+        "body": serialize_items(player.body),
     }
 
     with open(filename, "w") as f:
@@ -147,6 +148,8 @@ def load_player(filename="save_data.json"):
     player.bag = load_items(data.get("bag", []))
     player.right_hand = load_items(data.get("right_hand", []))
     player.left_hand = load_items(data.get("left_hand", []))
+    player.head = load_items(data.get("head", []))
+    player.body = load_items(data.get("body", []))
     return player
 
 

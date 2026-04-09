@@ -25,8 +25,8 @@ class BattleSystem:
         while self.player.player_is_alive():
             while self.monster.enemy_is_alive() and self.player.player_is_alive():
                 clear()
-                self.ui.show_status(self.player, self.monster)
                 print(self.monster.battle_cry())
+                self.ui.show_status(self.player, self.monster)
 
                 action = self.ui.show_main_battle_menu()
 

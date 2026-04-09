@@ -20,9 +20,11 @@ class CombatUI:
     def show_status(self, player, monster):
         width = 22
         print("")
-        print(f"{player.name} Lv.{player.level}".ljust(width) + f"{monster.name} Lv.{monster.level}")
+        print(f"{player.name} ({player.class_name}) Lv.{player.level}".ljust(width) + f"{monster.name} Lv.{monster.level}")
         print(f"HP {player.health}/{player.max_health}".ljust(width) + f"HP {monster.health}/{monster.max_health}")
-        print(f"MP {player.mana}/{player.mana_max}".ljust(width) + f"ATK {monster.attack}")
+        print(f"ATK {player.attack}".ljust(width) + f"ATK {monster.attack}")
+        print(f"DEF {player.defense}")
+        print("Dynamic Zone: ON" if player.dynamic_zone else "Dynamic Zone: OFF")
         print("")
 
     def show_turn_menu(self):

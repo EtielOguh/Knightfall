@@ -44,19 +44,36 @@ class Player():
         if damage > enemy.health:
             damage = enemy.health
         enemy.damage_received(damage)
+
+        return damage
     
     def use_skill(self, skill_index, enemy):
         if skill_index < 0 or skill_index >= len(self.skills):
-            print ("Invalid Skill!")
-        
+            return {"success": False, "reason": "invalid_skill"}
+
         skill = self.skills[skill_index]
-        if self.mana >= skill["mana_cost"]:
-            self.mana -= skill["mana_cost"]
-            skill["execute"](enemy)
-            print(f"Mana:{self.mana}/{self.mana_max}")
-        else:
-            print("No mana!")
-            
+
+        if self.mana < skill["mana_cost"]:
+            return {
+                "success": False,
+                "reason": "no_mana",
+                "skill": skill
+            }
+
+        previous_hp = enemy.health
+
+        self.mana -= skill["mana_cost"]
+        skill["execute"](enemy)
+
+        damage = max(0, previous_hp - enemy.health)
+
+        return {
+            "success": True,
+            "skill": skill,
+            "damage": damage,
+            "mana": self.mana,
+            "mana_max": self.mana_max
+        }
     def unlock_skills(self):
         self.skills = [
             s for s in self.all_skills if self.level >= s["required_level"]
@@ -94,6 +111,31 @@ class Player():
             dropped.append("Mana Potion")
 
         return dropped
+    
+    def use_heal_potion(self):
+        if self.healpotions <= 0:
+            return False
+
+        if self.health >= self.max_health:
+            return False
+
+        heal_amount = 50
+        self.healpotions -= 1
+        self.health = min(self.max_health, self.health + heal_amount)
+        return True
+
+
+    def use_mana_potion(self):
+        if self.manapotions <= 0:
+            return False
+
+        if self.mana >= self.mana_max:
+            return False
+
+        mana_amount = 30
+        self.manapotions -= 1
+        self.mana = min(self.mana_max, self.mana + mana_amount)
+        return True
             
     def show_bag_itens(self):
         for i, item in enumerate(self.bag, start=1):
@@ -134,10 +176,10 @@ class Player():
 
         if is_stackable:
             for bag_item in self.bag:
-                same_name = bag_item.name == item.name
+                same_class = bag_item.__class__ == item.__class__
                 same_type = getattr(bag_item, "type", None) == getattr(item, "type", None)
 
-                if same_name and same_type:
+                if same_class and same_type:
                     bag_item.quantity += item.quantity
                     return {
                         "action": "stacked",

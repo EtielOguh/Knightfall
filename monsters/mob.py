@@ -8,6 +8,7 @@ class Enemy():
         self.health = health
         self.max_health = max_health
         self.exp = 10 * level
+        #self.defense = fazer depois
         self.allowed_rarities = allowed_rarities
 
     def enemy_is_alive(self):
@@ -22,6 +23,8 @@ class Enemy():
             if damage > player.health:
                 damage = player.health
             player.health -= damage
+
+            return damage
     
     def drop_money(self, player):
         money = self.level * 10

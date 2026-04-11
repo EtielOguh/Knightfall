@@ -51,6 +51,13 @@ class BattleActions:
                 return
 
         self.ui.add_log(f"{item.name} cannot be used in battle.")
+        
+    def try_equip_item(self, item):
+        if hasattr(item, "slot"):
+            self.battle.player.equip_items_visual(item)
+            self.ui.add_log(f"{item.name} equipped.")
+        else:
+            self.ui.add_log(f"{item.name} cannot be equipped.")
 
     def use_skill(self, skill_index):
         player = self.battle.player

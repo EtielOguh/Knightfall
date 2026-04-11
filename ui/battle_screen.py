@@ -169,8 +169,24 @@ class BattleScreen:
         if event.type != pygame.KEYDOWN:
             return
 
-        if self.state.show_bag:
-            self.handle_bag_input(event)
+        if self.state.show_potions:
+            self.handle_potion_input(event)
+            return
+
+        if self.state.show_menu:
+            self.handle_menu_input(event)
+            return
+
+        if self.state.show_inventory:
+            self.handle_inventory_input(event)
+            return
+
+        if self.state.show_equipped:
+            self.handle_equipped_input(event)
+            return
+
+        if self.state.show_skills:
+            self.handle_skill_input(event)
             return
 
         if event.key == pygame.K_1:
@@ -179,17 +195,17 @@ class BattleScreen:
         elif event.key == pygame.K_2:
             self.state.show_skills = True
             self.state.skill_index = 0
-        
-        if self.state.show_skills:
-            self.handle_skill_input(event)
-            return
 
         elif event.key == pygame.K_3:
-            self.state.show_bag = True
-            self.state.bag_index = 0
+            self.state.show_potions = True
+            self.state.potion_index = 0
 
         elif event.key == pygame.K_4:
             self.battle.actions.run()
+
+        elif event.key == pygame.K_5:
+            self.state.show_menu = True
+            self.state.menu_index = 0
 
     def draw_background(self):
         if hasattr(self, "background") and self.background:
@@ -213,6 +229,47 @@ class BattleScreen:
 
     def get_inventory_categories(self):
         return ["weapon", "shield", "armor", "helmet", "jewel", "misc"]
+    
+    def get_inventory_items_by_category(self):
+        
+        categories = self.get_inventory_categories()
+        current_category = categories[self.state.inventory_category_index]
+
+        filtered_items = []
+
+        for item in self.player.bag:
+            item_category = getattr(item, "category", "misc")
+            if item_category == current_category:
+                filtered_items.append(item)
+
+        return filtered_items
+    
+    def handle_inventory_input(self, event):
+        categories = self.get_inventory_categories()
+        items = self.get_inventory_items_by_category()
+
+        if event.key == pygame.K_ESCAPE:
+            self.state.show_inventory = False
+            return
+
+        if event.key == pygame.K_LEFT:
+            self.state.inventory_category_index = max(0, self.state.inventory_category_index - 1)
+            self.state.inventory_item_index = 0
+
+        elif event.key == pygame.K_RIGHT:
+            self.state.inventory_category_index = min(len(categories) - 1, self.state.inventory_category_index + 1)
+            self.state.inventory_item_index = 0
+
+        elif event.key == pygame.K_UP:
+            self.state.inventory_item_index = max(0, self.state.inventory_item_index - 1)
+
+        elif event.key == pygame.K_DOWN:
+            self.state.inventory_item_index = min(max(0, len(items) - 1), self.state.inventory_item_index + 1)
+
+        elif event.key == pygame.K_RETURN:
+            if items:
+                selected_item = items[self.state.inventory_item_index]
+                self.battle.actions.try_equip_item(selected_item)
     
     def get_menu_options(self):
        return ["Bag", "Equipped", "Close"]
@@ -241,6 +298,73 @@ class BattleScreen:
 
         footer = self.small_font.render("[ENTER] Use   [ESC] Close", True, (180, 180, 180))
         self.screen.blit(footer, (240, 500))
+        
+    def draw_inventory_overlay(self):
+        overlay = pygame.Rect(80, 80, 840, 520)
+        pygame.draw.rect(self.screen, (20, 20, 20), overlay)
+        pygame.draw.rect(self.screen, (200, 200, 200), overlay, 2)
+
+        title = self.font.render("Inventory", True, (255, 255, 255))
+        self.screen.blit(title, (430, 95))
+
+        categories = self.get_inventory_categories()
+        current_category = categories[self.state.inventory_category_index]
+
+        x = 110
+        y = 145
+
+        for index, category in enumerate(categories):
+            color = (230, 210, 120) if index == self.state.inventory_category_index else (180, 180, 180)
+            text = self.small_font.render(category.capitalize(), True, color)
+            self.screen.blit(text, (x, y))
+            x += 120
+
+        items = self.get_inventory_items_by_category()
+
+        y = 200
+        if not items:
+            text = self.small_font.render("No items in this category.", True, (220, 220, 220))
+            self.screen.blit(text, (120, y))
+        else:
+            for index, item in enumerate(items):
+                prefix = ">" if index == self.state.inventory_item_index else " "
+                line = f"{prefix} {item.name} x{getattr(item, 'quantity', 1)}"
+                color = (230, 210, 120) if index == self.state.inventory_item_index else (220, 220, 220)
+                text = self.small_font.render(line, True, color)
+                self.screen.blit(text, (120, y))
+                y += 28
+
+            selected_item = items[self.state.inventory_item_index]
+            detail_x = 560
+            detail_y = 200
+
+            details = [
+                f"Name: {selected_item.name}",
+                f"ATK: {getattr(selected_item, 'attack', 0)}",
+                f"DEF: {getattr(selected_item, 'defense', 0)}",
+                f"Rarity: {getattr(selected_item, 'rarity', 'N/A')}",
+                f"Category: {getattr(selected_item, 'category', 'misc')}",
+            ]
+
+            for line in details:
+                text = self.small_font.render(str(line), True, (220, 220, 220))
+                self.screen.blit(text, (detail_x, detail_y))
+                detail_y += 28
+
+        footer = self.small_font.render("[ENTER] Equip   [ESC] Close   [LEFT/RIGHT] Category", True, (180, 180, 180))
+        self.screen.blit(footer, (120, 560))
+        
+    def get_equipped_items(self):
+        return [
+            ("Right Hand", self.player.right_hand[0] if self.player.right_hand else None),
+            ("Left Hand", self.player.left_hand[0] if self.player.left_hand else None),
+            ("Body", self.player.body[0] if self.player.body else None),
+            ("Head", self.player.head[0] if self.player.head else None),
+        ]
+    def handle_equipped_input(self, event):
+        if event.key == pygame.K_ESCAPE:
+            self.state.show_equipped = False
+            
     def draw_bar(self, x, y, width, height, current, maximum, fill_color, bg_color=(35, 35, 35)):
         pygame.draw.rect(self.screen, bg_color, (x, y, width, height), border_radius=6)
 
@@ -464,6 +588,25 @@ class BattleScreen:
 
         footer = self.small_font.render("[ENTER] Use   [ESC] Close", True, (180, 180, 180))
         self.screen.blit(footer, (240, 500))
+    
+    def draw_equipped_overlay(self):
+        overlay = pygame.Rect(220, 120, 560, 400)
+        pygame.draw.rect(self.screen, (20, 20, 20), overlay)
+        pygame.draw.rect(self.screen, (200, 200, 200), overlay, 2)
+
+        title = self.font.render("Equipped Items", True, (255, 255, 255))
+        self.screen.blit(title, (370, 145))
+
+        y = 220
+        for slot_name, item in self.get_equipped_items():
+            item_name = item.name if item else "Empty"
+            line = f"{slot_name}: {item_name}"
+            text = self.small_font.render(line, True, (220, 220, 220))
+            self.screen.blit(text, (270, y))
+            y += 45
+
+        footer = self.small_font.render("[ESC] Close", True, (180, 180, 180))
+        self.screen.blit(footer, (450, 470))
 
     def draw(self):
         self.draw_background()
@@ -473,8 +616,17 @@ class BattleScreen:
         self.draw_log_box()
         self.draw_floating_texts()
 
-        if self.state.show_bag:
-            self.draw_bag_overlay()
+        if self.state.show_potions:
+            self.draw_potions_overlay()
+
+        if self.state.show_menu:
+            self.draw_menu_overlay()
+
+        if self.state.show_inventory:
+            self.draw_inventory_overlay()
+
+        if self.state.show_equipped:
+            self.draw_equipped_overlay()
 
         if self.state.show_skills:
             self.draw_skill_overlay()

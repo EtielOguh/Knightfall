@@ -23,6 +23,6 @@ class Spiketooth(Enemy):
         return randint (60, 90)
 
     def battle_cry(self):
-        return f"{self.name} Appears! ATK: {self.attack} HP: {self.health}/{self.max_health}\nSpiketooth nicks you with its tiny, sharp teeth. It barely hurts."
+        return f"{self.name} Appears! Spiketooth nicks you with its tiny, sharp teeth. It barely hurts."
     
 

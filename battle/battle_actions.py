@@ -2,7 +2,7 @@ class BattleActions:
     def __init__(self, battle, ui):
         self.battle = battle
         self.ui = ui
-
+        
     def attack(self):
         player = self.battle.player
         monster = self.battle.monster
@@ -11,20 +11,24 @@ class BattleActions:
             return
 
         damage = player.attack_enemy(monster)
-        #self.ui.add_log(f"{player.name} dealt {damage} damage to {monster.name}.")
+        self.ui.add_log(f"{player.name} dealt {damage} damage to {monster.name}.")
 
         if monster.enemy_is_alive():
             enemy_damage = monster.attack_player(player)
-            #self.ui.add_log(f"{monster.name} dealt {enemy_damage} damage to {player.name}.")
+            self.ui.add_log(f"{monster.name} dealt {enemy_damage} damage to {player.name}.")
+            self.ui.add_floating_text(f"-{damage}", 760, 210, color=(255, 90, 90))
+            self.ui.add_floating_text(f"-{enemy_damage}", 180, 210, color=(255, 90, 90))
         else:
             self.battle.monster = self.battle.rewards.handle_monster_defeat(player, monster)
             self.ui.sync_entities()
-            #self.ui.add_log(f"A new {self.battle.monster.name} appeared.")
+            self.ui.add_log(f"A new {self.battle.monster.name} appeared.")
+            self.ui.show_battle_cry()
 
     def run(self):
         self.ui.add_log("You ran away.")
         self.battle.run_from_battle()
         self.ui.sync_entities()
+        self.ui.show_battle_cry()
 
     def use_bag_item(self, item):
         player = self.battle.player
@@ -68,11 +72,14 @@ class BattleActions:
         damage = result["damage"]
 
         self.ui.add_log(f"{player.name} used {skill['name']} for {damage} damage.")
+        self.ui.add_floating_text(f"-{damage}", 760, 210, color=(255, 90, 90))
 
         if monster.enemy_is_alive():
             enemy_damage = monster.attack_player(player)
             self.ui.add_log(f"{monster.name} dealt {enemy_damage} damage to {player.name}.")
+            self.ui.add_floating_text(f"-{enemy_damage}", 180, 210, color=(255, 90, 90))
         else:
             self.battle.monster = self.battle.rewards.handle_monster_defeat(player, monster)
             self.ui.sync_entities()
             self.ui.add_log(f"A new {self.battle.monster.name} appeared.")
+            self.ui.show_battle_cry()

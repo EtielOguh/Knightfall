@@ -54,23 +54,25 @@ class Player():
         skill = self.skills[skill_index]
 
         if self.mana < skill["mana_cost"]:
-            return {
-                "success": False,
-                "reason": "no_mana",
-                "skill": skill
-            }
+            return {"success": False, "reason": "no_mana", "skill": skill}
 
-        previous_hp = enemy.health
+        previous_enemy_hp = enemy.health
+        previous_player_hp = self.health
+        previous_player_mana = self.mana
 
         self.mana -= skill["mana_cost"]
         skill["execute"](enemy)
 
-        damage = max(0, previous_hp - enemy.health)
+        damage = max(0, previous_enemy_hp - enemy.health)
+        healed = max(0, self.health - previous_player_hp)
+        mana_spent = max(0, previous_player_mana - self.mana)
 
         return {
             "success": True,
             "skill": skill,
             "damage": damage,
+            "healed": healed,
+            "mana_spent": mana_spent,
             "mana": self.mana,
             "mana_max": self.mana_max
         }

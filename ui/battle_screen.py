@@ -11,7 +11,6 @@ class BattleScreen:
         self.battle = battle
         self.player = battle.player
         self.monster = battle.monster
-
         self.font = pygame.font.SysFont("arial", 24, bold=True)
         self.small_font = pygame.font.SysFont("arial", 18)
         self.menu_font = pygame.font.SysFont("arial", 28, bold=True)
@@ -29,9 +28,11 @@ class BattleScreen:
         self.enemy_sprite = self.load_sprite("enemies", self.monster.name)
         self.background = pygame.image.load("assets/background/battle_bg.png").convert()
         self.background = pygame.transform.scale(self.background, (self.width, self.height))
-
+        self.floating_texts = []
         self.running = True
         self.state = BattleUIState()
+        self.show_battle_cry()
+
 
     #SPRITES LOAD
     def load_sprite(self, folder, name, size=(250, 250)):
@@ -69,6 +70,33 @@ class BattleScreen:
 
         self.player_sprite = self.load_sprite("player", self.get_player_sprite_name())
         self.enemy_sprite = self.load_sprite("enemies", self.monster.name)
+
+    def show_battle_cry(self):
+        if hasattr(self.monster, "battle_cry"):
+            cry = self.monster.battle_cry()
+            if cry:
+                self.add_log(cry)
+
+    def add_floating_text(self, text, x, y, color=(255, 80, 80), duration=45):
+        self.floating_texts.append({
+            "text": str(text),
+            "x": x,
+            "y": y,
+            "color": color,
+            "duration": duration
+        })
+
+    def update_floating_texts(self):
+        for entry in self.floating_texts:
+            entry["y"] -= 1
+            entry["duration"] -= 1
+
+        self.floating_texts = [entry for entry in self.floating_texts if entry["duration"] > 0]
+    
+    def draw_floating_texts(self):
+        for entry in self.floating_texts:
+            text_surface = self.font.render(entry["text"], True, entry["color"])
+            self.screen.blit(text_surface, (entry["x"], entry["y"]))
 
     def get_bag_items(self):
         return BattleInventory.get_bag_items(self.player)
@@ -364,6 +392,7 @@ class BattleScreen:
         self.draw_hud()
         self.draw_action_bar()
         self.draw_log_box()
+        self.draw_floating_texts()
 
         if self.state.show_bag:
             self.draw_bag_overlay()
@@ -380,7 +409,8 @@ class BattleScreen:
                     self.running = False
                 self.handle_input(event)
 
+            self.update_floating_texts()
             self.draw()
-            self.clock.tick(60)
+            self.clock.tick(120)
 
         pygame.quit()

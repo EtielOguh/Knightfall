@@ -7,5 +7,6 @@ class JewelofSoul(Stone):
             type=1,
             quantity= 1,
             price = price,
-            is_stone = True
+            is_stone = True,
+            category = "stone"
         )

@@ -100,29 +100,48 @@ class BattleScreen:
 
     def get_bag_items(self):
         return BattleInventory.get_bag_items(self.player)
+    
+    def get_potion_items(self):
+        items = []
 
-    def handle_bag_input(self, event):
-        items = self.get_bag_items()
+        if self.player.healpotions > 0:
+            items.append({
+                "name": "Heal Potion",
+                "quantity": self.player.healpotions,
+                "kind": "heal_potion"
+            })
+
+        if self.player.manapotions > 0:
+            items.append({
+                "name": "Mana Potion",
+                "quantity": self.player.manapotions,
+                "kind": "mana_potion"
+            })
+
+        return items
+
+    def handle_potion_input(self, event):
+        items = self.get_potion_items()
 
         if event.key == pygame.K_ESCAPE:
-            self.state.show_bag = False
+            self.state.show_potions = False
             return
 
         if not items:
             if event.key == pygame.K_RETURN:
-                self.state.show_bag = False
+                self.state.show_potions = False
             return
 
         if event.key == pygame.K_UP:
-            self.state.bag_index = max(0, self.state.bag_index - 1)
+            self.state.potion_index = max(0, self.state.potion_index - 1)
 
         elif event.key == pygame.K_DOWN:
-            self.state.bag_index = min(len(items) - 1, self.state.bag_index + 1)
+            self.state.potion_index = min(len(items) - 1, self.state.potion_index + 1)
 
         elif event.key == pygame.K_RETURN:
-            selected_item = items[self.state.bag_index]
+            selected_item = items[self.state.potion_index]
             self.battle.actions.use_bag_item(selected_item)
-            self.state.show_bag = False
+            self.state.show_potions = False
 
     def handle_skill_input(self, event):
         skills = self.player.skills
@@ -192,6 +211,36 @@ class BattleScreen:
         else:
             pygame.draw.rect(self.screen, (160, 70, 70), (720, 170, 140, 220))
 
+    def get_inventory_categories(self):
+        return ["weapon", "shield", "armor", "helmet", "jewel", "misc"]
+    
+    def get_menu_options(self):
+       return ["Bag", "Equipped", "Close"]
+
+    def draw_potions_overlay(self):
+        overlay = pygame.Rect(180, 120, 640, 420)
+        pygame.draw.rect(self.screen, (20, 20, 20), overlay)
+        pygame.draw.rect(self.screen, (200, 200, 200), overlay, 2)
+
+        title = self.font.render("Potions", True, (255, 255, 255))
+        self.screen.blit(title, (445, 140))
+
+        items = self.get_potion_items()
+
+        if not items:
+            text = self.small_font.render("No potions available.", True, (220, 220, 220))
+            self.screen.blit(text, (240, 200))
+        else:
+            y = 200
+            for index, item in enumerate(items):
+                prefix = ">" if index == self.state.potion_index else " "
+                line = f"{prefix} {item['name']} x{item['quantity']}"
+                text = self.small_font.render(line, True, (220, 220, 220))
+                self.screen.blit(text, (240, y))
+                y += 30
+
+        footer = self.small_font.render("[ENTER] Use   [ESC] Close", True, (180, 180, 180))
+        self.screen.blit(footer, (240, 500))
     def draw_bar(self, x, y, width, height, current, maximum, fill_color, bg_color=(35, 35, 35)):
         pygame.draw.rect(self.screen, bg_color, (x, y, width, height), border_radius=6)
 
@@ -306,30 +355,60 @@ class BattleScreen:
             text_surface = self.small_font.render(line, True, (230, 230, 230))
             self.screen.blit(text_surface, (x, y))
             y += line_height
-            
+
+    def handle_menu_input(self, event):
+        options = self.get_menu_options()
+
+        if event.key == pygame.K_ESCAPE:
+            self.state.show_menu = False
+            return
+
+        if event.key == pygame.K_UP:
+            self.state.menu_index = max(0, self.state.menu_index - 1)
+
+        elif event.key == pygame.K_DOWN:
+            self.state.menu_index = min(len(options) - 1, self.state.menu_index + 1)
+
+        elif event.key == pygame.K_RETURN:
+            selected = options[self.state.menu_index]
+
+            if selected == "Bag":
+                self.state.show_menu = False
+                self.state.show_inventory = True
+                self.state.inventory_category_index = 0
+                self.state.inventory_item_index = 0
+
+            elif selected == "Equipped":
+                self.state.show_menu = False
+                self.state.show_equipped = True
+
+            elif selected == "Close":
+                self.state.show_menu = False
+
     def draw_action_bar(self):
-        bar_rect = pygame.Rect(150, 483, 700, 46)
+        bar_rect = pygame.Rect(120, 455, 760, 50)
         pygame.draw.rect(self.screen, (18, 18, 18), bar_rect, border_radius=10)
-        pygame.draw.rect(self.screen, (250, 250, 250), bar_rect, 2, border_radius=10)
+        pygame.draw.rect(self.screen, (160, 160, 160), bar_rect, 2, border_radius=10)
 
         actions = [
             ("[1]", "Attack"),
             ("[2]", "Skill"),
-            ("[3]", "Bag"),
+            ("[3]", "Potions"),
             ("[4]", "Run"),
+            ("[5]", "Menu"),
         ]
 
-        x = 210
-        y = 490
+        x = 145
+        y = 467
 
         for key, label in actions:
-            key_surface = self.font.render(key, True, (230, 210, 120))
-            label_surface = self.font.render(label, True, (240, 240, 240))
+            key_surface = self.menu_font.render(key, True, (230, 210, 120))
+            label_surface = self.menu_font.render(label, True, (240, 240, 240))
 
             self.screen.blit(key_surface, (x, y))
             self.screen.blit(label_surface, (x + 45, y))
 
-            x += 170
+            x += 145
 
     def draw_bag_overlay(self):
         overlay = pygame.Rect(180, 120, 640, 420)
@@ -401,6 +480,29 @@ class BattleScreen:
             self.draw_skill_overlay()
 
         pygame.display.flip()
+
+    def draw_menu_overlay(self):
+        overlay = pygame.Rect(300, 160, 400, 300)
+        pygame.draw.rect(self.screen, (20, 20, 20), overlay)
+        pygame.draw.rect(self.screen, (200, 200, 200), overlay, 2)
+
+        title = self.font.render("Menu", True, (255, 255, 255))
+        self.screen.blit(title, (460, 185))
+
+        options = self.get_menu_options()
+        y = 250
+
+        for index, option in enumerate(options):
+            prefix = ">" if index == self.state.menu_index else " "
+            line = f"{prefix} {option}"
+            color = (230, 210, 120) if index == self.state.menu_index else (220, 220, 220)
+
+            text = self.font.render(line, True, color)
+            self.screen.blit(text, (380, y))
+            y += 50
+
+        footer = self.small_font.render("[ENTER] Select   [ESC] Close", True, (180, 180, 180))
+        self.screen.blit(footer, (360, 420))
 
     def run(self):
         while self.running:

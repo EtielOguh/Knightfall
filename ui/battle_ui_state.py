@@ -2,7 +2,17 @@ class BattleUIState:
     def __init__(self):
         self.show_bag = False
         self.bag_index = 0
+        self.show_potions = False
+        self.potion_index = 0
 
+        self.show_menu = False
+        self.menu_index = 0
+
+        self.show_inventory = False
+        self.inventory_category_index = 0
+        self.inventory_item_index = 0
+
+        self.show_equipped = False
         self.show_skills = False
         self.skill_index = 0
 

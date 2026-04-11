@@ -1,3 +1,4 @@
+
 class BattleActions:
     def __init__(self, battle, ui):
         self.battle = battle
@@ -54,7 +55,7 @@ class BattleActions:
         
     def try_equip_item(self, item):
         if hasattr(item, "slot"):
-            self.battle.player.equip_items_visual(item)
+            self.battle.player.equip_item(item)
             self.ui.add_log(f"{item.name} equipped.")
         else:
             self.ui.add_log(f"{item.name} cannot be equipped.")

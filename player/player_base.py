@@ -1,6 +1,5 @@
 from random import randint
 import rules
-from time import sleep
 from copy import deepcopy
 from itens.stone import Stone
 
@@ -223,96 +222,44 @@ class Player():
             return False
 
 
-    def equip_items(self):
-        while True:
-            rules.clear()
+    def equip_item(self, selected_item):
+        if selected_item is None:
+            return False, "Invalid item."
 
-            equipment_slots = {
-                "Right Hand": self.right_hand,
-                "Left Hand": self.left_hand,
-                "Body": self.body,
-                "Head": self.head
-            }
+        if getattr(selected_item, "is_stone", False):
+            return False, f"{selected_item.name} cannot be equipped."
 
-            print("[EQUIPMENT]\n")
-            for slot_name, items_list in equipment_slots.items():
-                item_name = items_list[0].name if items_list else "Empty"
-                print(f"{slot_name:<11}: {item_name}")
+        slot_map = {
+            "right_hand": self.right_hand,
+            "left_hand": self.left_hand,
+            "head": self.head,
+            "body": self.body
+        }
 
-            visible_items = [item for item in self.bag if not getattr(item, "is_stone", False)]
+        target_slot = slot_map.get(getattr(selected_item, "slot", None))
 
-            print("\n[BAG]\n")
-            if visible_items:
-                for idx, item in enumerate(visible_items, 1):
-                    print(
-                        f"{idx}) {item.name:<18} "
-                        f"ATK: {item.base_attack:<3} "
-                        f"DEF: {item.defense:<3} "
-                        f"QTY: x{item.quantity}"
-                    )
-            else:
-                print("No equipable items available.")
+        if target_slot is None:
+            return False, f"Cannot equip {selected_item.name}. Invalid slot."
 
-            print("\n0) Back")
+        if selected_item not in self.bag:
+            return False, f"{selected_item.name} is not in bag."
 
-            try:
-                choice = int(input("\nSelect item: "))
+        if hasattr(selected_item, "quantity") and selected_item.quantity > 1:
+            selected_item.quantity -= 1
+            item_to_equip = deepcopy(selected_item)
+            item_to_equip.quantity = 1
+        else:
+            item_to_equip = selected_item
+            self.bag.remove(selected_item)
 
-                if choice == 0:
-                    print("Returning...")
-                    sleep(0.5)
-                    rules.clear()
-                    return
+        if target_slot:
+            old_item = target_slot.pop()
+            self.attack -= getattr(old_item, "attack", 0)
+            self.defense -= getattr(old_item, "defense", 0)
+            self.bag.append(old_item)
 
-                if not visible_items:
-                    print("No items to equip.")
-                    sleep(0.8)
-                    continue
+        target_slot.append(item_to_equip)
+        self.attack += getattr(item_to_equip, "attack", 0)
+        self.defense += getattr(item_to_equip, "defense", 0)
 
-                if choice < 1 or choice > len(visible_items):
-                    print("Invalid item number.")
-                    sleep(0.8)
-                    continue
-
-                selected_item = visible_items[choice - 1]
-
-                if hasattr(selected_item, "quantity") and selected_item.quantity > 1:
-                    selected_item.quantity -= 1
-                    item_to_equip = deepcopy(selected_item)
-                    item_to_equip.quantity = 1
-                else:
-                    item_to_equip = selected_item
-                    self.bag.remove(selected_item)
-
-                slot_map = {
-                    "right_hand": self.right_hand,
-                    "left_hand": self.left_hand,
-                    "head": self.head,
-                    "body": self.body
-                }
-
-                target_slot = slot_map.get(item_to_equip.slot)
-
-                if target_slot is None:
-                    print(f"Cannot equip {item_to_equip.name}. Invalid slot.")
-                    self.bag.append(item_to_equip)
-                    sleep(1)
-                    continue
-
-                if target_slot:
-                    old_item = target_slot.pop()
-                    self.attack -= old_item.attack
-                    self.defense -= old_item.defense
-                    self.bag.append(old_item)
-                    print(f"Unequipped: {old_item.name}")
-
-                target_slot.append(item_to_equip)
-                self.attack += item_to_equip.attack
-                self.defense += item_to_equip.defense
-
-                print(f"Equipped: {item_to_equip.name}")
-                sleep(0.8)
-
-            except ValueError:
-                print("Enter a valid number.")
-                sleep(0.8)
+        return True, f"Equipped: {item_to_equip.name}"

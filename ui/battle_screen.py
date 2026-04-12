@@ -1,9 +1,10 @@
 import os
 import pygame
-
+from world.zone import get_zone_name, get_zone_travel_options
 from ui.battle_ui_state import BattleUIState
 from ui.battle_overlays import BattleOverlays
 from ui.battle_screen_queries import BattleScreenQueries
+from world.zone import change_zone
 
 class BattleScreen:
     INVENTORY_CATEGORIES = ["weapon", "shield", "armor", "helmet", "jewel", "misc"]
@@ -30,7 +31,7 @@ class BattleScreen:
         self.clock = pygame.time.Clock()
 
         self.font = pygame.font.SysFont("arial", 24, bold=True)
-        self.small_font = pygame.font.SysFont("arial", 18)
+        self.small_font = pygame.font.SysFont("arial", 16)
         self.menu_font = pygame.font.SysFont("arial", 28, bold=True)
 
         self.state = BattleUIState()
@@ -120,6 +121,9 @@ class BattleScreen:
     # =========================
     # Queries / derived UI data
     # =========================
+    
+    def get_zone_travel_options(self):
+        return BattleScreenQueries.get_zone_travel_options(self)
 
     def get_bag_items(self):
         return BattleScreenQueries.get_bag_items(self)
@@ -144,6 +148,39 @@ class BattleScreen:
     # =========================
     # Input routing
     # =========================
+    def handle_menu_input(self, event):
+        options = self.get_menu_options()
+
+        if event.key == pygame.K_ESCAPE:
+            self.state.show_menu = False
+            return
+
+        if event.key == pygame.K_UP:
+            self.state.menu_index = max(0, self.state.menu_index - 1)
+
+        elif event.key == pygame.K_DOWN:
+            self.state.menu_index = min(len(options) - 1, self.state.menu_index + 1)
+
+        elif event.key == pygame.K_RETURN:
+            selected = options[self.state.menu_index]
+
+            if selected == "Bag":
+                self.state.show_menu = False
+                self.state.show_inventory = True
+                self.state.inventory_category_index = 0
+                self.state.inventory_item_index = 0
+
+            elif selected == "Equipped":
+                self.state.show_menu = False
+                self.state.show_equipped = True
+                self.state.equipped_index = 0
+                
+            elif selected == "Zone Travel":
+                self.state.show_menu = False
+                self.state.show_zone_menu = True
+
+            elif selected == "Close":
+                self.state.show_menu = False
 
     def handle_input(self, event):
         if event.type != pygame.KEYDOWN:
@@ -151,6 +188,11 @@ class BattleScreen:
 
         if self.state.show_potions:
             self.handle_potion_input(event)
+            return
+        
+        if self.state.show_zone_menu:
+            self.handle_zone_input(event)
+            self.state.zone_menu_index = 0
             return
 
         if self.state.show_menu:
@@ -161,7 +203,7 @@ class BattleScreen:
             self.handle_inventory_input(event)
             return
 
-        if self.state.show_equipped:
+        #if self.state.show_equipped:
             self.handle_equipped_input(event)
             return
 
@@ -171,6 +213,43 @@ class BattleScreen:
 
         self.handle_root_input(event)
 
+    def get_zone_travel_options(self):
+        return BattleScreenQueries.get_zone_travel_options(self)
+
+    def handle_zone_input(self, event):
+        options = []
+        zone_data = self.get_zone_travel_options()
+
+        if zone_data["previous_zone"] is not None:
+            options.append(("previous", zone_data["previous_zone"]))
+
+        if zone_data["next_zone"] is not None:
+            options.append(("next", zone_data["next_zone"]))
+
+        if event.key == pygame.K_ESCAPE:
+            self.state.show_zone_menu = False
+            return
+
+        if not options:
+            if event.key == pygame.K_RETURN:
+                self.state.show_zone_menu = False
+            return
+
+        if event.key == pygame.K_UP:
+            self.state.zone_menu_index = max(0, self.state.zone_menu_index - 1)
+
+        elif event.key == pygame.K_DOWN:
+            self.state.zone_menu_index = min(len(options) - 1, self.state.zone_menu_index + 1)
+
+        elif event.key == pygame.K_RETURN:
+            _, selected_zone = options[self.state.zone_menu_index]
+
+            success, message = change_zone(self.player, selected_zone["zone_id"])
+            self.add_log(message)
+
+            if success:
+                self.state.show_zone_menu = False
+                
     def handle_root_input(self, event):
         if event.key == pygame.K_1:
             self.battle.actions.attack()
@@ -270,22 +349,61 @@ class BattleScreen:
     def handle_equipped_input(self, event):
         if event.key == pygame.K_ESCAPE:
             self.state.show_equipped = False
+    
+    def get_item_sprite(self, item, size=(52, 52)):
+        if item is None:
+            return None
 
-    def handle_menu_input(self, event):
-        options = self.get_menu_options()
+        possible_names = []
+
+        item_name = getattr(item, "name", None)
+        if item_name:
+            possible_names.append(self._normalize_name(item_name))
+
+        item_sprite_name = getattr(item, "sprite_name", None)
+        if item_sprite_name:
+            possible_names.insert(0, self._normalize_name(item_sprite_name))
+
+        for name in possible_names:
+            path = os.path.join("assets", "items", f"{name}.png")
+            if os.path.exists(path):
+                image = pygame.image.load(path).convert_alpha()
+                return pygame.transform.scale(image, size)
+
+        return None
+
+
+    def truncate_text(self, text, max_len=12):
+        if not text:
+            return ""
+        if len(text) <= max_len:
+            return text
+        return text[:max_len - 3] + "..."
+    
+    def handle_equipped_input(self, event):
+        slot_count = 5  # Head, Left, Body, Right, Foot
 
         if event.key == pygame.K_ESCAPE:
-            self.state.show_menu = False
+            self.state.show_equipped = False
             return
 
-        if event.key == pygame.K_UP:
-            self.state.menu_index = max(0, self.state.menu_index - 1)
+        if event.key == pygame.K_LEFT:
+            self.state.equipped_index = max(0, self.state.equipped_index - 1)
+
+        elif event.key == pygame.K_RIGHT:
+            self.state.equipped_index = min(slot_count - 1, self.state.equipped_index + 1)
+
+        elif event.key == pygame.K_UP:
+            if self.state.equipped_index in [2, 4]:
+                self.state.equipped_index = 0
+            elif self.state.equipped_index in [1, 3]:
+                self.state.equipped_index = 0
 
         elif event.key == pygame.K_DOWN:
-            self.state.menu_index = min(len(options) - 1, self.state.menu_index + 1)
-
-        elif event.key == pygame.K_RETURN:
-            self._execute_menu_option(options[self.state.menu_index])
+            if self.state.equipped_index == 0:
+                self.state.equipped_index = 2
+            elif self.state.equipped_index in [1, 2, 3]:
+                self.state.equipped_index = 4
 
     def _execute_menu_option(self, selected):
         if selected == "Bag":
@@ -304,9 +422,13 @@ class BattleScreen:
     # =========================
     # Base draw helpers
     # =========================
-
+        
+    def get_zone_preview(self):
+        return BattleScreenQueries.get_zone_preview(self)
+    
     def draw(self):
         self.draw_background()
+        self.draw_zone_label()
         self.draw_battle_area()
         self.draw_hud()
         self.draw_action_bar()
@@ -316,7 +438,9 @@ class BattleScreen:
         pygame.display.flip()
 
     def draw_active_overlay(self):
-        if self.state.show_potions:
+        if self.state.show_zone_menu:
+            BattleOverlays.draw_zone_overlay(self)
+        elif self.state.show_potions:
             BattleOverlays.draw_potions_overlay(self)
         elif self.state.show_menu:
             BattleOverlays.draw_menu_overlay(self)
@@ -479,6 +603,23 @@ class BattleScreen:
             text_surface = self.small_font.render(line, True, (230, 230, 230))
             self.screen.blit(text_surface, (x, y))
             y += line_height
+    
+    def get_current_zone_name(self):
+        return get_zone_name(self.player.zone)
+
+
+    def draw_zone_label(self):
+        zone_name = self.get_current_zone_name()
+
+        label_rect = pygame.Rect(370, 16, 260, 36)
+
+        pygame.draw.rect(self.screen, (14, 14, 14), label_rect, border_radius=12)
+        pygame.draw.rect(self.screen, (80, 80, 80), label_rect, 1, border_radius=12)
+
+        text_surface = self.small_font.render(f"Zone {self.player.zone} - {zone_name}", True, (230, 210, 120))
+        text_rect = text_surface.get_rect(center=label_rect.center)
+
+        self.screen.blit(text_surface, text_rect)
 
     # =========================
     # Loop

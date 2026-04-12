@@ -23,6 +23,7 @@ class Player():
         self.head = []
         self.body = []
         self.hands = []
+        self.foot = []
         self.bag = []
         self.healpotions = 0
         self.manapotions = 0

@@ -4,7 +4,8 @@ class BattleUIState:
         self.bag_index = 0
         self.show_potions = False
         self.potion_index = 0
-
+        self.show_zone_menu = False
+        self.zone_menu_index = 0
         self.show_menu = False
         self.menu_index = 0
 
@@ -15,6 +16,7 @@ class BattleUIState:
         self.show_equipped = False
         self.show_skills = False
         self.skill_index = 0
+        self.equipped_index = 0
 
         self.logs = ["Battle started."]
 

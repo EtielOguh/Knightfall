@@ -1,5 +1,5 @@
 from battle.battle_inventory import BattleInventory
-
+from world.zone import get_zone_name, get_zone_travel_options
 
 class BattleScreenQueries:
     INVENTORY_CATEGORIES = ["weapon", "shield", "armor", "helmet", "jewel", "misc"]
@@ -60,3 +60,21 @@ class BattleScreenQueries:
     @classmethod
     def get_menu_options(cls, ui):
         return cls.MENU_OPTIONS
+    
+    @classmethod
+    def get_menu_options(cls, ui):
+        return ["Bag", "Equipped", "Zone Travel", "Close"]
+
+
+    @staticmethod
+    def get_zone_preview(ui):
+        return get_next_zone_preview(ui.player)
+
+
+    @staticmethod
+    def get_current_zone_name(ui):
+        return get_zone_name(ui.player.zone)
+    
+    @staticmethod
+    def get_zone_travel_options(ui):
+        return get_zone_travel_options(ui.player)

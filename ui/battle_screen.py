@@ -192,7 +192,6 @@ class BattleScreen:
         
         if self.state.show_zone_menu:
             self.handle_zone_input(event)
-            self.state.zone_menu_index = 0
             return
 
         if self.state.show_menu:
@@ -203,7 +202,7 @@ class BattleScreen:
             self.handle_inventory_input(event)
             return
 
-        #if self.state.show_equipped:
+        if self.state.show_equipped:
             self.handle_equipped_input(event)
             return
 
@@ -248,6 +247,9 @@ class BattleScreen:
             self.add_log(message)
 
             if success:
+                self.battle.run_from_battle()
+                self.sync_entities()
+                self.show_battle_cry()
                 self.state.show_zone_menu = False
                 
     def handle_root_input(self, event):

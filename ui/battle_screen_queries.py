@@ -67,11 +67,6 @@ class BattleScreenQueries:
 
 
     @staticmethod
-    def get_zone_preview(ui):
-        return get_next_zone_preview(ui.player)
-
-
-    @staticmethod
     def get_current_zone_name(ui):
         return get_zone_name(ui.player.zone)
     

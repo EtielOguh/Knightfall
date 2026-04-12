@@ -2,13 +2,13 @@ from random import randint
 from monsters.mob import Enemy
 from itens.rarity import Rarity
 
-class Drowsywing(Enemy):
+class DevilHydra(Enemy):
     def __init__(self):
-        level = 4
+        level = 10
         max_health = self._generate_max_health(level)
         health = max_health
         super().__init__(
-            name="Drowsywing",
+            name="DevilHydra",
             level=level,
             attack=self._generate_attack(level),
             health=health,
@@ -23,4 +23,4 @@ class Drowsywing(Enemy):
         return 40 + (level * 20) + randint(0, 9)
 
     def battle_cry(self):
-        return f"{self.name} Appears!  ATK: {self.attack} HP: {self.health}/{self.max_health}\nDrowsywing flaps lazily, grazing you with a weak gust of air."
+        return f"{self.name} Appears! ATK: {self.attack} HP: {self.health}/{self.max_health}\nMossblob oozes slowly toward you, its slimy body slowing you down slightly."

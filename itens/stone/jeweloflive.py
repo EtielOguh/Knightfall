@@ -7,5 +7,6 @@ class JewelOfLive(Stone):
             type=3,
             quantity=1,
             price = price,
-            is_stone = True
+            is_stone = True,
+            category = "stone"
         )

@@ -7,5 +7,6 @@ class JewelofBless(Stone):
             type=2,
             quantity= 1,
             price = price,
-            is_stone = True
+            is_stone = True,
+            category = "stone"
         )

@@ -41,6 +41,5 @@ class BattleRewards:
 
         save_player(player)
         self.ui.event("Progress saved.", 0.4)
-        sleep(1)
         return self.spawn_monster(player.zone, player)
         

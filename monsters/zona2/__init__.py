@@ -1,5 +1,5 @@
-from.drowsywing import Drowsywing
-from.fluffbite import Fluffbite
-from.pinchclaw import Pinchclaw
+from.devil import Devil
+from.zombiewarrior import Zombiewarrior
+from.goblin import Goblin
 
-monster_zona2 = [Drowsywing, Fluffbite, Pinchclaw]
+monster_zona2 = [Goblin, Zombiewarrior, Devil]

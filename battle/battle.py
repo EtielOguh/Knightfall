@@ -1,5 +1,5 @@
 from rules import spawn_monster, try_drop_item, try_drop_stone
-from battle.combat_ui import CombatUI
+
 from battle.battle_rewards import BattleRewards
 from battle.battle_actions import BattleActions
 
@@ -8,7 +8,7 @@ class BattleSystem:
     def __init__(self, player, ui=None):
         self.player = player
         self.monster = spawn_monster(player.zone, player)
-        self.ui = ui or CombatUI()
+        self.ui = ui
 
         self.rewards = BattleRewards(
             ui=self.ui,

@@ -30,7 +30,9 @@ class Player():
         self.xp = 0
         self.xp_max = 100
         self.money = 0
-        self.dynamic_zone = False
+        self.player_hit_timer = 0
+        self.player_flash_timer = 0
+        self.player_shake_intensity = 0
         
 
     def player_is_alive(self):
@@ -264,3 +266,8 @@ class Player():
         self.defense += getattr(item_to_equip, "defense", 0)
 
         return True, f"Equipped: {item_to_equip.name}"
+    
+    def trigger_player_hit_effect(self, duration=10, flash_duration=6, shake_intensity=8):
+        self.player_hit_timer = duration
+        self.player_flash_timer = flash_duration
+        self.player_shake_intensity = shake_intensity

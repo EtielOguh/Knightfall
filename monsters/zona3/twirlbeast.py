@@ -23,4 +23,4 @@ class Twirlbeast(Enemy):
         return 40 + (level * 20) + randint(0, 9)
 
     def battle_cry(self):
-        return f"{self.name} Appears! ATK: {self.attack} HP: {self.health}/{self.max_health}\nTwirlbeast spins around, bumping into you accidentally, causing no real harm."
+        return f"{self.name} Appears! Twirlbeast spins around, bumping into you accidentally, causing no real harm."

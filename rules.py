@@ -2,8 +2,6 @@ from monsters.zona1 import monster_zona1
 from monsters.zona2 import monster_zona2
 from monsters.zona3 import monster_zona3
 from monsters.zona4 import monster_zona4
-from monsters.Infinityzone import monster_dynamic
-from monsters.boss import boss_zone_1, boss_zone_2,boss_zone_3, boss_zone_4, boss_final
 from random import choice, random, randint
 import os
 from itens.archer import archer_weapons
@@ -17,51 +15,9 @@ from itens.stone.stone_registry import STONE_BY_TYPE
 from itens.rarity import Rarity
 from random import random, choice, choices
     
-def boss_fight(zone, player_level):
-    bosses_by_zone = {
-        1: boss_zone_1,
-        2: boss_zone_2,
-        3: boss_zone_3,
-        4: boss_zone_4
-    }
-
-    while True:
-        try:
-            player_choice = int(input(
-                "\nWhich boss do you want to fight against?\n"
-                "1 - Boss from current zone\n"
-                "2 - Final boss (Requires level 10+)\n"
-                ">>> "
-            ))
-        except ValueError:
-            print("Invalid input. Type 1 or 2.")
-            continue
-
-        if player_choice == 1:
-            bosses = bosses_by_zone.get(zone)
-            if bosses:
-                return choice(bosses)()
-            else:
-                print("Invalid zone! Returning to the game.")
-                return None 
-
-        elif player_choice == 2:
-            if player_level >= 10:
-                return choice(boss_final)()
-            else:
-                print("You need to be at least level 10 for the final boss. Returning to the game.")
-                return None
-
-        else:
-            print("Invalid option. Type 1 or 2.")
-            continue
-
-    
     
 def spawn_monster(zone, player):
-    if player.dynamic_zone == True:
-       return choice(monster_dynamic)(player.level)
-    elif zone == 1:
+    if zone == 1:
         return choice(monster_zona1)()
     elif zone == 2:
         return choice(monster_zona2)()

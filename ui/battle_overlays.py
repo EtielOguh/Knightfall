@@ -527,3 +527,46 @@ class BattleOverlays:
             surface = ui.small_font.render(line, True, (220, 220, 220))
             ui.screen.blit(surface, (rect.x + pad_x, info_y))
             info_y += line_gap
+
+    @staticmethod
+    def draw_revive_overlay(ui):
+        overlay = pygame.Rect(220, 170, 560, 260)
+        pygame.draw.rect(ui.screen, (18, 18, 18), overlay, border_radius=12)
+        pygame.draw.rect(ui.screen, (200, 200, 200), overlay, 2, border_radius=12)
+
+        title = ui.font.render("You Were Defeated", True, (220, 90, 90))
+        title_rect = title.get_rect(center=(overlay.centerx, overlay.y + 35))
+        ui.screen.blit(title, title_rect)
+
+        preview = ui.state.revive_penalty_preview or {
+            "xp_loss": 0,
+            "loss_percent": 20,
+            "will_level_down": False
+        }
+
+        line1 = ui.small_font.render(
+            f"Revive with full HP/MP and spawn a new monster.",
+            True,
+            (220, 220, 220)
+        )
+        ui.screen.blit(line1, (overlay.x + 35, overlay.y + 85))
+
+        line2 = ui.small_font.render(
+            f"Penalty: lose {preview['xp_loss']} XP ({preview['loss_percent']}% of current XP bar).",
+            True,
+            (220, 220, 220)
+        )
+        ui.screen.blit(line2, (overlay.x + 35, overlay.y + 118))
+
+        level_text = "This can reduce your level." if preview["will_level_down"] else "Your level will remain the same."
+        level_color = (220, 100, 100) if preview["will_level_down"] else (180, 180, 180)
+        line3 = ui.small_font.render(level_text, True, level_color)
+        ui.screen.blit(line3, (overlay.x + 35, overlay.y + 151))
+
+        footer = ui.small_font.render(
+            "[ENTER] Revive   [ESC] Keep reading",
+            True,
+            (180, 180, 180)
+        )
+        footer_rect = footer.get_rect(center=(overlay.centerx, overlay.bottom - 28))
+        ui.screen.blit(footer, footer_rect)

@@ -19,6 +19,9 @@ class BattleUIState:
 
         self.log_messages = []
 
+        self.show_revive_prompt = False
+        self.revive_penalty_preview = None
+        
         self.zone_transition_active = False
         self.zone_transition_phase = None
         self.zone_transition_alpha = 0

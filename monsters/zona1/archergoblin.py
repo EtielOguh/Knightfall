@@ -2,13 +2,13 @@ from random import randint
 from monsters.mob import Enemy
 from itens.rarity import Rarity
 
-class Zombiewarrior(Enemy):
+class Archergoblin(Enemy):
     def __init__(self):
-        level = 5
+        level = 2
         max_health = self._generate_max_health(level)
         health = max_health
         super().__init__(
-            name="Zombie Warrior",
+            name="Archer Goblin",
             level=level,
             attack=self._generate_attack(level),
             health=health,
@@ -23,4 +23,4 @@ class Zombiewarrior(Enemy):
         return 40 + (level * 20) + randint(0, 9)
 
     def battle_cry(self):
-        return f"{self.name} Appears! Fluffbite tries to nibble at you, but its bite is more cute than dangerous."
+        return f"{self.name} Appears! Whiskerghost flickers in and out, giving you a spooky chill but no real harm."

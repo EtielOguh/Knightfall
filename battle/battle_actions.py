@@ -22,6 +22,9 @@ class BattleActions:
             self.ui.add_log(f"{monster.name} dealt {enemy_damage} damage to {player.name}.", LOG_COMBAT)
             self.ui.add_floating_text(f"-{damage}", 760, 210, color=(255, 90, 90))
             self.ui.add_floating_text(f"-{enemy_damage}", 180, 210, color=(255, 90, 90))
+
+            if not player.player_is_alive():
+                self.ui.open_revive_prompt()
         else:
             self.battle.monster = self.battle.rewards.handle_monster_defeat(player, monster)
             self.ui.sync_entities()
@@ -92,6 +95,9 @@ class BattleActions:
             self.ui.add_log(f"{monster.name} dealt {enemy_damage} damage to {player.name}.", LOG_COMBAT)
             self.ui.add_floating_text(f"-{enemy_damage}", 180, 210, color=(255, 90, 90))
             self.ui.trigger_player_hit_effect()
+
+            if not player.player_is_alive():
+                self.ui.open_revive_prompt()
         else:
             self.battle.monster = self.battle.rewards.handle_monster_defeat(player, monster)
             self.ui.sync_entities()

@@ -83,7 +83,6 @@ def save_player(player, filename="save_data.json"):
         "money": player.money,
         "mana_potions": player.manapotions,
         "heal_potions": player.healpotions,
-        "dynamic_zone": player.dynamic_zone,
         "bag": serialize_items(player.bag),
         "right_hand": serialize_items(player.right_hand),
         "left_hand": serialize_items(player.left_hand),

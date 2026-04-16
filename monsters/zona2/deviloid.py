@@ -2,13 +2,13 @@ from random import randint
 from monsters.mob import Enemy
 from itens.rarity import Rarity
 
-class Squeek(Enemy):
+class Deviloid(Enemy):
     def __init__(self):
-        level = 2
+        level = 6
         max_health = self._generate_max_health(level)
         health = max_health
         super().__init__(
-            name="Squeek",
+            name="Deviloid",
             level=level,
             attack=self._generate_attack(level),
             health=health,
@@ -23,4 +23,4 @@ class Squeek(Enemy):
         return 40 + (level * 20) + randint(0, 9)
 
     def battle_cry(self):
-        return f"{self.name} Appears! Squeek darts past you, leaving a trail of squeaks, but no damage."
+        return f"{self.name} Appears! Pinchclaw pinches at you, but it's slow and clumsy, barely doing any damage."

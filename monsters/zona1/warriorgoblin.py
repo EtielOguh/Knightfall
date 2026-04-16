@@ -2,13 +2,13 @@ from random import randint
 from monsters.mob import Enemy
 from itens.rarity import Rarity
 
-class Spiketooth(Enemy):
+class Warriorgoblin(Enemy):
     def __init__(self):
         level = 1
         max_health = self._generate_max_health()
         health = max_health
         super().__init__(
-            name="Spiketooth",
+            name="Warrior Goblin",
             level=level,
             attack=self._generate_attack(),
             health=health,

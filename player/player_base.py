@@ -16,7 +16,7 @@ class Player():
         self.health = health
         self.mana = 100
         self.mana_max = 100
-        self.max_health = 100
+        self.max_health = health
         self.zone = 1
         self.right_hand = []
         self.left_hand = []
@@ -271,3 +271,68 @@ class Player():
         self.player_hit_timer = duration
         self.player_flash_timer = flash_duration
         self.player_shake_intensity = shake_intensity
+
+    #------------------------#
+    #Penalidades de lvl
+    #------------------------#
+
+    def level_down(self):
+        if self.level <= 1:
+            self.level = 1
+            self.xp = 0
+            self.xp_max = self.calculate_xp_max(self.level)
+            self.unlock_skills()
+            return False
+
+        self.level -= 1
+        self.attack = max(self.base_attack, self.attack - 3)
+        self.max_health = max(self.base_max_health, self.max_health - 50)
+        self.mana_max = max(self.base_mana_max, self.mana_max - 20)
+
+        self.health = min(max(1, self.health), self.max_health)
+        self.mana = min(self.mana, self.mana_max)
+
+        self.xp_max = self.calculate_xp_max(self.level)
+        self.unlock_skills()
+        return True
+
+    def preview_death_penalty(self, loss_percent=0.20):
+        xp_loss = max(1, int(self.xp_max * loss_percent))
+        will_level_down = self.level > 1 and self.xp < xp_loss
+
+        return {
+            "xp_loss": xp_loss,
+            "loss_percent": int(loss_percent * 100),
+            "current_level": self.level,
+            "will_level_down": will_level_down,
+        }
+
+    def apply_death_penalty(self, loss_percent=0.20):
+        xp_loss = max(1, int(self.xp_max * loss_percent))
+        remaining_loss = xp_loss
+        old_level = self.level
+
+        while remaining_loss > 0:
+            if self.xp >= remaining_loss:
+                self.xp -= remaining_loss
+                remaining_loss = 0
+                break
+
+            remaining_loss -= self.xp
+            self.xp = 0
+
+            if self.level == 1:
+                break
+
+            self.level_down()
+            self.xp = self.xp_max
+
+        if self.level == 1 and self.xp < 0:
+            self.xp = 0
+
+        return {
+            "xp_loss": xp_loss,
+            "old_level": old_level,
+            "new_level": self.level,
+            "level_down": self.level < old_level,
+        }

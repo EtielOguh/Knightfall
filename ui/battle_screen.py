@@ -41,6 +41,11 @@ class BattleScreen:
         self.enemy_flash_timer = 0
         self.enemy_shake_intensity = 0
 
+        self.pending_enemy_action = False
+        self.enemy_acion_delay = 250
+        self.enemy_action_time = 0
+    
+
         self.player_hit_timer = 0
         self.player_flash_timer = 0
         self.player_shake_intensity = 0
@@ -61,6 +66,13 @@ class BattleScreen:
         self.sync_entities()
         self.show_battle_cry()
 
+    def get_time(self):
+        return pygame.time.get_ticks()
+    
+    def update_pending_battle_actions(self):
+        if self.battle.can_execute_enemy_turn(self.get_time()):
+            self.battle.actions.enemy_take_turn()
+    
     # =========================
     # Salvar e sair
     # =========================
@@ -357,6 +369,9 @@ class BattleScreen:
         self.handle_root_input(event)
 
     def handle_root_input(self, event):
+        if not self.battle.is_player_turn():
+            return
+
         if event.key == pygame.K_1:
             self.battle.actions.attack()
 
@@ -611,7 +626,7 @@ class BattleScreen:
             BattleOverlays.draw_equipped_overlay(self)
         elif self.state.show_skills:
             BattleOverlays.draw_skill_overlay(self)
-            
+
     def draw_background(self):
         if hasattr(self, "background") and self.background:
             self.screen.blit(self.background, (0, 0))
@@ -854,6 +869,7 @@ class BattleScreen:
 
         self.battle.run_from_battle()
         self.sync_entities()
+        self.battle.set_player_turn()
 
         self.state.show_revive_prompt = False
         self.state.revive_penalty_preview = None
@@ -891,6 +907,7 @@ class BattleScreen:
             self.update_floating_texts()
             self.update_zone_transition()
             self.update_hit_effects()
+            self.update_pending_battle_actions()
             self.draw()
             self.clock.tick(120)
 

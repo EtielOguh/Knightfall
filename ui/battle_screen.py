@@ -756,6 +756,8 @@ class BattleScreen:
         )
         self.screen.blit(player_mp, (120, 182))
 
+        self.draw_status_effects(self.player, 120, 210)
+
         enemy_name = self.font.render(
             f"{self.monster.name} Lv.{self.monster.level}",
             True,
@@ -772,6 +774,8 @@ class BattleScreen:
             (255, 255, 255),
         )
         self.screen.blit(enemy_hp, (650, 132))
+
+        self.draw_status_effects(self.monster, 650, 155)
 
     def draw_action_bar(self):
         bar_rect = pygame.Rect(120, 455, 760, 50)
@@ -823,6 +827,49 @@ class BattleScreen:
             self.screen.blit(text_surface, (x, y))
             y += line_height
 
+    def draw_status_effects(self, entity, x, y):
+        if not hasattr(entity, "status_effects") or not entity.status_effects:
+            return
+
+        badge_x = x
+        badge_y = y
+        badge_width = 72
+        badge_height = 22
+        gap = 8
+
+        label_map = {
+            "poison": "POI",
+            "guard": "GRD",
+            "bleed": "BLD",
+            "burn": "BRN",
+            "stun": "STN",
+        }
+
+        color_map = {
+            "poison": (80, 170, 90),
+            "guard": (80, 140, 220),
+            "bleed": (180, 70, 70),
+            "burn": (220, 120, 60),
+            "stun": (190, 170, 70),
+        }
+
+        for effect in entity.status_effects[:3]:
+            effect_type = effect.get("type", "status").lower()
+            duration = effect.get("duration", 0)
+            short_label = label_map.get(effect_type, effect_type[:3].upper())
+            border_color = color_map.get(effect_type, (110, 110, 110))
+
+            text_label = f"{short_label} {duration}"
+
+            rect = pygame.Rect(badge_x, badge_y, badge_width, badge_height)
+            pygame.draw.rect(self.screen, (24, 24, 24), rect, border_radius=6)
+            pygame.draw.rect(self.screen, border_color, rect, 1, border_radius=6)
+
+            text_surface = self.small_font.render(text_label, True, (220, 220, 220))
+            text_rect = text_surface.get_rect(center=rect.center)
+            self.screen.blit(text_surface, text_rect)
+
+            badge_x += badge_width + gap
     # =========================
     # Hit Effects
     # =========================

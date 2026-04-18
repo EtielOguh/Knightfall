@@ -13,6 +13,7 @@ class Bonewhisper(Enemy):
             attack=self._generate_attack(level),
             health=health,
             max_health=max_health,
+            ai_profile = "trickster",
             allowed_rarities=[Rarity.COMMON]
         )
 

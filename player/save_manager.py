@@ -73,10 +73,12 @@ def save_player(player, filename="save_data.json"):
         "name": player.name,
         "class_type": player.class_type,
         "level": player.level,
-        "attack": player.attack,
-        "defense": player.defense,
+        "base_attack": player.base_attack,
+        "base_defense": player.base_defense,
         "health": player.health,
-        "max_health": player.max_health,
+        "base_max_health": player.base_max_health,
+        "mana": player.mana,
+        "base_mana_max": player.base_mana_max,
         "zone": player.zone,
         "xp": player.xp,
         "xp_max": player.xp_max,
@@ -117,10 +119,12 @@ def load_player(filename="save_data.json"):
 
     player.name = data["name"]
     player.level = data["level"]
-    player.attack = data["attack"]
-    player.defense = data["defense"]
+    player.base_attack = data["base_attack"]
+    player.base_defense = data["base_defense"]
     player.health = data["health"]
-    player.max_health = data["max_health"]
+    player.base_max_health = data["base_max_health"]
+    player.base_mana_max = data.get("base_mana_max", 100)
+    player.mana = data.get("mana", player.mana_max)
     player.zone = data["zone"]
     player.xp = data["xp"]
     player.xp_max = data["xp_max"]
@@ -128,6 +132,11 @@ def load_player(filename="save_data.json"):
     player.manapotions = data["mana_potions"]
     player.healpotions = data["heal_potions"]
     player.dynamic_zone = data.get("dynamic_zone", False)
+
+    player.recalculate_equipment_bonuses()
+    player.health = min(player.health, player.max_health)
+    player.mana = min(player.mana, player.mana_max)
+
 
     def load_items(item_list):
         items = []

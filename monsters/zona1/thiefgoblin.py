@@ -13,8 +13,13 @@ class Thiefgoblin(Enemy):
             attack=self._generate_attack(level),
             health=health,
             max_health=max_health,
+            ai_profile = "trickster",
             allowed_rarities=[Rarity.COMMON]
         )
+
+        self.status_chances = {
+            "poison": 0.25
+        }
 
     def _generate_attack(self, level):
         return randint(5 + level, 10 + level)

@@ -6,6 +6,7 @@ from world.zone import get_zone_name, get_zone_background, change_zone
 from ui.battle_ui_state import BattleUIState
 from ui.battle_overlays import BattleOverlays
 from ui.battle_screen_queries import BattleScreenQueries
+from player.save_manager import save_player
 
 
 class BattleScreen:
@@ -13,7 +14,7 @@ class BattleScreen:
     # Constantes visuais / UI
     # =========================
     INVENTORY_CATEGORIES = ["weapon", "shield", "armor", "helmet", "jewel", "misc"]
-    MENU_OPTIONS = ["Bag", "Equipped", "Close"]
+    MENU_OPTIONS = ["Bag", "Equipped", "Zone Travel", "Save and Exit", "Close"]
 
     ACTIONS = [
         ("[1]", "Attack"),
@@ -40,6 +41,11 @@ class BattleScreen:
         self.enemy_flash_timer = 0
         self.enemy_shake_intensity = 0
 
+        self.pending_enemy_action = False
+        self.enemy_acion_delay = 250
+        self.enemy_action_time = 0
+    
+
         self.player_hit_timer = 0
         self.player_flash_timer = 0
         self.player_shake_intensity = 0
@@ -59,6 +65,20 @@ class BattleScreen:
         # Carrega player/monster/sprites/background
         self.sync_entities()
         self.show_battle_cry()
+
+    def get_time(self):
+        return pygame.time.get_ticks()
+    
+    def update_pending_battle_actions(self):
+        if self.battle.can_execute_enemy_turn(self.get_time()):
+            self.battle.actions.enemy_take_turn()
+    
+    # =========================
+    # Salvar e sair
+    # =========================
+    def save_and_exit(self):
+        save_player(self.player)
+        self.running = False
 
     # =========================
     # Sincronização de entidades
@@ -188,13 +208,29 @@ class BattleScreen:
         if self.player_flash_timer > 0:
             self.player_flash_timer -= 1
             
-    def apply_damage_flash(self, sprite, color=(255, 60, 60), alpha=120):
+    def apply_damage_flash(self, sprite, intensity=120):
         if sprite is None:
             return None
 
         flashed = sprite.copy()
-        overlay = pygame.Surface(sprite.get_size(), pygame.SRCALPHA)
-        overlay.fill((*color, alpha))
+        w, h = sprite.get_size()
+
+        overlay = pygame.Surface((w, h), pygame.SRCALPHA)
+
+        center_x = w // 2
+        center_y = h // 2
+        radius = min(w, h) // 3
+
+        # desenha círculo suave
+        for r in range(radius, 0, -1):
+            alpha = int(intensity * (r / radius))
+            pygame.draw.circle(
+                overlay,
+                (255, 50, 50, alpha),
+                (center_x, center_y),
+                r
+            )
+
         flashed.blit(overlay, (0, 0), special_flags=pygame.BLEND_RGBA_ADD)
         return flashed
 
@@ -288,6 +324,17 @@ class BattleScreen:
     # Input principal
     # =========================
     def handle_input(self, event):
+
+        if event.type != pygame.KEYDOWN:
+            return
+
+        if self.state.zone_transition_active:
+            return
+
+        if self.state.show_revive_prompt:
+            self.handle_revive_input(event)
+            return
+        
         if event.type != pygame.KEYDOWN:
             return
 
@@ -322,6 +369,9 @@ class BattleScreen:
         self.handle_root_input(event)
 
     def handle_root_input(self, event):
+        if not self.battle.is_player_turn():
+            return
+
         if event.key == pygame.K_1:
             self.battle.actions.attack()
 
@@ -359,6 +409,10 @@ class BattleScreen:
             self.state.show_menu = False
             self.state.show_zone_menu = True
             self.state.zone_menu_index = 0
+
+        elif selected == "Save and Exit":
+            self.state.show_menu = False
+            self.save_and_exit()
 
         elif selected == "Close":
             self.state.show_menu = False
@@ -558,7 +612,9 @@ class BattleScreen:
         pygame.display.flip()
 
     def draw_active_overlay(self):
-        if self.state.show_zone_menu:
+        if self.state.show_revive_prompt:
+            BattleOverlays.draw_revive_overlay(self)
+        elif self.state.show_zone_menu:
             BattleOverlays.draw_zone_overlay(self)
         elif self.state.show_potions:
             BattleOverlays.draw_potions_overlay(self)
@@ -617,12 +673,12 @@ class BattleScreen:
         # sprite do player com flash opcional
         player_sprite = self.player_sprite
         if self.player_flash_timer > 0 and player_sprite:
-            player_sprite = self.apply_damage_flash(player_sprite, color=(255, 70, 70), alpha=110)
+            player_sprite = self.apply_damage_flash(player_sprite, intensity=90)
 
         # sprite do inimigo com flash opcional
         enemy_sprite = self.enemy_sprite
         if self.enemy_flash_timer > 0 and enemy_sprite:
-            enemy_sprite = self.apply_damage_flash(enemy_sprite, color=(255, 60, 60), alpha=130)
+            enemy_sprite = self.apply_damage_flash(enemy_sprite, intensity=90)
 
         if player_sprite:
             self.screen.blit(player_sprite, player_pos)
@@ -700,6 +756,8 @@ class BattleScreen:
         )
         self.screen.blit(player_mp, (120, 182))
 
+        self.draw_status_effects(self.player, 120, 210)
+
         enemy_name = self.font.render(
             f"{self.monster.name} Lv.{self.monster.level}",
             True,
@@ -716,6 +774,8 @@ class BattleScreen:
             (255, 255, 255),
         )
         self.screen.blit(enemy_hp, (650, 132))
+
+        self.draw_status_effects(self.monster, 650, 155)
 
     def draw_action_bar(self):
         bar_rect = pygame.Rect(120, 455, 760, 50)
@@ -767,6 +827,49 @@ class BattleScreen:
             self.screen.blit(text_surface, (x, y))
             y += line_height
 
+    def draw_status_effects(self, entity, x, y):
+        if not hasattr(entity, "status_effects") or not entity.status_effects:
+            return
+
+        badge_x = x
+        badge_y = y
+        badge_width = 72
+        badge_height = 22
+        gap = 8
+
+        label_map = {
+            "poison": "POI",
+            "guard": "GRD",
+            "bleed": "BLD",
+            "burn": "BRN",
+            "stun": "STN",
+        }
+
+        color_map = {
+            "poison": (80, 170, 90),
+            "guard": (80, 140, 220),
+            "bleed": (180, 70, 70),
+            "burn": (220, 120, 60),
+            "stun": (190, 170, 70),
+        }
+
+        for effect in entity.status_effects[:3]:
+            effect_type = effect.get("type", "status").lower()
+            duration = effect.get("duration", 0)
+            short_label = label_map.get(effect_type, effect_type[:3].upper())
+            border_color = color_map.get(effect_type, (110, 110, 110))
+
+            text_label = f"{short_label} {duration}"
+
+            rect = pygame.Rect(badge_x, badge_y, badge_width, badge_height)
+            pygame.draw.rect(self.screen, (24, 24, 24), rect, border_radius=6)
+            pygame.draw.rect(self.screen, border_color, rect, 1, border_radius=6)
+
+            text_surface = self.small_font.render(text_label, True, (220, 220, 220))
+            text_rect = text_surface.get_rect(center=rect.center)
+            self.screen.blit(text_surface, text_rect)
+
+            badge_x += badge_width + gap
     # =========================
     # Hit Effects
     # =========================
@@ -779,6 +882,63 @@ class BattleScreen:
         self.player_hit_timer = duration
         self.player_flash_timer = flash_duration
         self.player_shake_intensity = shake_intensity
+
+
+    # =========================
+    # Revive overlay
+    # =========================
+
+    def open_revive_prompt(self):
+        self.state.show_menu = False
+        self.state.show_inventory = False
+        self.state.show_equipped = False
+        self.state.show_skills = False
+        self.state.show_potions = False
+        self.state.show_zone_menu = False
+
+        self.state.show_revive_prompt = True
+        self.state.revive_penalty_preview = self.player.preview_death_penalty(0.20)
+
+        preview = self.state.revive_penalty_preview
+        self.add_log(
+            f"{self.player.name} was defeated. Revive will cost {preview['xp_loss']} XP.",
+            LOG_IMPORTANT
+        )
+
+        if preview["will_level_down"]:
+            self.add_log("This penalty can reduce your level.", LOG_IMPORTANT)
+
+    def confirm_revive(self):
+        penalty = self.player.apply_death_penalty(0.20)
+
+        self.player.health = self.player.max_health
+        self.player.mana = self.player.mana_max
+
+        self.battle.run_from_battle()
+        self.sync_entities()
+        self.battle.set_player_turn()
+
+        self.state.show_revive_prompt = False
+        self.state.revive_penalty_preview = None
+
+        self.add_log(
+            f"{self.player.name} revived and lost {penalty['xp_loss']} XP.",
+            LOG_IMPORTANT
+        )
+
+        if penalty["level_down"]:
+            self.add_log(
+                f"Level reduced: {penalty['old_level']} -> {penalty['new_level']}.",
+                LOG_IMPORTANT
+            )
+
+        self.show_battle_cry()
+
+    def handle_revive_input(self, event):
+        if event.key == pygame.K_RETURN:
+            self.confirm_revive()
+        elif event.key == pygame.K_ESCAPE:
+            return
     
     # =========================
     # Loop principal
@@ -794,6 +954,7 @@ class BattleScreen:
             self.update_floating_texts()
             self.update_zone_transition()
             self.update_hit_effects()
+            self.update_pending_battle_actions()
             self.draw()
             self.clock.tick(120)
 

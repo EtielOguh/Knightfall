@@ -12,8 +12,13 @@ class Joker(Enemy):
             attack=5,
             health= 50,
             max_health=50,
+            ai_profile = "trickster",
             allowed_rarities=[None]
         )
+
+        self.status_chances = {
+            "poison": 0.25
+        }
 
 
     def battle_cry(self):

@@ -2,17 +2,18 @@ from random import randint
 from monsters.mob import Enemy
 from itens.rarity import Rarity
 
-class Goblin(Enemy):
+class Deviloir(Enemy):
     def __init__(self):
         level = 4
         max_health = self._generate_max_health(level)
         health = max_health
         super().__init__(
-            name="Goblin",
+            name="Deviloir",
             level=level,
             attack=self._generate_attack(level),
             health=health,
             max_health=max_health,
+            ai_profile = "trickster",
             allowed_rarities=[Rarity.COMMON]
         )
 

@@ -61,9 +61,20 @@ class BattleScreenQueries:
     def get_menu_options(cls, ui):
         return cls.MENU_OPTIONS
     
-    @classmethod
-    def get_menu_options(cls, ui):
-        return ["Bag", "Equipped", "Zone Travel", "Close"]
+    @staticmethod
+    def get_menu_options(ui):
+        options = ["Bag", "Equipped"]
+
+        zone_data = ui.get_zone_travel_options()
+        if (
+            zone_data["previous_zone"] is not None
+            or zone_data["next_zone"] is not None
+        ):
+            options.append("Zone Travel")
+
+        options.append("Save and Exit")
+        options.append("Close")
+        return options
 
 
     @staticmethod

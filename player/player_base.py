@@ -9,14 +9,36 @@ class Player():
         self.class_type = type
         self.class_name = class_name
         self.level = 1
-        self.attack = attack
-        self.skills = []
-        self.all_skills = []
-        self.defense = defense
+        # Status effect
+        self.status_effects = []
+        self.base_status_chances = {}
+        self.status_chances = {}
+
+        # Base
+        self.base_attack = attack
+        self.base_defense = defense
+        self.base_max_health = health
+        self.base_mana_max = 100
+
+        # Equipamento
+        self.equipment_attack_bonus = 0
+        self.equipment_defense_bonus = 0
+        self.equipment_max_health_bonus = 0
+        self.equipment_mana_bonus = 0
+
+        # Temporários
+        self.temporary_attack_bonus = 0
+        self.temporary_defense_bonus = 0
+        self.temporary_max_health_bonus = 0
+        self.temporary_mana_bonus = 0
+
+        # Valores atuais de recurso
         self.health = health
         self.mana = 100
-        self.mana_max = 100
-        self.max_health = 100
+
+        self.skills = []
+        self.all_skills = []
+
         self.zone = 1
         self.right_hand = []
         self.left_hand = []
@@ -30,6 +52,7 @@ class Player():
         self.xp = 0
         self.xp_max = 100
         self.money = 0
+
         self.player_hit_timer = 0
         self.player_flash_timer = 0
         self.player_shake_intensity = 0
@@ -84,16 +107,19 @@ class Player():
         ]
     
     def level_up(self):
-            self.level += 1
-            self.xp -= self.xp_max
-            self.attack += 3
-            self.max_health += 50
-            self.mana_max += 20
-            self.health = self.max_health
-            self.mana = self.mana_max
-            self.xp_max = self.calculate_xp_max(self.level)
-            self.unlock_skills()
-            print(f"Level Up! {self.level}. Xp Left: {self.xp}/{self.xp_max}")
+        self.level += 1
+        self.xp -= self.xp_max
+
+        self.base_attack += 3
+        self.base_max_health += 50
+        self.base_mana_max += 20
+
+        self.health = self.max_health
+        self.mana = self.mana_max
+
+        self.xp_max = self.calculate_xp_max(self.level)
+        self.unlock_skills()
+        print(f"Level Up! {self.level}. Xp Left: {self.xp}/{self.xp_max}")
     
     def stats(self):
         print(f"{self.name} Lv.{self.level}")
@@ -257,13 +283,10 @@ class Player():
 
         if target_slot:
             old_item = target_slot.pop()
-            self.attack -= getattr(old_item, "attack", 0)
-            self.defense -= getattr(old_item, "defense", 0)
             self.bag.append(old_item)
 
         target_slot.append(item_to_equip)
-        self.attack += getattr(item_to_equip, "attack", 0)
-        self.defense += getattr(item_to_equip, "defense", 0)
+        self.recalculate_equipment_bonuses()
 
         return True, f"Equipped: {item_to_equip.name}"
     
@@ -271,3 +294,145 @@ class Player():
         self.player_hit_timer = duration
         self.player_flash_timer = flash_duration
         self.player_shake_intensity = shake_intensity
+
+    #------------------------#
+    #Penalidades de lvl
+    #------------------------#
+
+    def level_down(self):
+        if self.level <= 1:
+            self.level = 1
+            self.xp = 0
+            self.xp_max = self.calculate_xp_max(self.level)
+            self.unlock_skills()
+            return False
+
+        self.level -= 1
+
+        self.base_attack = max(1, self.base_attack - 3)
+        self.base_max_health = max(100, self.base_max_health - 50)
+        self.base_mana_max = max(100, self.base_mana_max - 20)
+
+        self.health = min(self.health, self.max_health)
+        self.mana = min(self.mana, self.mana_max)
+
+        self.xp_max = self.calculate_xp_max(self.level)
+        self.unlock_skills()
+        return True
+
+    def preview_death_penalty(self, loss_percent=0.20):
+        xp_loss = max(1, int(self.xp_max * loss_percent))
+        will_level_down = self.level > 1 and self.xp < xp_loss
+
+        return {
+            "xp_loss": xp_loss,
+            "loss_percent": int(loss_percent * 100),
+            "current_level": self.level,
+            "will_level_down": will_level_down,
+        }
+
+    def apply_death_penalty(self, loss_percent=0.20):
+        xp_loss = max(1, int(self.xp_max * loss_percent))
+        remaining_loss = xp_loss
+        old_level = self.level
+
+        while remaining_loss > 0:
+            if self.xp >= remaining_loss:
+                self.xp -= remaining_loss
+                remaining_loss = 0
+                break
+
+            remaining_loss -= self.xp
+            self.xp = 0
+
+            if self.level == 1:
+                break
+
+            self.level_down()
+            self.xp = self.xp_max
+
+        if self.level == 1 and self.xp < 0:
+            self.xp = 0
+
+        return {
+            "xp_loss": xp_loss,
+            "old_level": old_level,
+            "new_level": self.level,
+            "level_down": self.level < old_level,
+        }
+    
+    def recalculate_equipment_bonuses(self):
+        self.equipment_attack_bonus = 0
+        self.equipment_defense_bonus = 0
+        self.equipment_max_health_bonus = 0
+        self.equipment_mana_bonus = 0
+
+        self.status_chances = self.base_status_chances.copy()
+
+        equipped_lists = [
+            self.right_hand,
+            self.left_hand,
+            self.head,
+            self.body,
+            self.hands,
+            self.foot,
+        ]
+
+        for slot_items in equipped_lists:
+            for item in slot_items:
+                self.equipment_attack_bonus += getattr(item, "attack", 0)
+                self.equipment_defense_bonus += getattr(item, "defense", 0)
+                self.equipment_max_health_bonus += getattr(item, "max_health", 0)
+                self.equipment_mana_bonus += getattr(item, "mana", 0)
+
+                item_status_chances = getattr(item, "status_chances", {})
+                for status_type, chance in item_status_chances.items():
+                    current = self.status_chances.get(status_type, 0)
+                    self.status_chances[status_type] = max(current, chance)
+
+        self.health = min(self.health, self.max_health)
+        self.mana = min(self.mana, self.mana_max)
+
+    def apply_status_effect(self, effect):
+        effect_type = effect.get("type")
+
+        for existing in self.status_effects:
+            if existing["type"] == effect_type:
+                existing["duration"] = max(existing["duration"], effect["duration"])
+                existing["value"] = max(existing["value"], effect["value"])
+                return False
+
+        self.status_effects.append(effect.copy())
+        return True
+
+    @property
+    def attack(self):
+        return (
+            self.base_attack
+            + self.equipment_attack_bonus
+            + self.temporary_attack_bonus
+        )
+
+    @property
+    def defense(self):
+        return (
+            self.base_defense
+            + self.equipment_defense_bonus
+            + self.temporary_defense_bonus
+        )
+
+    @property
+    def max_health(self):
+        return (
+            self.base_max_health
+            + self.equipment_max_health_bonus
+            + self.temporary_max_health_bonus
+        )
+
+    @property
+    def mana_max(self):
+        return (
+            self.base_mana_max
+            + self.equipment_mana_bonus
+            + self.temporary_mana_bonus
+        )

@@ -5,7 +5,7 @@ from ..rarity import Rarity
 
 class WoodSwoord(Itens_Base):
     def __init__(self, price = None):
-        super().__init__(name="Wood Sword", attack=18, defense=0, type=1, rarity= Rarity.COMMON, price=price, buff=0,slot="right_hand",category="weapon", quantity=1)
+        super().__init__(name="Wood Sword", attack=18, defense=0, type=1, rarity= Rarity.COMMON, price=price, buff=0,slot="right_hand",category="weapon", quantity=1, status_chances = {"poison": 0.30})
 
 class StoneSword(Itens_Base):
     def __init__(self,price= None):

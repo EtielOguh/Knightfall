@@ -2,19 +2,24 @@ from random import randint
 from monsters.mob import Enemy
 from itens.rarity import Rarity
 
-class Devil(Enemy):
+class Thiefgoblin(Enemy):
     def __init__(self):
-        level = 6
+        level = 2
         max_health = self._generate_max_health(level)
         health = max_health
         super().__init__(
-            name="Devil",
+            name="Thief Goblin",
             level=level,
             attack=self._generate_attack(level),
             health=health,
             max_health=max_health,
+            ai_profile = "trickster",
             allowed_rarities=[Rarity.COMMON]
         )
+
+        self.status_chances = {
+            "poison": 0.25
+        }
 
     def _generate_attack(self, level):
         return randint(5 + level, 10 + level)
@@ -23,4 +28,4 @@ class Devil(Enemy):
         return 40 + (level * 20) + randint(0, 9)
 
     def battle_cry(self):
-        return f"{self.name} Appears! Pinchclaw pinches at you, but it's slow and clumsy, barely doing any damage."
+        return f"{self.name} Appears! Squeek darts past you, leaving a trail of squeaks, but no damage."

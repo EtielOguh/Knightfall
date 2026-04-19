@@ -102,8 +102,36 @@ class BattleActions:
         if not self.battle.is_player_turn():
             return
 
-        success, message = self.battle.player.equip_item(item)
-        self.ui.add_log(message, LOG_SYSTEM if success else LOG_IMPORTANT)
+        player = self.battle.player
+        slot_name = getattr(item, "slot", None)
+
+        slot_map = player.get_equipment_slot_map()
+        target_slot = slot_map.get(slot_name)
+
+        old_item = target_slot[0] if target_slot else None
+
+        old_atk = getattr(old_item, "attack", 0) if old_item else 0
+        old_def = getattr(old_item, "defense", 0) if old_item else 0
+
+        success, message = player.equip_item(item)
+
+        if not success:
+            self.ui.add_log(message, LOG_IMPORTANT)
+            return
+
+        new_atk = getattr(item, "attack", 0)
+        new_def = getattr(item, "defense", 0)
+
+        atk_diff = new_atk - old_atk
+        def_diff = new_def - old_def
+
+        atk_text = f"{atk_diff:+d} ATK"
+        def_text = f"{def_diff:+d} DEF"
+
+        self.ui.add_log(
+            f"Equipped {item.name} ({atk_text}, {def_text})",
+            LOG_SYSTEM
+        )
 
     def run(self):
         if not self.battle.is_player_turn():

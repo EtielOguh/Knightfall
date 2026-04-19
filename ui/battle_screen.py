@@ -325,7 +325,8 @@ class BattleScreen:
     # =========================
 
     def handle_equipped_input(self, event):
-        slot_count = 5  # Head, Left Hand, Body, Right Hand, Foot
+        slot_order = ["head", "left_hand", "body", "right_hand", "foot"]
+        slot_count = len(slot_order)
 
         if event.key == pygame.K_ESCAPE:
             self.state.show_equipped = False
@@ -346,7 +347,12 @@ class BattleScreen:
                 self.state.equipped_index = 2
             elif self.state.equipped_index in [1, 2, 3]:
                 self.state.equipped_index = 4
-                
+
+        elif event.key == pygame.K_RETURN:
+            selected_slot = slot_order[self.state.equipped_index]
+            success, message = self.player.unequip_item(selected_slot)
+            self.add_log(message, LOG_SYSTEM if success else LOG_IMPORTANT)
+
     def handle_input(self, event):
 
         if event.type != pygame.KEYDOWN:

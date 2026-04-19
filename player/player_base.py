@@ -414,6 +414,36 @@ class Player():
 
         self.status_effects.append(effect.copy())
         return True
+    
+    def get_equipment_slot_map(self):
+        return {
+            "right_hand": self.right_hand,
+            "left_hand": self.left_hand,
+            "head": self.head,
+            "body": self.body,
+            "foot": self.foot,
+        }
+
+    def unequip_item(self, slot_name):
+        slot_map = self.get_equipment_slot_map()
+        target_slot = slot_map.get(slot_name)
+
+        if target_slot is None:
+            return False, "Invalid slot."
+
+        if not target_slot:
+            return False, "There is no item equipped in this slot."
+
+        removed_item = target_slot.pop()
+        self.add_item_to_bag(removed_item)
+        self.recalculate_equipment_bonuses()
+
+        self.bag = [
+            item for item in self.bag
+            if not hasattr(item, "quantity") or item.quantity > 0
+        ]
+
+        return True, f"Unequipped: {removed_item.name}"
 
     @property
     def attack(self):

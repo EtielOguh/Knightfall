@@ -260,11 +260,58 @@ class BattleOverlays:
                 ui.screen.blit(placeholder, placeholder.get_rect(center=image_box.center))
 
             stat_x = detail_rect.x + 150
-            stat_y = detail_rect.y + 120
+            stat_y = detail_rect.y + 100
 
             rarity_text = BattleOverlays.format_enum_value(getattr(selected_item, "rarity", "N/A"))
             slot_text = BattleOverlays.format_slot_name(getattr(selected_item, "slot", None))
             category_text = str(getattr(selected_item, "category", "misc")).replace("_", " ").title()
+            selected_slot_key = getattr(selected_item, "slot", None)
+
+            mini_slots_rect = pygame.Rect(detail_rect.x + 20, detail_rect.y + 250, detail_rect.width - 40, 124)
+            pygame.draw.rect(ui.screen, (22, 22, 24), mini_slots_rect, border_radius=12)
+            pygame.draw.rect(ui.screen, (50, 50, 50), mini_slots_rect, 1, border_radius=12)
+
+            preview_title = ui.small_font.render("Target Slot", True, (230, 210, 120))
+            ui.screen.blit(preview_title, (mini_slots_rect.x + 14, mini_slots_rect.y + 12))
+
+            slot_boxes = {
+                "head": pygame.Rect(mini_slots_rect.x + 114, mini_slots_rect.y + 30, 44, 44),
+                "left_hand": pygame.Rect(mini_slots_rect.x + 54, mini_slots_rect.y + 76, 44, 44),
+                "body": pygame.Rect(mini_slots_rect.x + 114, mini_slots_rect.y + 76, 44, 44),
+                "right_hand": pygame.Rect(mini_slots_rect.x + 174, mini_slots_rect.y + 76, 44, 44),
+                "foot": pygame.Rect(mini_slots_rect.x + 114, mini_slots_rect.y + 122, 44, 44),
+            }
+
+            slot_labels = {
+                "head": "H",
+                "left_hand": "L",
+                "body": "B",
+                "right_hand": "R",
+                "foot": "F",
+            }
+
+            player_slot_map = {
+                "head": ui.player.head[0] if ui.player.head else None,
+                "left_hand": ui.player.left_hand[0] if ui.player.left_hand else None,
+                "body": ui.player.body[0] if ui.player.body else None,
+                "right_hand": ui.player.right_hand[0] if ui.player.right_hand else None,
+                "foot": ui.player.foot[0] if hasattr(ui.player, "foot") and ui.player.foot else None,
+            }
+
+            for slot_key, rect in slot_boxes.items():
+                is_target = slot_key == selected_slot_key
+                has_item = player_slot_map.get(slot_key) is not None
+
+                fill_color = (34, 34, 38) if has_item else (20, 20, 22)
+                border_color = (226, 205, 116) if is_target else ((100, 100, 100) if has_item else (60, 60, 60))
+                text_color = (255, 245, 190) if is_target else (170, 170, 170)
+
+                pygame.draw.rect(ui.screen, fill_color, rect, border_radius=8)
+                pygame.draw.rect(ui.screen, border_color, rect, 2, border_radius=8)
+
+                label_surface = ui.small_font.render(slot_labels[slot_key], True, text_color)
+                label_rect = label_surface.get_rect(center=rect.center)
+                ui.screen.blit(label_surface, label_rect)
 
             lines = [
                 f"ATK: {getattr(selected_item, 'attack', 0)}",
@@ -281,7 +328,7 @@ class BattleOverlays:
                 stat_y += 30
 
             # bloco inferior visual
-            info_rect = pygame.Rect(detail_rect.x + 20, detail_rect.y + 250, detail_rect.width - 40, 124)
+            info_rect = pygame.Rect(detail_rect.x + 20, detail_rect.y + 250, detail_rect.width - 40, 170)
             pygame.draw.rect(ui.screen, (22, 22, 24), info_rect, border_radius=12)
             pygame.draw.rect(ui.screen, (50, 50, 50), info_rect, 1, border_radius=12)
 
@@ -310,13 +357,20 @@ class BattleOverlays:
                 )
                 ui.screen.blit(equipped_line, (info_rect.x + 14, info_rect.y + 42))
 
-                compare_line = ui.small_font.render(
-                    f"ATK {getattr(equipped_same_slot, 'attack', 0)} -> {getattr(selected_item, 'attack', 0)}"
-                    f"   DEF {getattr(equipped_same_slot, 'defense', 0)} -> {getattr(selected_item, 'defense', 0)}",
+                atk_line = ui.small_font.render(
+                    f"ATK: {getattr(equipped_same_slot, 'attack', 0)} | {getattr(selected_item, 'attack', 0)}",
                     True,
                     (220, 220, 220)
                 )
-                ui.screen.blit(compare_line, (info_rect.x + 14, info_rect.y + 72))
+                ui.screen.blit(atk_line, (info_rect.x + 14, info_rect.y + 72))
+
+                def_line = ui.small_font.render(
+                    f"DEF: {getattr(equipped_same_slot, 'defense', 0)} | {getattr(selected_item, 'defense', 0)}",
+                    True,
+                    (220, 220, 220)
+                )
+                ui.screen.blit(def_line, (info_rect.x + 14, info_rect.y + 100))
+
             else:
                 empty_slot_line = ui.small_font.render(
                     "Current: Empty slot",
@@ -474,7 +528,7 @@ class BattleOverlays:
         )
 
         footer = ui.small_font.render(
-            "[ARROWS] Navigate   [ESC] Close",
+            "[ARROWS] Navigate   [ENTER] Unequip   [ESC] Close",
             True,
             (165, 165, 165),
         )

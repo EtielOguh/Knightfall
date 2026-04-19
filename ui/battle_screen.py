@@ -323,6 +323,30 @@ class BattleScreen:
     # =========================
     # Input principal
     # =========================
+
+    def handle_equipped_input(self, event):
+        slot_count = 5  # Head, Left Hand, Body, Right Hand, Foot
+
+        if event.key == pygame.K_ESCAPE:
+            self.state.show_equipped = False
+            return
+
+        if event.key == pygame.K_LEFT:
+            self.state.equipped_index = max(0, self.state.equipped_index - 1)
+
+        elif event.key == pygame.K_RIGHT:
+            self.state.equipped_index = min(slot_count - 1, self.state.equipped_index + 1)
+
+        elif event.key == pygame.K_UP:
+            if self.state.equipped_index in [1, 2, 3, 4]:
+                self.state.equipped_index = 0
+
+        elif event.key == pygame.K_DOWN:
+            if self.state.equipped_index == 0:
+                self.state.equipped_index = 2
+            elif self.state.equipped_index in [1, 2, 3]:
+                self.state.equipped_index = 4
+                
     def handle_input(self, event):
 
         if event.type != pygame.KEYDOWN:
@@ -520,6 +544,7 @@ class BattleScreen:
         if event.key == pygame.K_LEFT:
             self.state.inventory_category_index = max(0, self.state.inventory_category_index - 1)
             self.state.inventory_item_index = 0
+            return
 
         elif event.key == pygame.K_RIGHT:
             self.state.inventory_category_index = min(
@@ -527,42 +552,47 @@ class BattleScreen:
                 self.state.inventory_category_index + 1,
             )
             self.state.inventory_item_index = 0
+            return
 
         elif event.key == pygame.K_UP:
             self.state.inventory_item_index = max(0, self.state.inventory_item_index - 1)
+            return
 
         elif event.key == pygame.K_DOWN:
             self.state.inventory_item_index = min(
                 max(0, len(items) - 1),
                 self.state.inventory_item_index + 1,
             )
-
-        elif event.key == pygame.K_RETURN and items:
-            selected_item = items[self.state.inventory_item_index]
-            self.battle.actions.try_equip_item(selected_item)
-
-    def handle_equipped_input(self, event):
-        slot_count = 5  # Head, Left, Body, Right, Foot
-
-        if event.key == pygame.K_ESCAPE:
-            self.state.show_equipped = False
             return
 
-        if event.key == pygame.K_LEFT:
-            self.state.equipped_index = max(0, self.state.equipped_index - 1)
+        elif event.key == pygame.K_RETURN and items:
+            old_index = self.state.inventory_item_index
+            selected_item = items[old_index]
+            selected_name = getattr(selected_item, "name", None)
+            selected_slot = getattr(selected_item, "slot", None)
 
-        elif event.key == pygame.K_RIGHT:
-            self.state.equipped_index = min(slot_count - 1, self.state.equipped_index + 1)
+            self.battle.actions.try_equip_item(selected_item)
 
-        elif event.key == pygame.K_UP:
-            if self.state.equipped_index in [1, 2, 3, 4]:
-                self.state.equipped_index = 0
+            # recalcula a lista da categoria após equipar
+            updated_items = self.get_inventory_items_by_category()
 
-        elif event.key == pygame.K_DOWN:
-            if self.state.equipped_index == 0:
-                self.state.equipped_index = 2
-            elif self.state.equipped_index in [1, 2, 3]:
-                self.state.equipped_index = 4
+            if not updated_items:
+                self.state.inventory_item_index = 0
+                return
+
+            # tenta manter foco em item semelhante que permaneceu na bag
+            fallback_index = min(old_index, len(updated_items) - 1)
+            new_index = fallback_index
+
+            for i, item in enumerate(updated_items):
+                if (
+                    getattr(item, "name", None) == selected_name
+                    and getattr(item, "slot", None) == selected_slot
+                ):
+                    new_index = i
+                    break
+
+            self.state.inventory_item_index = new_index
 
     # =========================
     # Helpers de texto / layout
@@ -690,6 +720,8 @@ class BattleScreen:
         else:
             pygame.draw.rect(self.screen, (160, 70, 70), (720, 170, 140, 220))
 
+        self.draw_player_xp_bar()
+
     def draw_floating_texts(self):
         for entry in self.floating_texts:
             text_surface = self.font.render(entry["text"], True, entry["color"])
@@ -699,6 +731,30 @@ class BattleScreen:
         shadow_surface = pygame.Surface((width, height), pygame.SRCALPHA)
         pygame.draw.ellipse(shadow_surface, (0, 0, 0, 90), (0, 0, width, height))
         self.screen.blit(shadow_surface, (x, y))
+
+    def draw_player_xp_bar(self):
+        xp_x = 380
+        xp_y = 65
+        xp_width = 250
+        xp_height = 10
+
+        self.draw_bar(
+            xp_x,
+            xp_y,
+            xp_width,
+            xp_height,
+            self.player.xp,
+            self.player.xp_max,
+            (100, 170, 60),
+            bg_color=(30, 30, 30),
+        )
+
+        xp_text = self.small_font.render(
+            f"XP: {self.player.xp}/{self.player.xp_max}",
+            True,
+            (255, 255, 255),
+        )
+        self.screen.blit(xp_text, (xp_x + 28, xp_y + 14))
 
     def draw_bar(self, x, y, width, height, current, maximum, fill_color, bg_color=(35, 35, 35)):
         pygame.draw.rect(self.screen, bg_color, (x, y, width, height), border_radius=6)

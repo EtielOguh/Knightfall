@@ -3,27 +3,82 @@ import pygame
 class BattleOverlays:
     @staticmethod
     def draw_menu_overlay(ui):
-        overlay = pygame.Rect(300, 160, 400, 300)
-        pygame.draw.rect(ui.screen, (20, 20, 20), overlay)
-        pygame.draw.rect(ui.screen, (200, 200, 200), overlay, 2)
-
-        title = ui.font.render("Menu", True, (255, 255, 255))
-        ui.screen.blit(title, (460, 185))
-
         options = ui.get_menu_options()
-        y = 250
 
+        # fundo escurecido
+        dim = pygame.Surface((ui.width, ui.height), pygame.SRCALPHA)
+        dim.fill((0, 0, 0, 135))
+        ui.screen.blit(dim, (0, 0))
+
+        option_height = 46
+        header_h = 70
+        footer_h = 46
+        body_padding = 18
+
+        overlay_width = 420
+        overlay_height = header_h + footer_h + (len(options) * option_height) + (body_padding * 2)
+
+        overlay = pygame.Rect(
+            (ui.width - overlay_width) // 2,
+            (ui.height - overlay_height) // 2,
+            overlay_width,
+            overlay_height
+        )
+
+        pygame.draw.rect(ui.screen, (18, 18, 18), overlay, border_radius=14)
+        pygame.draw.rect(ui.screen, (210, 210, 210), overlay, 2, border_radius=14)
+
+        # título
+        title = ui.font.render("Menu", True, (255, 255, 255))
+        title_rect = title.get_rect(center=(overlay.centerx, overlay.y + 32))
+        ui.screen.blit(title, title_rect)
+
+        pygame.draw.line(
+            ui.screen,
+            (55, 55, 55),
+            (overlay.x + 24, overlay.y + 58),
+            (overlay.right - 24, overlay.y + 58),
+            1
+        )
+
+        # opções
+        start_y = overlay.y + 82
         for index, option in enumerate(options):
-            prefix = ">" if index == ui.state.menu_index else " "
-            line = f"{prefix} {option}"
-            color = (230, 210, 120) if index == ui.state.menu_index else (220, 220, 220)
+            is_selected = index == ui.state.menu_index
 
-            text = ui.font.render(line, True, color)
-            ui.screen.blit(text, (380, y))
-            y += 50
+            row_rect = pygame.Rect(
+                overlay.x + 26,
+                start_y + index * option_height,
+                overlay.width - 52,
+                36
+            )
 
-        footer = ui.small_font.render("[ENTER] Select   [ESC] Close", True, (180, 180, 180))
-        ui.screen.blit(footer, (360, 420))
+            if is_selected:
+                pygame.draw.rect(ui.screen, (48, 48, 62), row_rect, border_radius=8)
+                pygame.draw.rect(ui.screen, (230, 210, 120), row_rect, 1, border_radius=8)
+
+            prefix = "›" if is_selected else " "
+            color = (255, 245, 190) if is_selected else (220, 220, 220)
+            text = ui.font.render(f"{prefix} {option}", True, color)
+            text_rect = text.get_rect(midleft=(row_rect.x + 14, row_rect.centery))
+            ui.screen.blit(text, text_rect)
+
+        # footer
+        pygame.draw.line(
+            ui.screen,
+            (55, 55, 55),
+            (overlay.x + 24, overlay.bottom - 42),
+            (overlay.right - 24, overlay.bottom - 42),
+            1
+        )
+
+        footer = ui.small_font.render(
+            "[UP/DOWN] Navigate   [ENTER] Select   [ESC] Close",
+            True,
+            (175, 175, 175)
+        )
+        footer_rect = footer.get_rect(center=(overlay.centerx, overlay.bottom - 20))
+        ui.screen.blit(footer, footer_rect)
 
     @staticmethod
     def draw_potions_overlay(ui):
@@ -53,121 +108,247 @@ class BattleOverlays:
 
     @staticmethod
     def draw_inventory_overlay(ui):
-        overlay = pygame.Rect(80, 80, 840, 520)
-        pygame.draw.rect(ui.screen, (20, 20, 20), overlay, border_radius=10)
-        pygame.draw.rect(ui.screen, (200, 200, 200), overlay, 2, border_radius=10)
+        dim = pygame.Surface((ui.width, ui.height), pygame.SRCALPHA)
+        dim.fill((0, 0, 0, 150))
+        ui.screen.blit(dim, (0, 0))
 
-        title = ui.font.render("Inventory", True, (255, 255, 255))
-        ui.screen.blit(title, (430, 95))
+        overlay = pygame.Rect(48, 38, 904, 624)
+        pygame.draw.rect(ui.screen, (12, 12, 14), overlay, border_radius=18)
+        pygame.draw.rect(ui.screen, (170, 170, 170), overlay, 2, border_radius=18)
+
+        # Header
+        title = ui.menu_font.render("Bag", True, (245, 245, 245))
+        title_rect = title.get_rect(center=(overlay.centerx, overlay.y + 32))
+        ui.screen.blit(title, title_rect)
+
+        pygame.draw.line(
+            ui.screen,
+            (40, 40, 40),
+            (overlay.x + 26, overlay.y + 56),
+            (overlay.right - 26, overlay.y + 56),
+            1
+        )
 
         categories = ui.get_inventory_categories()
 
-        x = 105
-        y = 140
-        tab_width = 110
-        tab_height = 34
+        # Tabs
+        tab_y = overlay.y + 60
+        tab_x = overlay.x + 28
         tab_gap = 10
+        available_width = overlay.width - 56
+        tab_width = (available_width - tab_gap * (len(categories) - 1)) // len(categories)
+        tab_height = 42
 
         for index, category in enumerate(categories):
             is_selected = index == ui.state.inventory_category_index
-            tab_rect = pygame.Rect(x, y, tab_width, tab_height)
+            rect = pygame.Rect(
+                tab_x + index * (tab_width + tab_gap),
+                tab_y,
+                tab_width,
+                tab_height
+            )
 
-            fill_color = (55, 55, 70) if is_selected else (30, 30, 30)
-            border_color = (230, 210, 120) if is_selected else (110, 110, 110)
-            text_color = (255, 245, 190) if is_selected else (190, 190, 190)
+            fill = (44, 44, 58) if is_selected else (22, 22, 24)
+            border = (226, 205, 116) if is_selected else (82, 82, 82)
+            text_color = (255, 244, 200) if is_selected else (180, 180, 180)
 
-            pygame.draw.rect(ui.screen, fill_color, tab_rect, border_radius=6)
-            pygame.draw.rect(ui.screen, border_color, tab_rect, 2, border_radius=6)
+            pygame.draw.rect(ui.screen, fill, rect, border_radius=10)
+            pygame.draw.rect(ui.screen, border, rect, 2, border_radius=10)
 
-            text = ui.small_font.render(category.capitalize(), True, text_color)
-            text_rect = text.get_rect(center=tab_rect.center)
-            ui.screen.blit(text, text_rect)
+            label = category.replace("_", " ").title()
+            surface = ui.small_font.render(label, True, text_color)
+            ui.screen.blit(surface, surface.get_rect(center=rect.center))
 
-            x += tab_width + tab_gap
+        # Panels
+        list_rect = pygame.Rect(76, 146, 448, 420)
+        detail_rect = pygame.Rect(550, 146, 326, 420)
 
-        list_rect = pygame.Rect(110, 195, 380, 320)
-        detail_rect = pygame.Rect(520, 195, 300, 300)
+        pygame.draw.rect(ui.screen, (16, 16, 18), list_rect, border_radius=16)
+        pygame.draw.rect(ui.screen, (58, 58, 58), list_rect, 1, border_radius=16)
 
-        pygame.draw.rect(ui.screen, (26, 26, 26), list_rect, border_radius=8)
-        pygame.draw.rect(ui.screen, (80, 80, 80), list_rect, 1, border_radius=8)
+        pygame.draw.rect(ui.screen, (16, 16, 18), detail_rect, border_radius=16)
+        pygame.draw.rect(ui.screen, (58, 58, 58), detail_rect, 1, border_radius=16)
 
-        pygame.draw.rect(ui.screen, (26, 26, 26), detail_rect, border_radius=8)
-        pygame.draw.rect(ui.screen, (80, 80, 80), detail_rect, 1, border_radius=8)
+        # Titles
+        items_title = ui.font.render("Items", True, (230, 210, 120))
+        ui.screen.blit(items_title, (list_rect.x + 20, list_rect.y + 16))
+
+        details_title = ui.font.render("Details", True, (230, 210, 120))
+        ui.screen.blit(details_title, (detail_rect.x + 20, detail_rect.y + 16))
 
         items = ui.get_inventory_items_by_category()
+        selected_index = max(0, min(ui.state.inventory_item_index, max(0, len(items) - 1)))
 
-        y = 210
+        # LISTA COM SCROLL VISUAL
+        top_y = list_rect.y + 62
+        row_height = 46
+        visible_rows = 7
+
+        start_index = 0
+        if selected_index >= visible_rows:
+            start_index = selected_index - visible_rows + 1
+
+        visible_items = items[start_index:start_index + visible_rows]
+
         if not items:
-            text = ui.small_font.render("No items in this category.", True, (220, 220, 220))
-            ui.screen.blit(text, (125, y))
+            empty_text = ui.small_font.render("No items in this category.", True, (145, 145, 145))
+            ui.screen.blit(empty_text, (list_rect.x + 20, list_rect.y + 76))
         else:
-            for index, item in enumerate(items):
-                is_selected = index == ui.state.inventory_item_index
+            for local_idx, item in enumerate(visible_items):
+                real_idx = start_index + local_idx
+                is_selected = real_idx == selected_index
 
-                row_rect = pygame.Rect(120, y - 2, 360, 24)
+                row_rect = pygame.Rect(
+                    list_rect.x + 14,
+                    top_y + local_idx * row_height,
+                    list_rect.width - 34,
+                    36
+                )
+
                 if is_selected:
-                    pygame.draw.rect(ui.screen, (45, 45, 60), row_rect, border_radius=4)
-                    pygame.draw.rect(ui.screen, (230, 210, 120), row_rect, 1, border_radius=4)
+                    pygame.draw.rect(ui.screen, (46, 46, 60), row_rect, border_radius=8)
+                    pygame.draw.rect(ui.screen, (226, 205, 116), row_rect, 1, border_radius=8)
 
-                prefix = ">" if is_selected else " "
+                name = ui.truncate_text(getattr(item, "name", "Unknown"), 20)
                 atk = getattr(item, "attack", 0)
                 defense = getattr(item, "defense", 0)
                 qty = getattr(item, "quantity", 1)
 
-                line = f"{prefix} {item.name}  ATK:{atk}  DEF:{defense}  x{qty}"
-                color = (255, 245, 190) if is_selected else (220, 220, 220)
+                color = (255, 245, 190) if is_selected else (222, 222, 222)
 
-                text = ui.small_font.render(line, True, color)
-                ui.screen.blit(text, (128, y))
-                y += 28
+                name_surface = ui.small_font.render(name, True, color)
+                atk_surface = ui.small_font.render(f"ATK {atk}", True, color)
+                def_surface = ui.small_font.render(f"DEF {defense}", True, color)
+                qty_surface = ui.small_font.render(f"x{qty}", True, color)
 
-            selected_item = items[ui.state.inventory_item_index]
+                ui.screen.blit(name_surface, (row_rect.x + 12, row_rect.y + 8))
+                ui.screen.blit(atk_surface, (row_rect.x + 185, row_rect.y + 8))
+                ui.screen.blit(def_surface, (row_rect.x + 270, row_rect.y + 8))
+                ui.screen.blit(qty_surface, (row_rect.right - 42, row_rect.y + 8))
 
-            detail_x = 540
-            detail_y = 210
+            if len(items) > visible_rows:
+                track = pygame.Rect(list_rect.right - 12, top_y, 4, visible_rows * row_height - 10)
+                pygame.draw.rect(ui.screen, (42, 42, 42), track, border_radius=4)
 
-            # nome do item
-            name_text = ui.font.render(selected_item.name, True, (255, 245, 190))
-            ui.screen.blit(name_text, (detail_x, detail_y))
-            detail_y += 45
+                thumb_height = max(28, int(track.height * (visible_rows / len(items))))
+                max_start = max(1, len(items) - visible_rows)
+                thumb_y = track.y + int((start_index / max_start) * (track.height - thumb_height))
+                thumb = pygame.Rect(track.x, thumb_y, track.width, thumb_height)
+                pygame.draw.rect(ui.screen, (226, 205, 116), thumb, border_radius=4)
 
-            # espaço para imagem
-            image_box = pygame.Rect(detail_x, detail_y, 96, 96)
-            pygame.draw.rect(ui.screen, (35, 35, 35), image_box, border_radius=8)
-            pygame.draw.rect(ui.screen, (120, 120, 120), image_box, 2, border_radius=8)
+        # PAINEL DIREITO
+        if items:
+            selected_item = items[selected_index]
 
-            placeholder = ui.small_font.render("ITEM", True, (170, 170, 170))
-            placeholder_rect = placeholder.get_rect(center=image_box.center)
-            ui.screen.blit(placeholder, placeholder_rect)
+            name_surface = ui.font.render(
+                ui.truncate_text(selected_item.name, 20),
+                True,
+                (255, 245, 190)
+            )
+            ui.screen.blit(name_surface, (detail_rect.x + 20, detail_rect.y + 60))
 
-            # bloco de stats ao lado da imagem
-            stat_x = detail_x + 115
-            stat_y = detail_y + 5
+            image_box = pygame.Rect(detail_rect.x + 20, detail_rect.y + 110, 110, 110)
+            pygame.draw.rect(ui.screen, (28, 28, 32), image_box, border_radius=12)
+            pygame.draw.rect(ui.screen, (105, 105, 105), image_box, 2, border_radius=12)
+
+            sprite = ui.get_item_sprite(selected_item, size=(64, 64))
+            if sprite:
+                sprite_rect = sprite.get_rect(center=image_box.center)
+                ui.screen.blit(sprite, sprite_rect)
+            else:
+                placeholder = ui.small_font.render("ITEM", True, (140, 140, 140))
+                ui.screen.blit(placeholder, placeholder.get_rect(center=image_box.center))
+
+            stat_x = detail_rect.x + 150
+            stat_y = detail_rect.y + 120
 
             rarity_text = BattleOverlays.format_enum_value(getattr(selected_item, "rarity", "N/A"))
             slot_text = BattleOverlays.format_slot_name(getattr(selected_item, "slot", None))
+            category_text = str(getattr(selected_item, "category", "misc")).replace("_", " ").title()
 
-            details = [
+            lines = [
                 f"ATK: {getattr(selected_item, 'attack', 0)}",
                 f"DEF: {getattr(selected_item, 'defense', 0)}",
                 f"Rarity: {rarity_text}",
-                f"Category: {getattr(selected_item, 'category', 'misc').capitalize()}",
+                f"Category: {category_text}",
                 f"Slot: {slot_text}",
                 f"Qty: {getattr(selected_item, 'quantity', 1)}",
             ]
 
-            for line in details:
-                text = ui.small_font.render(line, True, (220, 220, 220))
-                ui.screen.blit(text, (stat_x, stat_y))
-                stat_y += 24
+            for line in lines:
+                line_surface = ui.small_font.render(line, True, (225, 225, 225))
+                ui.screen.blit(line_surface, (stat_x, stat_y))
+                stat_y += 30
+
+            # bloco inferior visual
+            info_rect = pygame.Rect(detail_rect.x + 20, detail_rect.y + 250, detail_rect.width - 40, 124)
+            pygame.draw.rect(ui.screen, (22, 22, 24), info_rect, border_radius=12)
+            pygame.draw.rect(ui.screen, (50, 50, 50), info_rect, 1, border_radius=12)
+
+            equipped_same_slot = None
+            slot_name = getattr(selected_item, "slot", None)
+            if slot_name == "right_hand" and ui.player.right_hand:
+                equipped_same_slot = ui.player.right_hand[0]
+            elif slot_name == "left_hand" and ui.player.left_hand:
+                equipped_same_slot = ui.player.left_hand[0]
+            elif slot_name == "head" and ui.player.head:
+                equipped_same_slot = ui.player.head[0]
+            elif slot_name == "body" and ui.player.body:
+                equipped_same_slot = ui.player.body[0]
+            elif slot_name == "foot" and ui.player.foot:
+                equipped_same_slot = ui.player.foot[0]
+
+            compare_title = ui.small_font.render("Slot Preview", True, (230, 210, 120))
+            ui.screen.blit(compare_title, (info_rect.x + 14, info_rect.y + 12))
+
+            if equipped_same_slot:
+                equipped_name = ui.truncate_text(equipped_same_slot.name, 22)
+                equipped_line = ui.small_font.render(
+                    f"Current: {equipped_name}",
+                    True,
+                    (200, 200, 200)
+                )
+                ui.screen.blit(equipped_line, (info_rect.x + 14, info_rect.y + 42))
+
+                compare_line = ui.small_font.render(
+                    f"ATK {getattr(equipped_same_slot, 'attack', 0)} -> {getattr(selected_item, 'attack', 0)}"
+                    f"   DEF {getattr(equipped_same_slot, 'defense', 0)} -> {getattr(selected_item, 'defense', 0)}",
+                    True,
+                    (220, 220, 220)
+                )
+                ui.screen.blit(compare_line, (info_rect.x + 14, info_rect.y + 72))
+            else:
+                empty_slot_line = ui.small_font.render(
+                    "Current: Empty slot",
+                    True,
+                    (200, 200, 200)
+                )
+                ui.screen.blit(empty_slot_line, (info_rect.x + 14, info_rect.y + 42))
+
+                compare_line = ui.small_font.render(
+                    f"New item will be equipped directly.",
+                    True,
+                    (220, 220, 220)
+                )
+                ui.screen.blit(compare_line, (info_rect.x + 14, info_rect.y + 72))
+
+        # Footer
+        pygame.draw.line(
+            ui.screen,
+            (40, 40, 40),
+            (overlay.x + 26, overlay.bottom - 48),
+            (overlay.right - 26, overlay.bottom - 48),
+            1
+        )
 
         footer = ui.small_font.render(
-            "[ENTER] Equip   [ESC] Close   [LEFT/RIGHT] Category",
+            "[LEFT/RIGHT] Category   [UP/DOWN] Select   [ENTER] Equip   [ESC] Close",
             True,
-            (180, 180, 180),
+            (170, 170, 170)
         )
-        ui.screen.blit(footer, (120, 560))
-        
+        footer_rect = footer.get_rect(center=(overlay.centerx, overlay.bottom - 24))
+        ui.screen.blit(footer, footer_rect)
+
     @staticmethod
     def draw_skill_overlay(ui):
         overlay = pygame.Rect(180, 120, 640, 420)

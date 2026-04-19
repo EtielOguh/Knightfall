@@ -262,7 +262,8 @@ class Player():
             "right_hand": self.right_hand,
             "left_hand": self.left_hand,
             "head": self.head,
-            "body": self.body
+            "body": self.body,
+            "foot": self.foot,
         }
 
         target_slot = slot_map.get(getattr(selected_item, "slot", None))
@@ -273,6 +274,7 @@ class Player():
         if selected_item not in self.bag:
             return False, f"{selected_item.name} is not in bag."
 
+        # cria a unidade que será equipada
         if hasattr(selected_item, "quantity") and selected_item.quantity > 1:
             selected_item.quantity -= 1
             item_to_equip = deepcopy(selected_item)
@@ -281,14 +283,22 @@ class Player():
             item_to_equip = selected_item
             self.bag.remove(selected_item)
 
+        # se já existe item no slot, remove e devolve para a bag usando stack correto
         if target_slot:
             old_item = target_slot.pop()
-            self.bag.append(old_item)
+            self.add_item_to_bag(old_item)
 
         target_slot.append(item_to_equip)
         self.recalculate_equipment_bonuses()
 
+        # limpa possíveis itens com quantidade zerada
+        self.bag = [
+            item for item in self.bag
+            if not hasattr(item, "quantity") or item.quantity > 0
+        ]
+
         return True, f"Equipped: {item_to_equip.name}"
+
     
     def trigger_player_hit_effect(self, duration=10, flash_duration=6, shake_intensity=8):
         self.player_hit_timer = duration

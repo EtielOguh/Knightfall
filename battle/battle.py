@@ -1,4 +1,4 @@
-from rules import spawn_monster, try_drop_item, try_drop_stone
+from rules import spawn_monster, spawn_boss,try_drop_item, try_drop_stone
 
 from battle.battle_rewards import BattleRewards
 from battle.battle_actions import BattleActions
@@ -79,6 +79,12 @@ class BattleSystem:
     def clear_enemy_turn_schedule(self):
         self.pending_enemy_action = False
         self.enemy_action_time = 0
+
+    def boss_fight(self):
+        self.monster = spawn_boss(self.player.zone, self.player)
+        self.turn_state = self.PLAYER_TURN
+        self.clear_enemy_turn_schedule()
+        
 
     def run_from_battle(self):
         self.monster = spawn_monster(self.player.zone, self.player)

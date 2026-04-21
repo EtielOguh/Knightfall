@@ -14,7 +14,22 @@ from time import sleep
 from itens.stone.stone_registry import STONE_BY_TYPE
 from itens.rarity import Rarity
 from random import random, choice, choices
-    
+from monsters.bosses.zone1 import boss_zone1
+from monsters.bosses.zone2 import boss_zone2
+from monsters.bosses.zone3 import boss_zone3
+from monsters.bosses.zone4 import boss_zone4
+
+def spawn_boss(zone,player):
+    if zone ==1:
+        return choice(boss_zone1)()
+    if zone == 2:
+        return choice(boss_zone2)()
+    if zone ==3:
+        return choice(boss_zone3)()
+    elif zone ==4:
+        return choice(boss_zone4)()
+    else:
+        return ValueError("Invalid Zone")
     
 def spawn_monster(zone, player):
     if zone == 1:
